@@ -346,7 +346,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
     <select id="anlGrade"><option value="">All grades</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
   </div>
   <div class="scorecards" id="anlCards"></div>
-  <h2 class="step">Benchmark bands</h2>
+  <h2 class="step" id="anlBandsHead" style="display:none">Benchmark bands</h2>
   <div id="anlBands"></div>
   <h2 class="step">Errors by skill level (totals)</h2>
   <div id="anlErr"></div>
@@ -414,8 +414,6 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 <section class="screen" id="scr-res">
   <h2 class="step">Results <span class="hint" id="resWho"></span></h2>
   <div class="scorecards" id="cards"></div>
-  <div class="gapflag" id="gapflag"></div>
-  <div class="gapflag" id="interp" style="display:none"></div>
 
   <h2 class="step">Reading Passage — Annotated</h2>
   <div class="wsLegend" id="annoLegend"></div>
@@ -439,7 +437,6 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <table class="skills"><thead><tr id="skHead"></tr></thead><tbody><tr id="skRow"></tr></tbody></table>
   <div style="font-size:12.5px; color:var(--grey); margin-top:8px; line-height:1.6">A Letter &amp; vowel recognition &middot; B CV/CVC blends &middot; C CVCV blends &middot; D Cholom Vav &amp; Shuruk &middot; E Similar-looking letters &middot; F Sofiot (final letters) &middot; G Patach Genuva &middot; H Silent Hei &middot; I Sounded/Silent Yud &middot; J Double-duty Cholom &middot; K Articulated Vav &middot; L Shva Na/Nach &middot; Ch Chataf vowels &middot; Gen General (no specific skill)</div>
   <div class="saveline" id="saveline">Saving to Google Sheet…</div>
-  <button class="btn-primary" id="copyBtn">Copy summary</button>
   <button class="btn-ghost" id="wsFromResultsBtn">Generate Practice Sheet →</button>
   <button class="btn-ghost" id="rrFromResultsBtn">Print Running Record →</button>
   <button class="btn-ghost" id="againBtn">Test another student</button>
@@ -475,12 +472,22 @@ const BANKS = {
 };
 let BANK = BANKS["35"];
 
-/* provisional Emek benchmarks, grades 3–5 */
-const BENCH = {
-  cspm:{3:[55,35],4:[70,45],5:[85,55],6:[90,60],7:[100,68],8:[110,75]},
-  wcpm:{3:[35,22],4:[45,30],5:[55,38],6:[60,40],7:[70,48],8:[80,55]},
-  acc:[97,93]
-};
+/* ================================================================
+   BENCHMARK CUTOFFS: switched OFF for now (raw-data-only mode).
+   No Benchmark / Strategic / Intensive labels are shown anywhere.
+   Later, set enabled:true and fill in cutoffs per grade as [benchmark, strategic]
+   (score at or above the first number = Benchmark, at or above the second = Strategic).
+   Every screen computes labels from the saved raw numbers at display time, so one new
+   index.html relabels all past results. Example:
+     enabled:true,
+     cspm:{3:[55,35], 4:[70,45], ...},   wcpm:{3:[35,22], 4:[45,30], ...}
+   ================================================================ */
+const BENCH = { enabled:false, cspm:{}, wcpm:{}, acc:null };
+function bandFor(kind, val, g){
+  if(!BENCH.enabled || val==null || val==="") return null;
+  const pair = (BENCH[kind]||{})[String(g)]; if(!pair) return null;
+  const v = +val; return v>=pair[0] ? "Benchmark" : v>=pair[1] ? "Strategic" : "Intensive";
+}
 const SKILLS = ["C","D","E","F","G","H","I","J","K","L","Ch","Gen"];
 function tagWord(w){
   if(/[חהע]ַ\u05BC?$/.test(w) || /הַּ$/.test(w)) return "G";        // patach genuva
@@ -562,7 +569,6 @@ function classSummaryHTML(ctxRows, w){
   const cnt = k => res.filter(r=>r[k]!=null).length;
   const lows = res.map(r=>{ const a=[r.acc1,r.accA,r.accB].filter(v=>v!=null); return a.length ? Math.min(...a) : null; }).filter(v=>v!=null);
   const avgAcc = lows.length ? Math.round(lows.reduce((a,b)=>a+b,0)/lows.length*10)/10 : null;
-  const flags = res.filter(r=>r.gapFlag==="FLAG").length;
   const card = (n,l,sub) => `<div class="sum-card"><div class="n">${n==null?"—":n}</div><div class="l">${l}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
   let h = `<div class="sum-wrap"><div class="sum-title">Class summary</div><div class="sum-sub">${tested} of ${total} students tested in ${esc(w)}. Medians are used so one very high or low score does not skew the picture.</div>`;
   if(!tested) return h + `<div class="rr-note" style="margin:0">No fluency results saved yet for this window.</div></div>`;
@@ -571,10 +577,9 @@ function classSummaryHTML(ctxRows, w){
     card(med("cspm"),"Median CSPM · word list",`${cnt("cspm")} tested`) +
     card(med("wcpmA"),"Median WCPM · familiar",`${cnt("wcpmA")} tested`) +
     card(med("wcpmB"),"Median WCPM · unfamiliar",`${cnt("wcpmB")} tested`) +
-    card(avgAcc==null?null:avgAcc+"%","Average accuracy","lowest part per student") +
-    card(flags,"Gap flags","memorized-reading pattern") + `</div>`;
+    card(avgAcc==null?null:avgAcc+"%","Average accuracy","lowest part per student") + `</div>`;
   const bar = (label, key, bandKey) => {
-    const c = {Benchmark:0,Strategic:0,Intensive:0}; res.forEach(r=>{ if(r[key]!=null && c[r[bandKey]]!=null) c[r[bandKey]]++; });
+    const c = {Benchmark:0,Strategic:0,Intensive:0}; res.forEach(r=>{ const b = bandFor(key==="cspm"?"cspm":"wcpm", r[key], r.grade); if(b) c[b]++; });
     const n = c.Benchmark + c.Strategic + c.Intensive; if(!n) return "";
     const seg = (v,color,t)=> v ? `<div style="flex:${v}; background:${color}">${v} ${t}</div>` : "";
     return `<div class="sum-lbl">${label} <span>(${n} tested)</span></div><div class="sum-bar">${seg(c.Benchmark,"#2E7D4F","Benchmark")}${seg(c.Strategic,"#C9A227","Strategic")}${seg(c.Intensive,"#C0392B","Intensive")}</div>`;
@@ -598,20 +603,21 @@ function recFromLive(){
   [["1","p1"],["A","pA"],["B","pB"]].forEach(([code,key])=>{
     const P = S.parts[key]; if(!P) return;
     const score = code==="1" ? P.cspm : P.wcpm;
-    const band = bandOf(score, (code==="1" ? BENCH.cspm : BENCH.wcpm)[g])[0];
+    const band = bandFor(code==="1" ? "cspm" : "wcpm", score, g);
     parts.push({ code, title:partTitle(code,g), measure: code==="1" ? "CSPM" : "WCPM", score, band, acc:P.acc, read:P.read, errors:P.errors, items:P.allItems, missed:P.missedWords||[] });
   });
-  return { name:r.name, grade:g, window:r.window, date:r.timestamp, examiner:r.examiner, gap:r.gap, gapFlag:r.gapFlag, tally:r.tally||{}, parts,
+  return { name:r.name, grade:g, window:r.window, date:r.timestamp, examiner:r.examiner, tally:r.tally||{}, parts,
            notes:{ rs:r.readingStyle||[], bh:r.behavior||[], txt:r.notes||"" }, live:true };
 }
 function recFromRow(r){
   const g = r.grade, parts = [], m = r.missed || {};
-  if(r.cspm != null) parts.push({ code:"1", title:partTitle("1",g), measure:"CSPM", score:r.cspm, band:r.band1, acc:r.acc1, read:r.syllRead, errors:r.syllErrors, missed:m["1"]||[] });
-  if(r.wcpmA != null) parts.push({ code:"A", title:partTitle("A",g), measure:"WCPM", score:r.wcpmA, band:r.bandA, acc:r.accA, read:r.wordsA, errors:r.errA, missed:m["A"]||[] });
-  if(r.wcpmB != null) parts.push({ code:"B", title:partTitle("B",g), measure:"WCPM", score:r.wcpmB, band:r.bandB, acc:r.accB, read:r.wordsB, errors:r.errB, missed:m["B"]||[] });
-  return { name:r.name, grade:g, window:r.window, date:r.ts, examiner:r.examiner, gap:r.gap==null?"":r.gap, gapFlag:r.gapFlag, tally:r.tally||{}, parts, notes:null, live:false };
+  if(r.cspm != null) parts.push({ code:"1", title:partTitle("1",g), measure:"CSPM", score:r.cspm, band:bandFor("cspm", r.cspm, g), acc:r.acc1, read:r.syllRead, errors:r.syllErrors, missed:m["1"]||[] });
+  if(r.wcpmA != null) parts.push({ code:"A", title:partTitle("A",g), measure:"WCPM", score:r.wcpmA, band:bandFor("wcpm", r.wcpmA, g), acc:r.accA, read:r.wordsA, errors:r.errA, missed:m["A"]||[] });
+  if(r.wcpmB != null) parts.push({ code:"B", title:partTitle("B",g), measure:"WCPM", score:r.wcpmB, band:bandFor("wcpm", r.wcpmB, g), acc:r.accB, read:r.wordsB, errors:r.errB, missed:m["B"]||[] });
+  return { name:r.name, grade:g, window:r.window, date:r.ts, examiner:r.examiner, tally:r.tally||{}, parts, notes:null, live:false };
 }
 function benchLine(code, g){
+  if(!BENCH.enabled) return "";
   const b = (code==="1" ? BENCH.cspm : BENCH.wcpm)[g]; return b ? `Benchmark ${b[0]}+ &middot; Strategic ${b[1]}+` : "";
 }
 function runRecordHTML(rec){
@@ -619,11 +625,8 @@ function runRecordHTML(rec){
   let h = `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Running Record</div><div class="rr-sub">Emek Hebrew Academy &middot; Teichman Family Torah Center</div></div></div>`;
   h += `<div class="rr-info"><div><b>Student:</b> ${esc(rec.name)}</div><div><b>Grade:</b> ${esc(g)}</div><div><b>Window:</b> ${esc(rec.window)}</div><div><b>Date:</b> ${fmtDate(rec.date)}</div><div><b>Examiner:</b> ${esc(rec.examiner||"—")}</div><div><b>Parts given:</b> ${rec.parts.map(x=>x.code).join(" + ") || "none"}</div></div>`;
   if(!rec.parts.length) return h + `<div class="notice">No fluency parts were saved for this student and window.</div></div>`;
-  h += `<table class="rr-table"><thead><tr><th>Part</th><th>Score</th><th>Level</th><th>Accuracy</th><th>Read</th><th>Errors</th></tr></thead><tbody>` +
-    rec.parts.map(x=>`<tr><td><b>${x.title}</b><div style="font-size:11.5px;color:var(--grey)">${benchLine(x.code,g)}</div></td><td class="c"><b style="font-size:17px">${x.score}</b><div style="font-size:11.5px;color:var(--grey)">${x.measure}</div></td><td class="c">${pill(x.band)}</td><td class="c">${x.acc==null?"—":x.acc+"%"}</td><td class="c">${x.read==null?"—":x.read}</td><td class="c">${x.errors==null?"—":x.errors}</td></tr>`).join("") + `</tbody></table>`;
-  if(rec.gap !== "" && rec.gap != null){
-    h += `<div class="rr-note" style="margin-top:0;color:${rec.gapFlag==="FLAG"?"var(--err)":"var(--ok)"};font-weight:700">Familiar vs. unfamiliar gap: ${rec.gap} WCPM &mdash; ${rec.gapFlag==="FLAG" ? "flagged (over 20% of the familiar rate; may indicate memorized reading)" : "within the expected range"}.</div>`;
-  }
+  h += `<table class="rr-table"><thead><tr><th>Part</th><th>Score</th>${BENCH.enabled?"<th>Level</th>":""}<th>Accuracy</th><th>Read</th><th>Errors</th></tr></thead><tbody>` +
+    rec.parts.map(x=>`<tr><td><b>${x.title}</b><div style="font-size:11.5px;color:var(--grey)">${benchLine(x.code,g)}</div></td><td class="c"><b style="font-size:17px">${x.score}</b><div style="font-size:11.5px;color:var(--grey)">${x.measure}</div></td>${BENCH.enabled?`<td class="c">${pill(x.band)}</td>`:""}<td class="c">${x.acc==null?"—":x.acc+"%"}</td><td class="c">${x.read==null?"—":x.read}</td><td class="c">${x.errors==null?"—":x.errors}</td></tr>`).join("") + `</tbody></table>`;
   rec.parts.forEach(x=>{
     h += `<div class="rr-h">${x.title}</div>`;
     if(x.items){
@@ -644,25 +647,25 @@ function runRecordHTML(rec){
       (rec.notes.bh.length ? `<div><b>Behavior:</b> ${rec.notes.bh.map(esc).join(", ")}</div>` : "") +
       (rec.notes.txt ? `<div><b>Notes:</b> ${esc(rec.notes.txt)}</div>` : "") + `</div>`;
   }
-  h += `<div class="rr-note">Errors are boxed and marked &#10007;. Benchmarks are provisional and will be reset from Emek's own Fall data.</div>`;
+  h += `<div class="rr-note">Errors are boxed and marked &#10007;.</div>`;
   h += `<div class="rr-sign"><span>Examiner signature</span><span>Date</span></div></div>`;
   return h;
 }
 function classRecordHTML(rows, w, label){
   const bandBg = {Benchmark:"#E3F1E8", Strategic:"#FBF3D9", Intensive:"#FBEAE8"};
-  const cell = (score, band) => score==null ? `<td class="c" style="color:#8A8578">—</td>` : `<td class="c" style="background:${bandBg[band]||"#fff"}"><b>${score}</b><div style="font-size:11px">${band||""}</div></td>`;
+  const cell = (score, band) => score==null ? `<td class="c" style="color:#8A8578">—</td>` : `<td class="c" style="background:${bandBg[band]||"#fff"}"><b>${score}</b>${band?`<div style="font-size:11px">${band}</div>`:""}</td>`;
   const body = rows.map(s=>{
     const r = (activeResultsCache||[]).filter(x=>x.name===s.name && x.window===w).pop();
-    if(!r) return `<tr><td>${esc(s.name)}</td><td class="c">${esc(s.grade)}</td><td class="c" colspan="6" style="color:#8A8578">Not tested this window</td><td></td></tr>`;
+    if(!r) return `<tr><td>${esc(s.name)}</td><td class="c">${esc(s.grade)}</td><td class="c" colspan="5" style="color:#8A8578">Not tested this window</td><td></td></tr>`;
     const accs = [r.acc1, r.accA, r.accB].filter(v=>v!=null);
     const low = accs.length ? Math.min(...accs) : null;
     const skills = SKILLS.filter(k=>(r.tally||{})[k] >= 2).join(", ") || "—";
     const missed = [...new Set(Object.values(r.missed||{}).flat())].slice(0,8);
-    return `<tr><td><b>${esc(s.name)}</b></td><td class="c">${esc(s.grade)}</td>${cell(r.cspm,r.band1)}${cell(r.wcpmA,r.bandA)}${cell(r.wcpmB,r.bandB)}<td class="c">${low==null?"—":low+"%"}</td><td class="c" style="${r.gapFlag==="FLAG"?"color:var(--err);font-weight:800":""}">${r.gapFlag==="FLAG" ? "FLAG ("+r.gap+")" : (r.gap==null?"—":"OK")}</td><td class="c">${skills}</td><td class="rr-miss-cell">${missed.map(esc).join(" ") || "—"}</td></tr>`;
+    return `<tr><td><b>${esc(s.name)}</b></td><td class="c">${esc(s.grade)}</td>${cell(r.cspm,bandFor("cspm",r.cspm,r.grade))}${cell(r.wcpmA,bandFor("wcpm",r.wcpmA,r.grade))}${cell(r.wcpmB,bandFor("wcpm",r.wcpmB,r.grade))}<td class="c">${low==null?"—":low+"%"}</td><td class="c">${skills}</td><td class="rr-miss-cell">${missed.map(esc).join(" ") || "—"}</td></tr>`;
   }).join("");
   return `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Class Running Record</div><div class="rr-sub">${esc(label)} &middot; printed ${fmtDate()}</div></div></div>
-    ${classSummaryHTML(rows, w)}<div class="rr-scroll" style="margin-top:12px"><table class="rr-table rr-class"><thead><tr><th>Student</th><th>Gr</th><th>Word list (CSPM)</th><th>Passage A (WCPM)</th><th>Passage B (WCPM)</th><th>Lowest accuracy</th><th>Gap</th><th>Skills to target (2+ errors)</th><th>Missed items</th></tr></thead><tbody>${body}</tbody></table></div>
-    <div class="rr-note">Level colors: green = Benchmark, yellow = Strategic, red = Intensive. Benchmarks are provisional.</div></div>`;
+    ${classSummaryHTML(rows, w)}<div class="rr-scroll" style="margin-top:12px"><table class="rr-table rr-class"><thead><tr><th>Student</th><th>Gr</th><th>Word list (CSPM)</th><th>Passage A (WCPM)</th><th>Passage B (WCPM)</th><th>Lowest accuracy</th><th>Skills to target (2+ errors)</th><th>Missed items</th></tr></thead><tbody>${body}</tbody></table></div>
+    ${BENCH.enabled?`<div class="rr-note">Level colors: green = Benchmark, yellow = Strategic, red = Intensive.</div>`:""}</div>`;
 }
 let rrReturnTo = "scr-setup";
 function openRunRecord(html, returnTo, landscape){
@@ -745,7 +748,7 @@ function renderWorksheetHTML(title, subtitle, skillCounts, missedWords, missedBy
     body += missedByLevel.map(lv=>`<div class="wsSkill"><div class="wsSkillHead">Level ${lv.id} · ${lv.desc}</div>
       <div class="wsItems">${lv.missed.map(w=>`<span class="wsItem">${w}</span>`).join("")}</div></div>`).join("");
   }
-  if(!body) body = "<p style='color:var(--grey)'>No specific skill pattern flagged. General re-read practice recommended.</p>";
+  if(!body) body = "<p style='color:var(--grey)'>No skill errors were recorded for this selection.</p>";
   return `<div class="wsHeader"><img src="${LOGO}" alt="Emek Hebrew Academy" style="height:54px; display:block; margin-bottom:8px"><div class="wsSchool">Torah Studies</div>
     <div class="wsTitle">${title}</div><div class="wsSub">${subtitle}</div></div>${body}
     <div class="wsSign">Rabbi Levi Solomon, Principal</div>`;
@@ -956,9 +959,6 @@ $("p3next").addEventListener("click", showResults);
 $("p3skip").addEventListener("click", ()=>{ S.parts.pB = null; showResults(); });
 
 /* ============ RESULTS ============ */
-function bandOf(val, pair){ return val>=pair[0] ? ["Benchmark","b-bench"] : val>=pair[1] ? ["Strategic","b-strat"] : ["Intensive","b-int"]; }
-function accBand(a){ return a>=BENCH.acc[0]?["Benchmark","b-bench"]:a>=BENCH.acc[1]?["Strategic","b-strat"]:["Intensive","b-int"]; }
-
 function recomputePart(key){
   const P = S.parts[key]; if(!P || !P.allItems) return;
   const read = P.allItems.filter(i=>i.read), errs = read.filter(i=>i.err);
@@ -981,61 +981,30 @@ async function showResults(recalc){
   const g = S.grade, p1r = S.parts.p1 || null, A = S.parts.pA || null, B = S.parts.pB || null;
   const partsStr = [p1r?"1":null, A?"A":null, B?"B":null].filter(Boolean).join("+") || "none";
   $("resWho").textContent = S.name + " · Grade " + g + " · " + S.window + " · " + new Date().toLocaleDateString();
-  let cards = "", bands = [], accs = [];
-  const c1 = p1r ? bandOf(p1r.cspm, BENCH.cspm[g]) : null;
-  const cA = A ? bandOf(A.wcpm, BENCH.wcpm[g]) : null;
-  const cB = B ? bandOf(B.wcpm, BENCH.wcpm[g]) : null;
-  if(p1r){ cards += `<div class="card"><div class="n">${p1r.cspm}</div><div class="l">CSPM · word list</div><span class="band-tag ${c1[1]}">${c1[0]}</span></div>`; bands.push(c1[0]); accs.push(p1r.acc); }
-  if(A){ cards += `<div class="card"><div class="n">${A.wcpm}</div><div class="l">WCPM · familiar</div><span class="band-tag ${cA[1]}">${cA[0]}</span></div>`; bands.push(cA[0]); accs.push(A.acc); }
-  if(B){ cards += `<div class="card"><div class="n">${B.wcpm}</div><div class="l">WCPM · unfamiliar</div><span class="band-tag ${cB[1]}">${cB[0]}</span></div>`; bands.push(cB[0]); accs.push(B.acc); }
-  const worstAcc = accs.length ? Math.min(...accs) : null;
-  if(worstAcc !== null){ const x = accBand(worstAcc); cards += `<div class="card"><div class="n">${worstAcc}%</div><div class="l">Lowest accuracy</div><span class="band-tag ${x[1]}">${x[0]}</span></div>`; }
+  let cards = "", accs = [];
+  const mcard = (P, val, lbl, kind) => {
+    const bt = bandFor(kind, val, g);
+    const sub = `Accuracy ${P.acc}% &middot; ${P.read} read &middot; ${P.errors} error${P.errors===1?"":"s"}`;
+    return `<div class="card"><div class="n">${val}</div><div class="l">${lbl}</div><div style="font-size:12px;color:var(--grey);margin-top:6px">${sub}</div>${bt?`<span class="band-tag">${bt}</span>`:""}</div>`;
+  };
+  if(p1r){ cards += mcard(p1r, p1r.cspm, "CSPM · word list", "cspm"); accs.push(p1r.acc); }
+  if(A){ cards += mcard(A, A.wcpm, "WCPM · familiar", "wcpm"); accs.push(A.acc); }
+  if(B){ cards += mcard(B, B.wcpm, "WCPM · unfamiliar", "wcpm"); accs.push(B.acc); }
   $("cards").innerHTML = cards || "<div class='card'><div class='l'>No parts administered</div></div>";
-
-  const gf = $("gapflag");
-  let gap = "", gapFlagVal = "";
-  if(A && B){
-    gap = A.wcpm - B.wcpm;
-    const flag = A.wcpm > 0 && gap > 0.2 * A.wcpm;
-    gapFlagVal = flag ? "FLAG" : "OK";
-    gf.style.display = "block";
-    gf.className = "gapflag " + (flag ? "bad" : "good");
-    gf.textContent = flag
-      ? `Familiar/unfamiliar gap: ${gap} WCPM (over 20% of familiar rate). This pattern suggests memorization-supported reading rather than fluent decoding. Recommend the A–L decoding diagnostic.`
-      : `Familiar/unfamiliar gap: ${gap} WCPM. Within the expected range; decoding transfers to new text.`;
-  } else { gf.style.display = "none"; }
-
-  // interpretation: accurate-but-slow vs inaccurate profiles
-  const interp = $("interp");
-  if(worstAcc !== null && worstAcc >= 97 && bands.some(b => b !== "Benchmark")){
-    interp.style.display = "block"; interp.className = "gapflag bad";
-    interp.textContent = "Accurate but slow: accuracy is at benchmark while rate is not. This student needs fluency and automaticity practice (repeated reading, timed rereads), not decoding remediation. Expect few or no errors in the skill table below; that is the finding, not a gap in the data.";
-  } else if(worstAcc !== null && worstAcc < 93){
-    interp.style.display = "block"; interp.className = "gapflag bad";
-    const hot0 = SKILLS.filter(k => "ABCDEFGHIJKL".includes(k)); // placeholder scope
-    interp.textContent = "Accuracy below 93%: prioritize accuracy over speed. Administer the A–L decoding diagnostic before any rate-building work.";
-  } else { interp.style.display = "none"; }
+  let gap = "";
+  if(A && B) gap = A.wcpm - B.wcpm;   // raw difference only; no flag is stored or shown
 
   const tally = {}; SKILLS.forEach(k=>tally[k]=0);
   [p1r, A, B].filter(Boolean).forEach(p=>Object.entries(p.tally).forEach(([k,v])=>{ if(tally[k]!=null) tally[k]+=v; else tally.Gen+=v; }));
   $("skHead").innerHTML = SKILLS.map(k=>`<th>${k}</th>`).join("");
   $("skRow").innerHTML = SKILLS.map(k=>`<td class="${tally[k]>=2?'hot':''}">${tally[k]}</td>`).join("");
-  const hotLevels = ["C","D","E","F","G","H","I","J","K","L"].filter(k => tally[k] >= 2);
-  const flagged = (worstAcc !== null && worstAcc < 93) || bands.includes("Intensive");
-  if(flagged){
-    flagsMap[S.name + "|" + S.window] = hotLevels;
-    if(hotLevels.length && interp.style.display === "block"){
-      interp.textContent += " Suggested starting levels: " + hotLevels.join(", ") + " (marked in the diagnostic level picker).";
-    }
-  }
-
   const missedWords = [...new Set([p1r, A, B].filter(Boolean).flatMap(p=>p.missedWords||[]))];
   S.result = {
     action:"result", timestamp:new Date().toISOString(), name:S.name, grade:g, window:S.window, examiner:S.examiner, parts:partsStr,
-    cspm:p1r?p1r.cspm:"", syllRead:p1r?p1r.read:"", syllErrors:p1r?p1r.errors:"", acc1:p1r?p1r.acc:"", band1:c1?c1[0]:"",
-    wcpmA:A?A.wcpm:"", wordsA:A?A.read:"", errA:A?A.errors:"", accA:A?A.acc:"", bandA:cA?cA[0]:"",
-    wcpmB:B?B.wcpm:"", wordsB:B?B.read:"", errB:B?B.errors:"", accB:B?B.acc:"", bandB:cB?cB[0]:"",
-    gap, gapFlag:gapFlagVal, tally, missedWords,
+    cspm:p1r?p1r.cspm:"", syllRead:p1r?p1r.read:"", syllErrors:p1r?p1r.errors:"", acc1:p1r?p1r.acc:"", band1:"",
+    wcpmA:A?A.wcpm:"", wordsA:A?A.read:"", errA:A?A.errors:"", accA:A?A.acc:"", bandA:"",
+    wcpmB:B?B.wcpm:"", wordsB:B?B.read:"", errB:B?B.errors:"", accB:B?B.acc:"", bandB:"",
+    gap, gapFlag:"", tally, missedWords,
     partDetail: {
       ...(p1r ? {"1":{tally:p1r.tally, missed:p1r.missedWords}} : {}),
       ...(A ? {"A":{tally:A.tally, missed:A.missedWords}} : {}),
@@ -1068,26 +1037,12 @@ async function showResults(recalc){
 }
 async function saveResult(){
   const sl = $("saveline");
-  if(SCRIPT_URL.startsWith("PASTE")){ sl.textContent = "Not connected to a Sheet. Use Copy Summary."; sl.className="saveline fail"; return; }
+  if(SCRIPT_URL.startsWith("PASTE")){ sl.textContent = "Not connected to a Sheet, so this result is not saved."; sl.className="saveline fail"; return; }
   try{
     await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain"}, body:JSON.stringify(S.result)});
     sl.textContent = S.corrections ? "Correction saved to Google Sheet ✓" : "Saved to Google Sheet ✓"; sl.className = "saveline ok";
-  }catch(e){ sl.textContent = "Could not save (no connection). Use Copy Summary so nothing is lost."; sl.className = "saveline fail"; }
+  }catch(e){ sl.textContent = "Could not save (no connection). Check your connection before starting the next student."; sl.className = "saveline fail"; }
 }
-$("copyBtn").addEventListener("click", ()=>{
-  const r = S.result, t = r.tally;
-  const lines = [`KRIAH FLUENCY — ${r.name} (Gr ${r.grade}, ${r.window}) ${new Date().toLocaleDateString()}  Parts: ${r.parts}`];
-  if(r.cspm !== "") lines.push(`Word list: ${r.cspm} CSPM (${r.acc1}% acc) — ${r.band1}`);
-  if(r.wcpmA !== "") lines.push(`Passage A familiar: ${r.wcpmA} WCPM (${r.accA}%) — ${r.bandA}`);
-  if(r.wcpmB !== "") lines.push(`Passage B unfamiliar: ${r.wcpmB} WCPM (${r.accB}%) — ${r.bandB}`);
-  if(r.gap !== "") lines.push(`Gap: ${r.gap} (${r.gapFlag})`);
-  lines.push(`Errors by skill: ${SKILLS.filter(k=>t[k]).map(k=>k+":"+t[k]).join("  ") || "none"}`);
-  if(r.readingStyle && r.readingStyle.length) lines.push(`Reading style: ${r.readingStyle.join(", ")}`);
-  if(r.behavior && r.behavior.length) lines.push(`Behavior: ${r.behavior.join(", ")}`);
-  if(r.notes) lines.push(`Notes: ${r.notes}`);
-  lines.push(`Examiner: ${r.examiner||"-"}`);
-  navigator.clipboard.writeText(lines.join("\n")).then(()=>{ $("copyBtn").textContent = "Copied ✓"; setTimeout(()=>$("copyBtn").textContent="Copy summary",1500); });
-});
 $("againBtn").addEventListener("click", ()=>location.reload());
 $("wsFromResultsBtn").addEventListener("click", ()=>{
   const r = S.result;
@@ -1097,7 +1052,7 @@ $("wsFromResultsBtn").addEventListener("click", ()=>{
 });
 
 /* ============ DECODING DIAGNOSTIC (A–L) ============ */
-const LEVELS = [{"id":"A","desc":"Letter / Sound + Vowel Recognition","items":["ל","ז","תּ","ר","ם","ב","צ","מ","שׁ","ך","פּ","ו","ק","ף","ג","כ","ט","א","נ","ת","ץ","בּ","י","ה","ן","כּ","שֹ","פ","ס","ד","ח","ע","ָ","ַ","ֵ","ֶ","ִ","ֻ","ְ","וּ","וֹ"],"labels":["Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel"]},{"id":"B","desc":"C+V blend / C+V+C blend","items":["פֶּ","טׂ","בֻ","קֵ","חִ","שֻׁב","גָד","רֵק","דֻר","מָן"],"labels":["CV blend","CV blend","CV blend","CV blend","CV blend","CVC blend","CVC blend","CVC blend","CVC blend","CVC blend"]},{"id":"C","desc":"CVCV / CVCVCV blend","items":["פֶּלֶ","עַמִ","יָבֹ","צֻרֵ","בִּקֵעַ","זַמֵרֻ","כֹּתָבֵ","טַפֵּנֻ"],"labels":["CVCV","CVCV","CVCV","CVCV","CVCVCV","CVCVCV","CVCVCV","CVCVCV"]},{"id":"D","desc":"Cholom Vav (Maleh) / Shoorook","items":["בּוֹקֶר","יַכּוּ","חוֹלֵק","וֶעֶזוּז","יוֹצֵא","וּמָלֵא","שׁוֹפָר","לוּלָב"],"labels":["Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook"]},{"id":"E","desc":"Similar looking letters","items":["כָּזֶה","בֶּצַע","הִנוֹ","חָלָב","וֶרֶד","זֶבֶד","טַלִית","מֶלַח","כֻּלָם","כַּנֵס","אוֹצָרוֹ","עָנָוִים","הַשְֹכֵּל","הַׂשֵמוֹת"],"labels":["Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters"]},{"id":"F","desc":"Similar looking Sofiot","items":["מְצַוֶךָּ","כָּמוֹךָ","דֶרֶךְ","רָצוּף","קִבּוּץ","חַלּוֹן","קִבֵּץ","אַף"],"labels":["Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit"]},{"id":"G","desc":"Patach Ganuva (Ach vs Cha)","items":["נִתּוּחַ","פָּתַח","יָרֵחַ","שׁוֹלֵחַ","טָבוּחַ","פּוֹתֵחַ","יִפָּתֵחַ","שָׁלַח"],"labels":["Ganuva (ach)","Normal order","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Normal order"]},{"id":"H","desc":"Silent Hei","items":["הֻכָּה","אֶמוּנָה","תּוֹרָה","בְּרָכָה","לַיְלָה","מִשְׁפָּחָה","קוֹמָה","שָׂדֶה"],"labels":["Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei"]},{"id":"I","desc":"Sounded & Silent Yud","items":["אַבוֹתַי","גוֹיֶךָ","אַבוֹתָיו","גָלוּי","עָלָיו","בָּנָיו","דְּבָרָיו","עָלַי"],"labels":["Sounded","Sounded","Silent","Sounded","Silent","Silent","Silent","Sounded"]},{"id":"J","desc":"Double duty Cholom","items":["מׂשֵל","תִּגשֹׁ","לָשֹבַע","נְפָׂשֹת","יִטשׁ","עׂשֶֹה","שֹׁמֵעַ","חַשֹךְ"],"labels":["Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom"]},{"id":"K","desc":"Articulated Vav","items":["עָוֹן","עַוֹנֵי","מִצְוֹת","עֲוֹנוֹת","מִצְוֹתֵיכֶם","עֲוֹנוֹתֵינוּ","תִּקְוָה","מִקְוֶה"],"labels":["Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav"]},{"id":"L","desc":"Shva Nah / Shva Nach","items":["מְאׂד","זִמְּרָה","הַלְלוּ","תִּשְׁמְרוּ","בָּךְ","וַיַשְׁקְ","חֶבְלֵי","יִצְרֵי"],"labels":["Shva Nah","Shva Nah","Shva Nach","Shva Nach","Shva Nach","Shva Nah","Shva Nach","Shva Nah"]}];
+const LEVELS = [{"id":"A","desc":"Letter / Sound + Vowel Recognition","items":["ל","ז","תּ","ר","ם","ב","צ","מ","שׁ","ך","פּ","ו","ק","ף","ג","כ","ט","א","נ","ת","ץ","בּ","י","ה","ן","כּ","שׂ","פ","ס","ד","ח","ע","ָ","ַ","ֵ","ֶ","ִ","ֻ","ְ","וּ","וֹ"],"labels":["Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel"]},{"id":"B","desc":"C+V blend / C+V+C blend","items":["פֶּ","טֹ","בֻ","קֵ","חִ","שֻׁב","גָד","רֵק","דֻר","מָן"],"labels":["CV blend","CV blend","CV blend","CV blend","CV blend","CVC blend","CVC blend","CVC blend","CVC blend","CVC blend"]},{"id":"C","desc":"CVCV / CVCVCV blend","items":["פֶּלֶ","עַמִ","יָבֹ","צֻרֵ","בִּקֵעַ","זַמֵרֻ","כֹּתָבֵ","טַפֵּנֻ"],"labels":["CVCV","CVCV","CVCV","CVCV","CVCVCV","CVCVCV","CVCVCV","CVCVCV"]},{"id":"D","desc":"Cholom Vav (Maleh) / Shoorook","items":["בּוֹקֶר","יַכּוּ","חוֹלֵק","וֶעֶזוּז","יוֹצֵא","וּמָלֵא","שׁוֹפָר","לוּלָב"],"labels":["Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook"]},{"id":"E","desc":"Similar looking letters","items":["כָּזֶה","בֶּצַע","הִנוֹ","חָלָב","וֶרֶד","זֶבֶד","טַלִית","מֶלַח","כֻּלָם","כַּנֵס","אוֹצָרוֹ","עָנָוִים","הַשְׂכֵּל","הַשֵׂמוֹת"],"labels":["Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters"]},{"id":"F","desc":"Similar looking Sofiot","items":["מְצַוֶךָּ","כָּמוֹךָ","דֶרֶךְ","רָצוּף","קִבּוּץ","חַלּוֹן","קִבֵּץ","אַף"],"labels":["Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit"]},{"id":"G","desc":"Patach Ganuva (Ach vs Cha)","items":["נִתּוּחַ","פָּתַח","יָרֵחַ","שׁוֹלֵחַ","טָבוּחַ","פּוֹתֵחַ","יִפָּתֵחַ","שָׁלַח"],"labels":["Ganuva (ach)","Normal order","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Normal order"]},{"id":"H","desc":"Silent Hei","items":["הֻכָּה","אֶמוּנָה","תּוֹרָה","בְּרָכָה","לַיְלָה","מִשְׁפָּחָה","קוֹמָה","שָׂדֶה"],"labels":["Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei"]},{"id":"I","desc":"Sounded & Silent Yud","items":["אַבוֹתַי","גוֹיֶךָ","אַבוֹתָיו","גָלוּי","עָלָיו","בָּנָיו","דְּבָרָיו","עָלַי"],"labels":["Sounded","Sounded","Silent","Sounded","Silent","Silent","Silent","Sounded"]},{"id":"J","desc":"Double duty Cholom","items":["מֹשֵׁל","תִּגשֹׁ","לָשׂבַע","נְפָשֹׁת","יִטשׁ","עֹשֶׂה","שֹׁמֵעַ","חַשׂךְ"],"labels":["Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom"]},{"id":"K","desc":"Articulated Vav","items":["עָוֹן","עַוֹנֵי","מִצְוֹת","עֲוֹנוֹת","מִצְוֹתֵיכֶם","עֲוֹנוֹתֵינוּ","תִּקְוָה","מִקְוֶה"],"labels":["Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav"]},{"id":"L","desc":"Shva Nah / Shva Nach","items":["מְאֹד","זִמְּרָה","הַלְלוּ","תִּשְׁמְרוּ","בָּךְ","וַיַשְׁקְ","חֶבְלֵי","יִצְרֵי"],"labels":["Shva Nah","Shva Nah","Shva Nach","Shva Nach","Shva Nach","Shva Nah","Shva Nach","Shva Nah"]}];
 
 const DG = { done:{}, cur:null, idx:0, answers:[] };
 
@@ -1124,12 +1079,9 @@ function renderLevels(){
     let score = "<span class='lscore' style='color:var(--grey)'>Not assessed</span>";
     if(r){
       const pct = Math.round(r.correct/r.total*100);
-      const cls = pct>=90?"good":pct>=70?"mid":"low";
-      score = `<span class="lscore ${cls}">${r.correct}/${r.total} · ${pct}%</span>`;
+      score = `<span class="lscore">${r.correct}/${r.total} correct · ${pct}%</span>`;
     }
-    const sug = (flagsMap[S.name + "|" + S.window] || []).includes(l.id);
-    const sugTag = sug ? `<div style="font-size:11.5px; font-weight:700; color:var(--gold); margin-top:4px">★ SUGGESTED from fluency errors</div>` : "";
-    return `<div class="lvlcard" data-lvl="${l.id}" style="${sug?'border-color:var(--gold); border-width:2.5px;':''}"><div class="lid">Level ${l.id}</div><div class="ldesc">${l.desc}</div>${sugTag}${score}</div>`;
+    return `<div class="lvlcard" data-lvl="${l.id}"><div class="lid">Level ${l.id}</div><div class="ldesc">${l.desc}</div>${score}</div>`;
   }).join("");
   if(!effectiveShowA) html += `<div class="lvlcard" id="showA" style="border-style:dashed; opacity:.75"><div class="lid" style="font-size:15px">+ Show Level A</div><div class="ldesc">Letter/vowel recognition. Rarely needed in grades 3–8; tap only for a student who cannot access Level B.</div></div>`;
   if(isG2 && S.window === "Fall") html += `<div class="lvlcard" style="border-style:dashed; opacity:.6; cursor:default"><div class="lid" style="font-size:15px">Levels J–L</div><div class="ldesc">Not administered in Fall for Grade 2. These unlock at Winter/Spring testing.</div></div>`;
@@ -1401,10 +1353,7 @@ $("myClassBtn").addEventListener("click", async ()=>{
 
 /* ============ STUDENT RESULT DETAIL ============ */
 let activeResultsCache = null;
-function bandTag(band){
-  const cls = band==="Benchmark"?"b-bench":band==="Strategic"?"b-strat":band==="Intensive"?"b-int":"";
-  return band ? `<span class="band-tag ${cls}">${band}</span>` : "";
-}
+function bandTag(band){ return band ? `<span class="band-tag">${band}</span>` : ""; }
 function openStudentResult(name, w, type){
   $("srWho").textContent = name + " · " + w;
   const matches = (activeResultsCache||[]).filter(r => r.name === name && r.window === w);
@@ -1414,15 +1363,15 @@ function openStudentResult(name, w, type){
 
   if(r){
     let cards = "";
-    if(r.cspm != null && r.cspm !== "") cards += `<div class="card"><div class="n">${r.cspm}</div><div class="l">CSPM · word list</div>${bandTag(r.band1)}</div>`;
-    if(r.wcpmA != null && r.wcpmA !== "") cards += `<div class="card"><div class="n">${r.wcpmA}</div><div class="l">WCPM · familiar</div>${bandTag(r.bandA)}</div>`;
-    if(r.wcpmB != null && r.wcpmB !== "") cards += `<div class="card"><div class="n">${r.wcpmB}</div><div class="l">WCPM · unfamiliar</div>${bandTag(r.bandB)}</div>`;
+    const g = r.grade;
+    const dcard = (val, lbl, acc, read, errs, kind) => `<div class="card"><div class="n">${val}</div><div class="l">${lbl}</div><div style="font-size:12px;color:var(--grey);margin-top:6px">${acc==null||acc===""?"":"Accuracy "+acc+"% &middot; "}${read==null||read===""?"":read+" read &middot; "}${errs==null||errs===""?"":errs+" error"+(+errs===1?"":"s")}</div>${bandTag(bandFor(kind, val, g))}</div>`;
+    if(r.cspm != null && r.cspm !== "") cards += dcard(r.cspm, "CSPM · word list", r.acc1, r.syllRead, r.syllErrors, "cspm");
+    if(r.wcpmA != null && r.wcpmA !== "") cards += dcard(r.wcpmA, "WCPM · familiar", r.accA, r.wordsA, r.errA, "wcpm");
+    if(r.wcpmB != null && r.wcpmB !== "") cards += dcard(r.wcpmB, "WCPM · unfamiliar", r.accB, r.wordsB, r.errB, "wcpm");
     html += `<h2 class="step">Fluency Exam <span class="hint">Parts: ${r.parts||"—"}</span></h2>`;
     html += cards ? `<div class="scorecards">${cards}</div>` : "<div class='notice'>No fluency parts saved for this window.</div>";
-    if(r.wcpmA && r.wcpmB){
-      const flag = r.gapFlag === "FLAG";
-      html += `<div class="gapflag ${flag?'bad':'good'}">Familiar/unfamiliar gap: ${r.wcpmA - r.wcpmB} WCPM ${flag ? "— flagged (over 20% of familiar rate)" : "— within expected range"}.</div>`;
-    }
+    const missedAll = [...new Set(Object.values(r.missed||{}).flat())];
+    if(missedAll.length) html += `<h2 class="step">Missed words / syllables</h2><div class="rr-missed" style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px">${missedAll.map(esc).join(" &nbsp; ")}</div>`;
     const errEntries = SKILLS.filter(k => (r.tally||{})[k]);
     if(errEntries.length){
       html += `<h2 class="step">Errors by skill level</h2><table class="skills"><thead><tr>${errEntries.map(k=>`<th>${k}</th>`).join("")}</tr></thead><tbody><tr>${errEntries.map(k=>`<td class="${r.tally[k]>=2?'hot':''}">${r.tally[k]}</td>`).join("")}</tr></tbody></table>`;
@@ -1487,7 +1436,7 @@ function stackBar(label, counts){
 }
 function bandCounts(rows, key){
   const c = {B:0,S:0,I:0};
-  rows.forEach(r=>{ const b=r[key]; if(b==="Benchmark")c.B++; else if(b==="Strategic")c.S++; else if(b==="Intensive")c.I++; });
+  rows.forEach(r=>{ const b=bandFor(key==="cspm"?"cspm":"wcpm", r[key], r.grade); if(b==="Benchmark")c.B++; else if(b==="Strategic")c.S++; else if(b==="Intensive")c.I++; });
   return c;
 }
 let secOf = {};
@@ -1503,19 +1452,19 @@ function renderAnl(){
   const cspms = rows.map(r=>r.cspm).filter(v=>v!=null);
   const wbs = rows.map(r=>r.wcpmB).filter(v=>v!=null);
   const names = new Set(rows.map(r=>r.name));
-  const flags = rows.filter(r=>r.gapFlag==="FLAG").length;
   const lowsA = rows.map(r=>{ const a=[r.acc1,r.accA,r.accB].filter(v=>v!=null); return a.length?Math.min(...a):null; }).filter(v=>v!=null);
   const avgAccAnl = lowsA.length ? Math.round(lowsA.reduce((a,b)=>a+b,0)/lowsA.length*10)/10 : null;
   $("anlCards").innerHTML = `
     <div class="card"><div class="n">${names.size}</div><div class="l">Students tested</div></div>
     <div class="card"><div class="n">${median(cspms) ?? "–"}</div><div class="l">Median CSPM</div></div>
     <div class="card"><div class="n">${median(wbs) ?? "–"}</div><div class="l">Median WCPM (unfamiliar)</div></div>
-    <div class="card"><div class="n">${avgAccAnl==null?"–":avgAccAnl+"%"}</div><div class="l">Avg accuracy (lowest part)</div></div>
-    <div class="card"><div class="n">${flags}</div><div class="l">Gap flags</div></div>`;
-  $("anlBands").innerHTML =
-    stackBar("Word list (CSPM)", bandCounts(rows.filter(r=>r.cspm!=null),"band1")) +
-    stackBar("Passage A · familiar (WCPM)", bandCounts(rows.filter(r=>r.wcpmA!=null),"bandA")) +
-    stackBar("Passage B · unfamiliar (WCPM)", bandCounts(rows.filter(r=>r.wcpmB!=null),"bandB")) ||
+    <div class="card"><div class="n">${median(rows.map(r=>r.wcpmA).filter(v=>v!=null)) ?? "–"}</div><div class="l">Median WCPM (familiar)</div></div>
+    <div class="card"><div class="n">${avgAccAnl==null?"–":avgAccAnl+"%"}</div><div class="l">Avg accuracy (lowest part)</div></div>`;
+  $("anlBandsHead").style.display = BENCH.enabled ? "" : "none";
+  $("anlBands").innerHTML = !BENCH.enabled ? "" :
+    stackBar("Word list (CSPM)", bandCounts(rows.filter(r=>r.cspm!=null),"cspm")) +
+    stackBar("Passage A · familiar (WCPM)", bandCounts(rows.filter(r=>r.wcpmA!=null),"wcpmA")) +
+    stackBar("Passage B · unfamiliar (WCPM)", bandCounts(rows.filter(r=>r.wcpmB!=null),"wcpmB")) ||
     "<div class='notice'>No data for this selection yet.</div>";
   const sums = {}; SKILLS.forEach(k=>sums[k]=0);
   rows.forEach(r=>Object.entries(r.tally||{}).forEach(([k,v])=>{ if(sums[k]!=null) sums[k]+=v; }));
