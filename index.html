@@ -1274,7 +1274,7 @@ $("dashWorksheetBtn").addEventListener("click", ()=>{
 $("dashBack").addEventListener("click", ()=>show("scr-setup"));
 
 /* ============ SIGN IN / SIGN OUT ============ */
-let resumeInfo = null;
+let resumeInfo = null, teacherOpenWindows = null;
 let teacherName = null, teacherRoster = null, teacherResults = null, teacherSections = null;
 async function loadTeacher(name){
   if(SCRIPT_URL.startsWith("PASTE")) return {ok:false, msg:"Not connected to a Sheet yet."};
@@ -1284,6 +1284,7 @@ async function loadTeacher(name){
     if(j.error) return {ok:false, msg:"Could not find that teacher. Reload the page and try again."};
     teacherName = j.teacherName || name; teacherRoster = j.roster || []; teacherResults = j.results || [];
     teacherSections = j.sections || [];
+    teacherOpenWindows = j.openWindows || null;
     doneMap = {}; flagsMap = {}; diagMap = {};
     (j.done || []).forEach(d => {
       doneMap[d.name + "|" + d.window] = d.parts;
@@ -1297,6 +1298,17 @@ async function loadTeacher(name){
     return {ok:true};
   }catch(e){ return {ok:false, msg:"Could not reach the Sheet. Check your connection and try again."}; }
 }
+function applyWindows(open){
+  const sel = $("windowSel"), cur = sel.value;
+  const all = ["Fall","Winter","Spring"];
+  const isOpen = w => !open || open.indexOf(w) !== -1;
+  sel.innerHTML = "<option value=''>Select window…</option>" + all.map(w => isOpen(w) ? `<option value="${w}">${w}</option>` : `<option value="${w}" disabled>${w} (not open yet)</option>`).join("");
+  const openList = all.filter(isOpen);
+  if(cur && isOpen(cur)) sel.value = cur;
+  else if(openList.length === 1) sel.value = openList[0];
+  else sel.value = "";
+  sel.dispatchEvent(new Event("change"));
+}
 function enterAsTeacher(){
   currentRole = "teacher";
   scopeRoster = teacherRoster.filter(s => s.active);
@@ -1306,6 +1318,7 @@ function enterAsTeacher(){
   $("myClassBtn").style.display = "block";
   $("myClassBtn").textContent = "My Class Dashboard →";
   $("examiner").value = ""; $("examinerBox").style.display = "none"; $("examinerToggle").style.display = "block";
+  applyWindows(teacherOpenWindows);
   fillClasses();
   show("scr-setup");
 }
@@ -1317,6 +1330,7 @@ function enterAsAdmin(){
   $("dashBtn").style.display = "block";
   $("anlBtn").style.display = "block";
   $("myClassBtn").style.display = "none";
+  applyWindows(null);
   fillClasses();
   show("scr-setup");
 }
@@ -1368,6 +1382,7 @@ $("siForm").addEventListener("submit", async ev=>{
 $("signOutBtn").addEventListener("click", ()=>{
   resumeInfo = null; try{ sessionStorage.removeItem("kriahResume"); }catch(e){}
   currentRole = null; scopeRoster = null;
+  teacherOpenWindows = null;
   teacherName = null; teacherRoster = null; teacherResults = null; teacherSections = null;
   adminKey = null; adminLoaded = false; anlCache = null; activeResultsCache = null;
   roster = []; doneMap = {}; diagMap = {}; flagsMap = {}; secOf = {};
