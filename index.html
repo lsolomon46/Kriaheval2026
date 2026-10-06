@@ -320,7 +320,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 <section class="screen" id="scr-p2">
   <div class="timerbar">
     <svg class="ring" viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="prog" cx="32" cy="32" r="27"/><text x="32" y="39" text-anchor="middle">60</text></svg>
-    <div class="tstate"><b>Part 2 · Passage A (familiar)</b><span id="p2msg">Tap Start, then have the student begin. Tap any word read incorrectly. The student reads the whole passage, even after 60 seconds.</span></div>
+    <div class="tstate"><b>Part 2 · Passage A (familiar)</b><span id="p2msg">Tap Start, then have the student begin. Tap any word read incorrectly.</span></div>
     <button class="btn-stop" id="p2btn">Start</button>
   </div>
   <div class="passage" id="pasA"></div>
@@ -333,7 +333,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 <section class="screen" id="scr-p3">
   <div class="timerbar">
     <svg class="ring" viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="prog" cx="32" cy="32" r="27"/><text x="32" y="39" text-anchor="middle">60</text></svg>
-    <div class="tstate"><b>Part 3 · Passage B (unfamiliar)</b><span id="p3msg">Tap Start, then have the student begin. Tap any word read incorrectly. The student reads the whole passage, even after 60 seconds.</span></div>
+    <div class="tstate"><b>Part 3 · Passage B (unfamiliar)</b><span id="p3msg">Tap Start, then have the student begin. Tap any word read incorrectly.</span></div>
     <button class="btn-stop" id="p3btn">Start</button>
   </div>
   <div class="passage" id="pasB"></div>
@@ -707,7 +707,7 @@ function bucketOf(skill){ return BUCKET[skill] || "gen"; }
 function renderLegend(){
   return ["letters","nikud","rules"].map(b=>
     `<span class="legchip"><span class="dot" style="background:var(--bkt-${b})"></span>${BUCKET_LABEL[b]}</span>`).join("") +
-    `<div class="legnote">Words with a dotted gold underline were read after the 60-second mark. They count toward skill errors and missed words, but not toward the speed score or the accuracy shown on the cards.</div>`;
+    `<div class="legnote">Word-list items with a dotted gold underline were read after the 60-second mark. They count toward skill errors and missed words, but not toward the speed score or the accuracy shown on the cards.</div>`;
 }
 function renderAnnoBlock(labelText, items, partKey){
   const html = items.map(it=>{
@@ -859,14 +859,14 @@ $("beginBtn").addEventListener("click", ()=>{
 
 
 /* ============ TIMED PROBE ENGINE ============ */
-function makeProbe(prefix, container, onDone){
+function makeProbe(prefix, container, onDone, whole){
   const scr = $("scr-"+prefix);
   const svg = scr.querySelector(".ring"), prog = svg.querySelector(".prog"), txt = svg.querySelector("text");
   const CIRC = 2*Math.PI*27; prog.style.strokeDasharray = CIRC; prog.style.strokeDashoffset = 0;
   const btn = $(prefix+"btn"), msg = $(prefix+"msg"), next = $(prefix+"next");
   /* secondary button: student cannot finish the page */
   let cant = $(prefix+"cant");
-  if(!cant){ cant = document.createElement("button"); cant.id = prefix+"cant"; cant.className = "btn-ghost"; cant.style.display = "none";
+  if(!cant && whole){ cant = document.createElement("button"); cant.id = prefix+"cant"; cant.className = "btn-ghost"; cant.style.display = "none";
     cant.textContent = "Student can't finish the page"; scr.querySelector(".timerbar").insertAdjacentElement("afterend", cant); }
   let t0=null, timer=null, elapsed=60, phase="idle", minuteIdx=-1;
   /* idle > running > picklast (mark where the student was at 60 sec) > continue (student finishes the page) > done */
@@ -882,12 +882,12 @@ function makeProbe(prefix, container, onDone){
     clearInterval(timer); elapsed = Math.min(60, el);
     phase = "picklast";
     container.classList.add("pick-last");
-    msg.innerHTML = "<b style='color:var(--err)'>Time!</b> Tap the item the student was reading at 60 seconds. The student then keeps reading to the end of the page.";
-    btn.style.display = "none"; cant.style.display = "none";
+    msg.innerHTML = whole ? "<b style='color:var(--err)'>Time!</b> Tap the item the student was reading at 60 seconds. The student then keeps reading to the end of the page." : "<b style='color:var(--err)'>Time!</b> Now tap the LAST item the student read.";
+    btn.style.display = "none"; if(cant) cant.style.display = "none";
   }
   function complete(finalIdx){
     phase="done"; container.classList.remove("pick-last");
-    btn.style.display = "none"; cant.style.display = "none";
+    btn.style.display = "none"; if(cant) cant.style.display = "none";
     msg.textContent = "Done. Review taps if needed, then continue.";
     next.style.display = "block";
     onDone(minuteIdx, elapsed, finalIdx);
@@ -895,17 +895,18 @@ function makeProbe(prefix, container, onDone){
   btn.addEventListener("click", ()=>{
     if(phase==="idle"){
       phase="running"; t0=Date.now(); timer=setInterval(tick,200);
-      btn.textContent="Student finished the whole page";
-      msg.textContent="Timer running. Tap errors as you hear them. The student must read the whole page, even after 60 seconds.";
+      btn.textContent = whole ? "Student finished the whole page" : "Student finished page";
+      msg.textContent = whole ? "Timer running. Tap errors as you hear them. The student must read the whole list, even after 60 seconds." : "Timer running. Tap errors as you hear them.";
     } else if(phase==="running"){
-      /* finished the entire page inside the minute */
+      if(!whole){ stop((Date.now()-t0)/1000); return; }   /* passages: stop here, teacher taps the last item read */
+      /* word list: finished the entire list inside the minute */
       clearInterval(timer); elapsed = Math.min(60, (Date.now()-t0)/1000);
       minuteIdx = total()-1; complete(minuteIdx);
     } else if(phase==="continue"){
       complete(total()-1);
     }
   });
-  cant.addEventListener("click", ()=>{
+  if(cant) cant.addEventListener("click", ()=>{
     if(phase!=="continue") return;
     phase="picklast2"; container.classList.add("pick-last");
     btn.style.display = "none"; cant.style.display = "none";
@@ -917,10 +918,10 @@ function makeProbe(prefix, container, onDone){
     finishPick(idx){
       if(phase==="picklast"){
         minuteIdx = idx; container.classList.remove("pick-last");
-        if(idx >= total()-1){ complete(idx); return; }
+        if(!whole || idx >= total()-1){ complete(idx); return; }
         phase="continue";
         msg.innerHTML = "Student keeps reading to the end of the page. Tap errors as you hear them. Tap <b>Student finished the whole page</b> when done.";
-        btn.style.display = ""; btn.textContent = "Student finished the whole page"; cant.style.display = "";
+        btn.style.display = ""; btn.textContent = "Student finished the whole page"; if(cant) cant.style.display = "";
       } else if(phase==="picklast2"){
         complete(Math.max(idx, minuteIdx));
       }
@@ -948,7 +949,7 @@ function buildP1(){
     const allItems = segs.map(s=>({ g:+s.dataset.g, text:s.textContent, skill:(s.dataset.skill||"Gen").split("·")[0], skills:(s.dataset.skill||"Gen"), err:s.classList.contains("err"), read:+s.dataset.g<=lastIdx, checked:+s.dataset.g<=finalIdx }));
     S.parts.p1 = { elapsed, allItems, total:allItems.length };
     recomputePart("p1");
-  });
+  }, true);
   grid.addEventListener("click", e=>{
     const sp = e.target.closest(".seg"); if(!sp) return;
     if(p1.getPhase()==="picklast"){ grid.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); p1.finishPick(+sp.dataset.g); }
@@ -980,7 +981,7 @@ function buildPassage(elId, lines, prefix, key){
     const allItems = ws.map(s=>({ g:+s.dataset.g, text:s.textContent, skill:s.dataset.skill, err:s.classList.contains("err"), read:+s.dataset.g<=lastIdx, checked:+s.dataset.g<=finalIdx }));
     S.parts[key] = { elapsed, allItems, total:allItems.length };
     recomputePart(key);
-  });
+  }, false);
   box.addEventListener("click", e=>{
     const sp = e.target.closest(".pw"); if(!sp) return;
     const pr = probes[key];
