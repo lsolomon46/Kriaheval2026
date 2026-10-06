@@ -126,6 +126,10 @@ table.skills td.hot{background:var(--err-bg); color:var(--err); font-weight:700;
 .aw.bkt-rules{color:var(--bkt-rules); background:var(--bkt-rules-bg); border-bottom-color:var(--bkt-rules);}
 .aw.bkt-gen{color:var(--bkt-gen); background:var(--bkt-gen-bg); border-bottom-color:var(--bkt-gen);}
 .aw.beyond{opacity:.28;}
+.aw.after{border-bottom:3px dotted var(--gold);}
+.pw.after,.seg.after{border-bottom:3px dotted var(--gold);}
+.pw.after.err,.seg.after.err{border-bottom-style:solid;}
+.legnote{font-size:12.5px; color:var(--grey); margin-top:8px;}
 .attnGrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:10px;}
 .attnCard{background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px;}
 .attnCard .an{font-size:26px; font-weight:700;}
@@ -192,6 +196,7 @@ table.rr-table td.c{text-align:center;}
 .rr-text .rw.err{border:1.6px solid #1E2430; border-radius:5px; background:var(--err-bg); color:var(--err); font-weight:700;}
 .rr-text .rw.err::after{content:"\2717"; font-family:'Nunito Sans',sans-serif; font-size:11px; vertical-align:super; margin-right:1px;}
 .rr-text .rw.beyond{opacity:.3;}
+.rr-text .rw.after{border-bottom:2px dotted #8A6D1F;}
 .rr-text .rr-stop{font-family:'Nunito Sans',sans-serif; font-size:11px; font-weight:800; color:var(--navy); background:var(--gold-soft); border-radius:5px; padding:1px 6px; margin:0 4px;}
 .rr-chips{display:flex; flex-wrap:wrap; gap:6px;}
 .rr-chip{font-size:12.5px; border:1px solid var(--line); border-radius:6px; padding:3px 8px; background:#fff;}
@@ -302,7 +307,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 <section class="screen" id="scr-p1">
   <div class="timerbar">
     <svg class="ring" viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="prog" cx="32" cy="32" r="27"/><text x="32" y="39" text-anchor="middle">60</text></svg>
-    <div class="tstate"><b>Part 1 · Word Reading</b><span id="p1msg">Tap Start, then have the student begin. Tap any syllable the student misreads.</span></div>
+    <div class="tstate"><b>Part 1 · Word Reading</b><span id="p1msg">Tap Start, then have the student begin. Tap any syllable the student misreads. The student reads the whole list, even after 60 seconds.</span></div>
     <button class="btn-stop" id="p1btn">Start</button>
   </div>
   <div class="grid" id="wordGrid"></div>
@@ -315,7 +320,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 <section class="screen" id="scr-p2">
   <div class="timerbar">
     <svg class="ring" viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="prog" cx="32" cy="32" r="27"/><text x="32" y="39" text-anchor="middle">60</text></svg>
-    <div class="tstate"><b>Part 2 · Passage A (familiar)</b><span id="p2msg">Tap Start, then have the student begin. Tap any word read incorrectly.</span></div>
+    <div class="tstate"><b>Part 2 · Passage A (familiar)</b><span id="p2msg">Tap Start, then have the student begin. Tap any word read incorrectly. The student reads the whole passage, even after 60 seconds.</span></div>
     <button class="btn-stop" id="p2btn">Start</button>
   </div>
   <div class="passage" id="pasA"></div>
@@ -328,7 +333,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 <section class="screen" id="scr-p3">
   <div class="timerbar">
     <svg class="ring" viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="prog" cx="32" cy="32" r="27"/><text x="32" y="39" text-anchor="middle">60</text></svg>
-    <div class="tstate"><b>Part 3 · Passage B (unfamiliar)</b><span id="p3msg">Tap Start, then have the student begin. Tap any word read incorrectly.</span></div>
+    <div class="tstate"><b>Part 3 · Passage B (unfamiliar)</b><span id="p3msg">Tap Start, then have the student begin. Tap any word read incorrectly. The student reads the whole passage, even after 60 seconds.</span></div>
     <button class="btn-stop" id="p3btn">Start</button>
   </div>
   <div class="passage" id="pasB"></div>
@@ -467,8 +472,8 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwt98ldDRwaD6YKAe8nG
 
 /* ============ EXAM DATA (injected at build time) ============ */
 const BANKS = {
-  "35": { words: [{"segs":["שָׁ","לוֹם"],"skill":"C"},{"segs":["אוֹר"],"skill":"D"},{"segs":["דֶּ","רֶךְ"],"skill":"E"},{"segs":["מַ","יִם"],"skill":"F"},{"segs":["רוּ","חַ"],"skill":"G"},{"segs":["לַיְ","לָה"],"skill":"H"},{"segs":["מִצְ","וֹת"],"skill":"J"},{"segs":["שְׁ","מַע"],"skill":"L"},{"segs":["סֵ","פֶר"],"skill":"C"},{"segs":["בָּ","רוּךְ"],"skill":"D"},{"segs":["רֶ","גֶל"],"skill":"E"},{"segs":["אֶ","רֶץ"],"skill":"F"},{"segs":["מָ","שִׁי","חַ"],"skill":"G"},{"segs":["מִצְ","וָה"],"skill":"H"},{"segs":["עֲ","וֹ","נוֹת"],"skill":"J"},{"segs":["בְּ","רָ","כָה"],"skill":"L"},{"segs":["בֹּ","קֶר"],"skill":"C"},{"segs":["חוּ","מָשׁ"],"skill":"D"},{"segs":["חָ","תָן"],"skill":"E"},{"segs":["שֻׁלְ","חָן"],"skill":"F"},{"segs":["לִשְׁ","מֹ","עַ"],"skill":"G"},{"segs":["בַּ","יִת"],"skill":"I"},{"segs":["וַ","יֹּא","מֶר"],"skill":"K"},{"segs":["מִדְ","בָּר"],"skill":"L"},{"segs":["גָּ","מָל"],"skill":"C"},{"segs":["יוֹם"],"skill":"D"},{"segs":["כֶּ","לֶב"],"skill":"E"},{"segs":["גַּן"],"skill":"F"},{"segs":["תַּ","פּוּ","חַ"],"skill":"G"},{"segs":["יַ","יִן"],"skill":"I"},{"segs":["וְ","הָ","יָה"],"skill":"K"},{"segs":["תְּ","פִ","לָּה"],"skill":"L"},{"segs":["יָ","דַע"],"skill":"C"},{"segs":["סוּס"],"skill":"D"},{"segs":["בֵּי","צָה"],"skill":"E"},{"segs":["סוֹף"],"skill":"F"},{"segs":["שָׂ","מֵ","חַ"],"skill":"G"},{"segs":["עֵי","נַ","יִם"],"skill":"I"},{"segs":["וּ","בָ","נִים"],"skill":"K"},{"segs":["יִלְ","מְ","דוּ"],"skill":"L"},{"segs":["זָ","קֵן"],"skill":"C"},{"segs":["לִ","מּוּד"],"skill":"D"},{"segs":["נָ","גַע"],"skill":"E"},{"segs":["מֶ","לֶךְ"],"skill":"F"},{"segs":["גָּ","בוֹ","הַּ"],"skill":"G"},{"segs":["שָׁ","מַ","יִם"],"skill":"I"},{"segs":["וְ","אָ","הַבְ","תָּ"],"skill":"K"},{"segs":["יִשְׁ","מְ","רוּ"],"skill":"L"}], pasA: ["בַּבֹּקֶר קָם דָּוִד מִן הַמִּטָּה וְנוֹטֵל יָדַיִם.","הוּא אוֹמֵר מוֹדֶה אֲנִי בְּקוֹל שָׂמֵחַ.","אַחַר כָּךְ הוֹלֵךְ דָּוִד לְבֵית הַסֵּפֶר עִם אָחִיו הַקָּטָן.","בַּדֶּרֶךְ הֵם רוֹאִים אֶת הַשֶּׁמֶשׁ בַּשָּׁמַיִם.","בְּבֵית הַסֵּפֶר לוֹמְדִים הַיְלָדִים תּוֹרָה וּתְפִלָּה.","הַמּוֹרֶה אוֹמֵר שְׁמַע יִשְׂרָאֵל וְכָל הַיְלָדִים עוֹנִים יַחַד.","אַחַר הַלִּמּוּד אוֹכְלִים הַיְלָדִים לֶחֶם וְתַפּוּחַ בֶּחָצֵר.","דָּוִד אוֹהֵב אֶת הַתּוֹרָה וְאֶת כָּל הַמִּצְווֹת.","בָּעֶרֶב הוּא מִתְפַּלֵּל וְהוֹלֵךְ לִישֹׁן בְּשָׁלוֹם.","בַּשַּׁבָּת יוֹשֶׁבֶת כָּל הַמִּשְׁפָּחָה סְבִיב הַשֻּׁלְחָן.","אַבָּא עוֹשֶׂה קִדּוּשׁ עַל הַיַּיִן וְכֻלָּם שָׁרִים זְמִירוֹת.","אִמָּא מַדְלִיקָה נֵרוֹת וְהַבַּיִת מָלֵא אוֹר גָּדוֹל."], pasB: ["בַּחֹרֶף יוֹרֵד גֶּשֶׁם חָזָק עַל הֶהָרִים הַגְּבוֹהִים.","הָרוּחַ נוֹשֶׁבֶת בֵּין הָעֵצִים בַּיַּעַר הַיָּרֹק.","צִפּוֹר קְטַנָּה עָפָה מֵעַל הַנָּהָר וּמְחַפֶּשֶׂת מָקוֹם חַם.","הִיא מוֹצֵאת קֵן יָשָׁן תַּחַת הַגַּג שֶׁל בַּיִת לָבָן.","בַּלַּיְלָה שׁוֹמַעַת הַצִּפּוֹר קוֹל רַעַם גָּדוֹל בַּשָּׁמַיִם.","בַּבֹּקֶר זוֹרַחַת הַשֶּׁמֶשׁ וְהַשֶּׁלֶג נָמֵס עַל הַשָּׂדֶה.","הַצִּפּוֹר שָׁרָה שִׁיר שָׂמֵחַ וְעָפָה לְדַרְכָּהּ.","יְלָדִים יוֹצְאִים מִן הַבַּיִת וּמְשַׂחֲקִים בַּחוּץ.","בָּאָבִיב פּוֹרְחִים פְּרָחִים יָפִים בְּכָל הַגִּנָּה.","הַיְלָדִים קוֹטְפִים תַּפּוּחִים מִן הָעֵץ הַגָּדוֹל.","בָּעֶרֶב חוֹזְרִים כֻּלָּם הַבַּיְתָה שְׂמֵחִים וַעֲיֵפִים.","הַשָּׁמַיִם מְלֵאִים כּוֹכָבִים קְטַנִּים וּמְאִירִים."], p1label: "Word Reading" },
-  "68": { words: [{"segs":["וַיְ","דַ","בֵּר"],"skill":"K·L"},{"segs":["יְ","רוּ","שָׁ","לַ","יִם"],"skill":"I·L"},{"segs":["הָ","רָ","קִי","עַ"],"skill":"G"},{"segs":["וַ","יִּשְׁ","מַע"],"skill":"K"},{"segs":["בְּ","שִׁבְ","תְּ","ךָ"],"skill":"L"},{"segs":["לִקְ","רַאת"],"skill":"L"},{"segs":["בְּ","רֵא","שִׁית"],"skill":"L"},{"segs":["מַלְ","כוּתְ","ךָ"],"skill":"L"},{"segs":["לְ","הוֹ","דִי","עַ"],"skill":"G"},{"segs":["מִשְׁ","פָּ","טִים"],"skill":"F·L"},{"segs":["וּ","בְ","לֶכְ","תְּ","ךָ"],"skill":"K·L"},{"segs":["מִצְ","רַיְ","מָה"],"skill":"I·H"},{"segs":["מִזְ","בֵּ","חַ"],"skill":"G"},{"segs":["לְ","עוֹ","לָם"],"skill":"L"},{"segs":["חֲ","מִ","שָּׁה"],"skill":"Ch"},{"segs":["וּ","לְ","בָ","נָיו"],"skill":"K"},{"segs":["נַפְ","שְׁ","ךָ"],"skill":"L"},{"segs":["וְ","הִתְ","פַּ","לְּ","לוּ"],"skill":"K·L"},{"segs":["מִשְׁ","פָּ","חָה"],"skill":"L"},{"segs":["וָ","עֶד"],"skill":"K"},{"segs":["אֲ","דָ","מָה"],"skill":"Ch"},{"segs":["מְ","זוּ","זוֹת"],"skill":"L"},{"segs":["מְ","אֹ","דֶ","ךָ"],"skill":"L"},{"segs":["תּוֹ","לְ","דוֹת"],"skill":"L"},{"segs":["תַּלְ","מִי","דִים"],"skill":"F"},{"segs":["תִּשְׁ","מְ","עוּ"],"skill":"L"},{"segs":["וְ","נֶ","אֱ","מָן"],"skill":"Ch·K"},{"segs":["שְׁ","עָ","רֶי","ךָ"],"skill":"L"},{"segs":["הַ","מַּ","חֲ","נֶה"],"skill":"Ch·H"},{"segs":["וּבְ","קוּ","מֶ","ךָ"],"skill":"K·D"},{"segs":["וּ","שְׁ","מַרְ","תֶּם"],"skill":"K·L"},{"segs":["בְּ","מִדְ","בַּר"],"skill":"L"},{"segs":["עֲ","בוֹ","דָה"],"skill":"Ch"},{"segs":["וְ","דִ","בַּרְ","תָּ"],"skill":"K"},{"segs":["וַ","יַּ","עֲ","מֹד"],"skill":"K·Ch"},{"segs":["לְ","דֹ","רֹ","תָם"],"skill":"J·L"}], pasA: ["כָּל בֹּקֶר מִתְפַּלְּלִים הַתַּלְמִידִים בְּבֵית הַמִּדְרָשׁ בְּכַוָּנָה גְּדוֹלָה.","הֵם מוֹדִים לַמֶּלֶךְ הַקָּדוֹשׁ אֲשֶׁר בָּרָא שָׁמַיִם וָאָרֶץ בְּשִׁשָּׁה יָמִים.","אַחֲרֵי הַתְּפִלָּה לוֹמְדִים הֵם תּוֹרָה וּמִשְׁנָה עִם רַבּוֹתֵיהֶם הַנֶּאֱמָנִים.","הָרַב מְלַמֵּד אוֹתָם כִּי הָעוֹלָם עוֹמֵד עַל שְׁלֹשָׁה דְּבָרִים.","עַל הַתּוֹרָה וְעַל הָעֲבוֹדָה וְעַל גְּמִילוּת חֲסָדִים לְכָל אָדָם.","הַתַּלְמִידִים שׁוֹמְעִים אֶת הַדְּבָרִים הַקְּדוֹשִׁים וְשׁוֹמְרִים אוֹתָם בְּלִבָּם.","בְּכָל דּוֹר וָדוֹר עוֹבְרוֹת הַמִּצְווֹת מֵאָבוֹת לְבָנִים בְּאַהֲבָה רַבָּה.","וְכַאֲשֶׁר מַגִּיעַ יוֹם הַשַּׁבָּת שׁוֹבְתִים כֻּלָּם מִכָּל מְלַאכְתָּם.","הֵם מְקַדְּשִׁים עַל הַיַּיִן וּמְבָרְכִים אֶת בִּרְכַּת הַמָּזוֹן בְּשִׂמְחָה.","בְּמוֹצָאֵי שַׁבָּת מַבְדִּילִים הֵם בֵּין קֹדֶשׁ לְחֹל לְאוֹר הַנֵּר.","וּבְנֵיהֶם אַחֲרֵיהֶם יִלְמְדוּ וְיִשְׁמְרוּ אֶת כָּל דִּבְרֵי הַתּוֹרָה הַזֹּאת.","אַשְׁרֵי הָעָם הַשּׁוֹמֵר אֶת דַּרְכֵי הַתּוֹרָה לְעוֹלָם וָעֶד."], pasB: ["וַיְהִי בַּשָּׁנָה הַהִיא וַיֵּלְכוּ הָאֲנָשִׁים מִן הַמִּדְבָּר אֶל הֶעָרִים.","וַיַּעַמְדוּ עַל יַד הַנָּהָר הַגָּדוֹל וַיִּרְאוּ אֶת הָרָקִיעַ מֵעַל הֶהָרִים.","וַיִּקְרְאוּ בְּקוֹל גָּדוֹל אֶל כָּל יוֹשְׁבֵי הָאָרֶץ לִשְׁמֹעַ אֶת דִּבְרֵיהֶם.","וְהָאֲדָמָה נָתְנָה אֶת פִּרְיָהּ וְהָעֵצִים נָשְׂאוּ פְּרִי לָרֹב בְּכָל הַשָּׂדוֹת.","וַיַּעַבְדוּ הָאֲנָשִׁים אֶת עֲבוֹדָתָם בֶּאֱמוּנָה וּבְשִׂמְחָה גְּדוֹלָה כָּל הַיָּמִים.","וּבָעֶרֶב יָשְׁבוּ תַּחַת הָעֵצִים וַיְסַפְּרוּ אִישׁ לְרֵעֵהוּ עַל מַעֲשֵׂיהֶם.","וְהַיְלָדִים שָׁמְעוּ וְשָׁמְרוּ אֶת הַדְּבָרִים בְּלִבָּם לְדוֹרוֹת עוֹלָם.","וַיְבָרְכוּ אֶת שֵׁם הַמֶּלֶךְ אֲשֶׁר נָתַן לָהֶם אֶת כָּל הַטּוֹב הַזֶּה.","וּבַבֹּקֶר הִשְׁכִּימוּ וַיֵּצְאוּ אֶל הַשָּׂדֶה לַעֲבֹד אֶת הָאֲדָמָה.","וְכֹה עָשׂוּ שָׁנָה בְּשָׁנָה וְלֹא שָׁכְחוּ אֵת אֲשֶׁר לָמְדוּ מֵאֲבוֹתֵיהֶם.","וַיִּבְנוּ לָהֶם בָּתִּים חֲדָשִׁים וַיִּטְּעוּ כְּרָמִים עַל צַלְעֵי הֶהָרִים.","וַתְּהִי שִׂמְחָה גְּדוֹלָה בְּכָל הָאָרֶץ כִּי רָאוּ בְּרָכָה בַּעֲמָלָם.","וְגַם בְּנֵיהֶם אַחֲרֵיהֶם שָׁמְרוּ אֶת הַדֶּרֶךְ הַטּוֹבָה הַזֹּאת."], p1label: "Word Screener" }
+  "35": { words: [{"segs":["שָׁ","לוֹם"],"skill":"C"},{"segs":["אוֹר"],"skill":"D"},{"segs":["דֶּ","רֶךְ"],"skill":"E"},{"segs":["מַ","יִם"],"skill":"F"},{"segs":["רוּ","חַ"],"skill":"G"},{"segs":["לַיְ","לָה"],"skill":"H"},{"segs":["מִצְ","וֹת"],"skill":"K"},{"segs":["שְׁ","מַע"],"skill":"L"},{"segs":["סֵ","פֶר"],"skill":"C"},{"segs":["בָּ","רוּךְ"],"skill":"D"},{"segs":["רֶ","גֶל"],"skill":"E"},{"segs":["אֶ","רֶץ"],"skill":"F"},{"segs":["מָ","שִׁי","חַ"],"skill":"G"},{"segs":["מִצְ","וָה"],"skill":"H·K"},{"segs":["עֲ","וֹ","נוֹת"],"skill":"K"},{"segs":["בְּ","רָ","כָה"],"skill":"L"},{"segs":["בֹּ","קֶר"],"skill":"C"},{"segs":["חוּ","מָשׁ"],"skill":"D"},{"segs":["חָ","תָן"],"skill":"E"},{"segs":["שֻׁלְ","חָן"],"skill":"F"},{"segs":["לִשְׁ","מֹ","עַ"],"skill":"G"},{"segs":["בַּ","יִת"],"skill":"I"},{"segs":["וַ","יֹּא","מֶר"],"skill":"Gen"},{"segs":["מִקְ","וֶה"],"skill":"K·H"},{"segs":["עֹ","שֶׂה"],"skill":"J"},{"segs":["יוֹם"],"skill":"D"},{"segs":["כֶּ","לֶב"],"skill":"E"},{"segs":["גַּן"],"skill":"F"},{"segs":["תַּ","פּוּ","חַ"],"skill":"G"},{"segs":["יַ","יִן"],"skill":"I"},{"segs":["וְ","הָ","יָה"],"skill":"L"},{"segs":["תְּ","פִ","לָּה"],"skill":"L"},{"segs":["עָ","וֹן"],"skill":"K·F"},{"segs":["סוּס"],"skill":"D"},{"segs":["בֵּי","צָה"],"skill":"E"},{"segs":["סוֹף"],"skill":"F"},{"segs":["שֹׁ","מֵ","עַ"],"skill":"J·G"},{"segs":["עֵי","נַ","יִם"],"skill":"I"},{"segs":["וּ","בָ","נִים"],"skill":"D"},{"segs":["יִלְ","מְ","דוּ"],"skill":"L"},{"segs":["שֹׁ","כֵן"],"skill":"J·F"},{"segs":["לִ","מּוּד"],"skill":"D"},{"segs":["נָ","גַע"],"skill":"E"},{"segs":["מֶ","לֶךְ"],"skill":"F"},{"segs":["גָּ","בוֹ","הַּ"],"skill":"G"},{"segs":["שָׁ","מַ","יִם"],"skill":"I"},{"segs":["וְ","אָ","הַבְ","תָּ"],"skill":"L"},{"segs":["יִשְׁ","מְ","רוּ"],"skill":"L"}], pasA: ["בַּבֹּקֶר קָם דָּוִד מִן הַמִּטָּה וְנוֹטֵל יָדַיִם.","הוּא אוֹמֵר מוֹדֶה אֲנִי בְּקוֹל שָׂמֵחַ.","אַחַר כָּךְ הוֹלֵךְ דָּוִד לְבֵית הַסֵּפֶר עִם אָחִיו הַקָּטָן.","בַּדֶּרֶךְ הֵם רוֹאִים אֶת הַשֶּׁמֶשׁ בַּשָּׁמַיִם.","בְּבֵית הַסֵּפֶר לוֹמְדִים הַיְלָדִים תּוֹרָה וּתְפִלָּה.","הַמּוֹרֶה אוֹמֵר שְׁמַע יִשְׂרָאֵל וְכָל הַיְלָדִים עוֹנִים יַחַד.","אַחַר הַלִּמּוּד אוֹכְלִים הַיְלָדִים לֶחֶם וְתַפּוּחַ בֶּחָצֵר.","דָּוִד אוֹהֵב אֶת הַתּוֹרָה וְאֶת כָּל הַמִּצְווֹת.","בָּעֶרֶב הוּא מִתְפַּלֵּל וְהוֹלֵךְ לִישֹׁן בְּשָׁלוֹם.","בַּשַּׁבָּת יוֹשֶׁבֶת כָּל הַמִּשְׁפָּחָה סְבִיב הַשֻּׁלְחָן.","אַבָּא עוֹשֶׂה קִדּוּשׁ עַל הַיַּיִן וְכֻלָּם שָׁרִים זְמִירוֹת.","אִמָּא מַדְלִיקָה נֵרוֹת וְהַבַּיִת מָלֵא אוֹר גָּדוֹל."], pasB: ["בַּחֹרֶף יוֹרֵד גֶּשֶׁם חָזָק עַל הֶהָרִים הַגְּבוֹהִים.","הָרוּחַ נוֹשֶׁבֶת בֵּין הָעֵצִים בַּיַּעַר הַיָּרֹק.","צִפּוֹר קְטַנָּה עָפָה מֵעַל הַנָּהָר וּמְחַפֶּשֶׂת מָקוֹם חַם.","הִיא מוֹצֵאת קֵן יָשָׁן תַּחַת הַגַּג שֶׁל בַּיִת לָבָן.","בַּלַּיְלָה שׁוֹמַעַת הַצִּפּוֹר קוֹל רַעַם גָּדוֹל בַּשָּׁמַיִם.","בַּבֹּקֶר זוֹרַחַת הַשֶּׁמֶשׁ וְהַשֶּׁלֶג נָמֵס עַל הַשָּׂדֶה.","הַצִּפּוֹר שָׁרָה שִׁיר שָׂמֵחַ וְעָפָה לְדַרְכָּהּ.","יְלָדִים יוֹצְאִים מִן הַבַּיִת וּמְשַׂחֲקִים בַּחוּץ.","בָּאָבִיב פּוֹרְחִים פְּרָחִים יָפִים בְּכָל הַגִּנָּה.","הַיְלָדִים קוֹטְפִים תַּפּוּחִים מִן הָעֵץ הַגָּדוֹל.","בָּעֶרֶב חוֹזְרִים כֻּלָּם הַבַּיְתָה שְׂמֵחִים וַעֲיֵפִים.","הַשָּׁמַיִם מְלֵאִים כּוֹכָבִים קְטַנִּים וּמְאִירִים."], p1label: "Word Reading" },
+  "68": { words: [{"segs":["וַיְ","דַ","בֵּר"],"skill":"L"},{"segs":["יְ","רוּ","שָׁ","לַ","יִם"],"skill":"I·L"},{"segs":["הָ","רָ","קִי","עַ"],"skill":"G"},{"segs":["וַ","יִּשְׁ","מַע"],"skill":"L"},{"segs":["לְ","מִצְ","וֹ","תָיו"],"skill":"K·L"},{"segs":["לַחְ","שֹׁב"],"skill":"J·L"},{"segs":["בְּ","רֵא","שִׁית"],"skill":"L"},{"segs":["מַלְ","כוּתְ","ךָ"],"skill":"L"},{"segs":["לְ","הוֹ","דִי","עַ"],"skill":"G"},{"segs":["מִשְׁ","פָּ","טִים"],"skill":"F·L"},{"segs":["וּ","בְ","לֶכְ","תְּ","ךָ"],"skill":"L"},{"segs":["מִצְ","רַיְ","מָה"],"skill":"I·H"},{"segs":["מִזְ","בֵּ","חַ"],"skill":"G"},{"segs":["לְ","שֹׁ","נוֹ"],"skill":"J·L"},{"segs":["חֲ","מִ","שָּׁה"],"skill":"Ch"},{"segs":["וּ","לְ","בָ","נָיו"],"skill":"L"},{"segs":["נְ","פָ","שֹׁת"],"skill":"J·L"},{"segs":["וְ","הִתְ","פַּ","לְּ","לוּ"],"skill":"L"},{"segs":["מִשְׁ","פָּ","חָה"],"skill":"L"},{"segs":["עָ","וֹן"],"skill":"K"},{"segs":["אֲ","דָ","מָה"],"skill":"Ch"},{"segs":["מְ","זוּ","זוֹת"],"skill":"L"},{"segs":["מִצְ","וֹ","תֶי","ךָ"],"skill":"K·L"},{"segs":["תּוֹ","לְ","דוֹת"],"skill":"L"},{"segs":["תַּלְ","מִי","דִים"],"skill":"F"},{"segs":["תִּשְׁ","מְ","עוּ"],"skill":"L"},{"segs":["וְ","נֶ","אֱ","מָן"],"skill":"Ch"},{"segs":["עֲ","וֹ","נֵי","נוּ"],"skill":"K·Ch"},{"segs":["הַ","מַּ","חֲ","נֶה"],"skill":"Ch·H"},{"segs":["וּבְ","קוּ","מֶ","ךָ"],"skill":"D"},{"segs":["וּ","שְׁ","מַרְ","תֶּם"],"skill":"L"},{"segs":["בְּ","מִדְ","בַּר"],"skill":"L"},{"segs":["עֲ","בוֹ","דָה"],"skill":"Ch"},{"segs":["וְ","דִ","בַּרְ","תָּ"],"skill":"L"},{"segs":["וַ","יַּ","עֲ","מֹד"],"skill":"Ch"},{"segs":["לְ","דֹ","רֹ","תָם"],"skill":"L"}], pasA: ["כָּל בֹּקֶר מִתְפַּלְּלִים הַתַּלְמִידִים בְּבֵית הַמִּדְרָשׁ בְּכַוָּנָה גְּדוֹלָה.","הֵם מוֹדִים לַמֶּלֶךְ הַקָּדוֹשׁ אֲשֶׁר בָּרָא שָׁמַיִם וָאָרֶץ בְּשִׁשָּׁה יָמִים.","אַחֲרֵי הַתְּפִלָּה לוֹמְדִים הֵם תּוֹרָה וּמִשְׁנָה עִם רַבּוֹתֵיהֶם הַנֶּאֱמָנִים.","הָרַב מְלַמֵּד אוֹתָם כִּי הָעוֹלָם עוֹמֵד עַל שְׁלֹשָׁה דְּבָרִים.","עַל הַתּוֹרָה וְעַל הָעֲבוֹדָה וְעַל גְּמִילוּת חֲסָדִים לְכָל אָדָם.","הַתַּלְמִידִים שׁוֹמְעִים אֶת הַדְּבָרִים הַקְּדוֹשִׁים וְשׁוֹמְרִים אוֹתָם בְּלִבָּם.","בְּכָל דּוֹר וָדוֹר עוֹבְרוֹת הַמִּצְווֹת מֵאָבוֹת לְבָנִים בְּאַהֲבָה רַבָּה.","וְכַאֲשֶׁר מַגִּיעַ יוֹם הַשַּׁבָּת שׁוֹבְתִים כֻּלָּם מִכָּל מְלַאכְתָּם.","הֵם מְקַדְּשִׁים עַל הַיַּיִן וּמְבָרְכִים אֶת בִּרְכַּת הַמָּזוֹן בְּשִׂמְחָה.","בְּמוֹצָאֵי שַׁבָּת מַבְדִּילִים הֵם בֵּין קֹדֶשׁ לְחֹל לְאוֹר הַנֵּר.","וּבְנֵיהֶם אַחֲרֵיהֶם יִלְמְדוּ וְיִשְׁמְרוּ אֶת כָּל דִּבְרֵי הַתּוֹרָה הַזֹּאת.","אַשְׁרֵי הָעָם הַשּׁוֹמֵר אֶת דַּרְכֵי הַתּוֹרָה לְעוֹלָם וָעֶד."], pasB: ["וַיְהִי בַּשָּׁנָה הַהִיא וַיֵּלְכוּ הָאֲנָשִׁים מִן הַמִּדְבָּר אֶל הֶעָרִים.","וַיַּעַמְדוּ עַל יַד הַנָּהָר הַגָּדוֹל וַיִּרְאוּ אֶת הָרָקִיעַ מֵעַל הֶהָרִים.","וַיִּקְרְאוּ בְּקוֹל גָּדוֹל אֶל כָּל יוֹשְׁבֵי הָאָרֶץ לִשְׁמֹעַ אֶת דִּבְרֵיהֶם.","וְהָאֲדָמָה נָתְנָה אֶת פִּרְיָהּ וְהָעֵצִים נָשְׂאוּ פְּרִי לָרֹב בְּכָל הַשָּׂדוֹת.","וַיַּעַבְדוּ הָאֲנָשִׁים אֶת עֲבוֹדָתָם בֶּאֱמוּנָה וּבְשִׂמְחָה גְּדוֹלָה כָּל הַיָּמִים.","וּבָעֶרֶב יָשְׁבוּ תַּחַת הָעֵצִים וַיְסַפְּרוּ אִישׁ לְרֵעֵהוּ עַל מַעֲשֵׂיהֶם.","וְהַיְלָדִים שָׁמְעוּ וְשָׁמְרוּ אֶת הַדְּבָרִים בְּלִבָּם לְדוֹרוֹת עוֹלָם.","וַיְבָרְכוּ אֶת שֵׁם הַמֶּלֶךְ אֲשֶׁר נָתַן לָהֶם אֶת כָּל הַטּוֹב הַזֶּה.","וּבַבֹּקֶר הִשְׁכִּימוּ וַיֵּצְאוּ אֶל הַשָּׂדֶה לַעֲבֹד אֶת הָאֲדָמָה.","וְכֹה עָשׂוּ שָׁנָה בְּשָׁנָה וְלֹא שָׁכְחוּ אֵת אֲשֶׁר לָמְדוּ מֵאֲבוֹתֵיהֶם.","וַיִּבְנוּ לָהֶם בָּתִּים חֲדָשִׁים וַיִּטְּעוּ כְּרָמִים עַל צַלְעֵי הֶהָרִים.","וַתְּהִי שִׂמְחָה גְּדוֹלָה בְּכָל הָאָרֶץ כִּי רָאוּ בְּרָכָה בַּעֲמָלָם.","וְגַם בְּנֵיהֶם אַחֲרֵיהֶם שָׁמְרוּ אֶת הַדֶּרֶךְ הַטּוֹבָה הַזֹּאת."], p1label: "Word Screener" }
 };
 let BANK = BANKS["35"];
 
@@ -490,9 +495,10 @@ function bandFor(kind, val, g){
 }
 const SKILLS = ["C","D","E","F","G","H","I","J","K","L","Ch","Gen"];
 function tagWord(w){
+  w = w.replace(/[.,:;!?]+$/,"");
   if(/[חהע]ַ\u05BC?$/.test(w) || /הַּ$/.test(w)) return "G";        // patach genuva
   if(/[\u05B1\u05B2\u05B3]/.test(w)) return "Ch";                    // chataf vowels
-  if(/^ו[\u05B0\u05B7\u05B8\u05BC]/.test(w)) return "K";              // vav prefix
+  if(/[\u05B0-\u05BB][\u05BC\u05C1\u05C2]*ו\u05B9/.test(w) || /\u05B0ו[\u05B4-\u05B8]/.test(w) || /וו/.test(w)) return "K";   // articulated vov (vo)
   if(/\u05B0/.test(w)) return "L";                                   // shva
   if(/וֹ/.test(w) || /וּ/.test(w)) return "D";                       // cholom malei / shuruk
   if(/ה$/.test(w)) return "H";                                       // silent hei
@@ -632,7 +638,7 @@ function runRecordHTML(rec){
     if(x.items){
       const lastRead = Math.max(-1, ...x.items.filter(i=>i.read).map(i=>i.g));
       h += `<div class="rr-text">` + x.items.map(i=>{
-        const cls = ["rw"]; if(i.err) cls.push("err"); if(!i.read) cls.push("beyond");
+        const cls = ["rw"]; if(i.err) cls.push("err"); const chk = i.checked != null ? i.checked : i.read; if(!chk) cls.push("beyond"); else if(!i.read) cls.push("after");
         return `<span class="${cls.join(" ")}">${esc(i.text)}</span>` + (i.g === lastRead ? `<span class="rr-stop">&#8741; 60 sec</span>` : "");
       }).join(" ") + `</div>`;
     } else {
@@ -700,14 +706,17 @@ const BUCKET_LABEL = {letters:"Letters", nikud:"Nikudos", rules:"Rules & Dagesh"
 function bucketOf(skill){ return BUCKET[skill] || "gen"; }
 function renderLegend(){
   return ["letters","nikud","rules"].map(b=>
-    `<span class="legchip"><span class="dot" style="background:var(--bkt-${b})"></span>${BUCKET_LABEL[b]}</span>`).join("");
+    `<span class="legchip"><span class="dot" style="background:var(--bkt-${b})"></span>${BUCKET_LABEL[b]}</span>`).join("") +
+    `<div class="legnote">Words with a dotted gold underline were read after the 60-second mark. They count toward skill errors and missed words, but not toward the speed score or the accuracy shown on the cards.</div>`;
 }
 function renderAnnoBlock(labelText, items, partKey){
   const html = items.map(it=>{
     const cls = ["aw"];
     if(it.err) cls.push("bkt-"+bucketOf(it.skill));
-    if(!it.read) cls.push("beyond");
-    if(it.read) cls.push("fixable");
+    const chk = it.checked != null ? it.checked : it.read;
+    if(!chk) cls.push("beyond");
+    if(chk && !it.read) cls.push("after");
+    if(chk) cls.push("fixable");
     return `<span class="${cls.join(" ")}" data-part="${partKey}" data-g="${it.g}">${it.text}</span>`;
   }).join(" ");
   return `<div class="annoBlock"><div class="annoLabel">${labelText}</div><div class="annoPassage">${html}</div></div>`;
@@ -855,7 +864,13 @@ function makeProbe(prefix, container, onDone){
   const svg = scr.querySelector(".ring"), prog = svg.querySelector(".prog"), txt = svg.querySelector("text");
   const CIRC = 2*Math.PI*27; prog.style.strokeDasharray = CIRC; prog.style.strokeDashoffset = 0;
   const btn = $(prefix+"btn"), msg = $(prefix+"msg"), next = $(prefix+"next");
-  let t0=null, timer=null, elapsed=60, phase="idle"; // idle→running→picklast→done
+  /* secondary button: student cannot finish the page */
+  let cant = $(prefix+"cant");
+  if(!cant){ cant = document.createElement("button"); cant.id = prefix+"cant"; cant.className = "btn-ghost"; cant.style.display = "none";
+    cant.textContent = "Student can't finish the page"; scr.querySelector(".timerbar").insertAdjacentElement("afterend", cant); }
+  let t0=null, timer=null, elapsed=60, phase="idle", minuteIdx=-1;
+  /* idle > running > picklast (mark where the student was at 60 sec) > continue (student finishes the page) > done */
+  const total = () => container.querySelectorAll("[data-g]").length;
   function tick(){
     const el = (Date.now()-t0)/1000, left = Math.max(0, 60-el);
     txt.textContent = Math.ceil(left);
@@ -867,21 +882,48 @@ function makeProbe(prefix, container, onDone){
     clearInterval(timer); elapsed = Math.min(60, el);
     phase = "picklast";
     container.classList.add("pick-last");
-    msg.innerHTML = "<b style='color:var(--err)'>Time!</b> Now tap the LAST item the student read.";
-    btn.style.display = "none";
+    msg.innerHTML = "<b style='color:var(--err)'>Time!</b> Tap the item the student was reading at 60 seconds. The student then keeps reading to the end of the page.";
+    btn.style.display = "none"; cant.style.display = "none";
+  }
+  function complete(finalIdx){
+    phase="done"; container.classList.remove("pick-last");
+    btn.style.display = "none"; cant.style.display = "none";
+    msg.textContent = "Done. Review taps if needed, then continue.";
+    next.style.display = "block";
+    onDone(minuteIdx, elapsed, finalIdx);
   }
   btn.addEventListener("click", ()=>{
-    if(phase==="idle"){ phase="running"; t0=Date.now(); timer=setInterval(tick,200); btn.textContent="Student finished page"; msg.textContent="Timer running. Tap errors as you hear them."; }
-    else if(phase==="running"){ stop((Date.now()-t0)/1000); }
+    if(phase==="idle"){
+      phase="running"; t0=Date.now(); timer=setInterval(tick,200);
+      btn.textContent="Student finished the whole page";
+      msg.textContent="Timer running. Tap errors as you hear them. The student must read the whole page, even after 60 seconds.";
+    } else if(phase==="running"){
+      /* finished the entire page inside the minute */
+      clearInterval(timer); elapsed = Math.min(60, (Date.now()-t0)/1000);
+      minuteIdx = total()-1; complete(minuteIdx);
+    } else if(phase==="continue"){
+      complete(total()-1);
+    }
+  });
+  cant.addEventListener("click", ()=>{
+    if(phase!=="continue") return;
+    phase="picklast2"; container.classList.add("pick-last");
+    btn.style.display = "none"; cant.style.display = "none";
+    msg.innerHTML = "Tap the LAST item the student read.";
   });
   return {
     getPhase:()=>phase,
     getElapsed:()=>t0 ? (Date.now()-t0)/1000 : 0,
-    finishPick(lastIdx){
-      phase="done"; container.classList.remove("pick-last");
-      msg.textContent = "Done. Review taps if needed, then continue.";
-      next.style.display = "block";
-      onDone(lastIdx, elapsed);
+    finishPick(idx){
+      if(phase==="picklast"){
+        minuteIdx = idx; container.classList.remove("pick-last");
+        if(idx >= total()-1){ complete(idx); return; }
+        phase="continue";
+        msg.innerHTML = "Student keeps reading to the end of the page. Tap errors as you hear them. Tap <b>Student finished the whole page</b> when done.";
+        btn.style.display = ""; btn.textContent = "Student finished the whole page"; cant.style.display = "";
+      } else if(phase==="picklast2"){
+        complete(Math.max(idx, minuteIdx));
+      }
     }
   };
 }
@@ -900,20 +942,18 @@ function buildP1(){
     });
     grid.appendChild(d);
   });
-  p1 = makeProbe("p1", grid, (lastIdx, elapsed)=>{
+  p1 = makeProbe("p1", grid, (lastIdx, elapsed, finalIdx)=>{
     const segs = [...grid.querySelectorAll(".seg")];
-    segs.forEach(s=>{ if(+s.dataset.g > lastIdx) s.classList.add("beyond"); });
-    const read = segs.filter(s=>+s.dataset.g <= lastIdx);
-    const errs = read.filter(s=>s.classList.contains("err"));
-    const tally = {}; errs.forEach(s=>{ (s.dataset.skill||"Gen").split("·").forEach(k=>tally[k]=(tally[k]||0)+1); });
-    const missedWords = [...new Set(errs.map(s=>s.textContent))];
-    const allItems = segs.map(s=>({ g:+s.dataset.g, text:s.textContent, skill:(s.dataset.skill||"Gen").split("·")[0], skills:(s.dataset.skill||"Gen"), err:s.classList.contains("err"), read:+s.dataset.g<=lastIdx }));
-    S.parts.p1 = { read:read.length, errors:errs.length, elapsed, cspm:Math.round((read.length-errs.length)/elapsed*60), acc:read.length? Math.round((read.length-errs.length)/read.length*1000)/10 : 0, tally, missedWords, allItems };
+    segs.forEach(s=>{ s.classList.toggle("beyond", +s.dataset.g > finalIdx); s.classList.toggle("after", +s.dataset.g > lastIdx && +s.dataset.g <= finalIdx); });
+    const allItems = segs.map(s=>({ g:+s.dataset.g, text:s.textContent, skill:(s.dataset.skill||"Gen").split("·")[0], skills:(s.dataset.skill||"Gen"), err:s.classList.contains("err"), read:+s.dataset.g<=lastIdx, checked:+s.dataset.g<=finalIdx }));
+    S.parts.p1 = { elapsed, allItems, total:allItems.length };
+    recomputePart("p1");
   });
   grid.addEventListener("click", e=>{
     const sp = e.target.closest(".seg"); if(!sp) return;
     if(p1.getPhase()==="picklast"){ grid.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); p1.finishPick(+sp.dataset.g); }
-    else if(p1.getPhase()==="running"){
+    else if(p1.getPhase()==="picklast2"){ p1.finishPick(+sp.dataset.g); }
+    else if(p1.getPhase()==="running" || p1.getPhase()==="continue"){
       sp.classList.toggle("err");
     }
   });
@@ -934,21 +974,19 @@ function buildPassage(elId, lines, prefix, key){
       idx++;
     });
   });
-  probes[key] = makeProbe(prefix, box, (lastIdx, elapsed)=>{
+  probes[key] = makeProbe(prefix, box, (lastIdx, elapsed, finalIdx)=>{
     const ws = [...box.querySelectorAll(".pw")];
-    ws.forEach(s=>{ if(+s.dataset.g > lastIdx) s.classList.add("beyond"); });
-    const read = ws.filter(s=>+s.dataset.g <= lastIdx);
-    const errs = read.filter(s=>s.classList.contains("err"));
-    const tally = {}; errs.forEach(s=>{ tally[s.dataset.skill]=(tally[s.dataset.skill]||0)+1; });
-    const missedWords = [...new Set(errs.map(s=>s.textContent))];
-    const allItems = ws.map(s=>({ g:+s.dataset.g, text:s.textContent, skill:s.dataset.skill, err:s.classList.contains("err"), read:+s.dataset.g<=lastIdx }));
-    S.parts[key] = { read:read.length, errors:errs.length, elapsed, wcpm:Math.round((read.length-errs.length)/elapsed*60), acc:read.length? Math.round((read.length-errs.length)/read.length*1000)/10 : 0, tally, missedWords, allItems };
+    ws.forEach(s=>{ s.classList.toggle("beyond", +s.dataset.g > finalIdx); s.classList.toggle("after", +s.dataset.g > lastIdx && +s.dataset.g <= finalIdx); });
+    const allItems = ws.map(s=>({ g:+s.dataset.g, text:s.textContent, skill:s.dataset.skill, err:s.classList.contains("err"), read:+s.dataset.g<=lastIdx, checked:+s.dataset.g<=finalIdx }));
+    S.parts[key] = { elapsed, allItems, total:allItems.length };
+    recomputePart(key);
   });
   box.addEventListener("click", e=>{
     const sp = e.target.closest(".pw"); if(!sp) return;
     const pr = probes[key];
     if(pr.getPhase()==="picklast"){ box.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); pr.finishPick(+sp.dataset.g); }
-    else if(pr.getPhase()==="running"){
+    else if(pr.getPhase()==="picklast2"){ pr.finishPick(+sp.dataset.g); }
+    else if(pr.getPhase()==="running" || pr.getPhase()==="continue"){
       sp.classList.toggle("err");
     }
   });
@@ -961,15 +999,21 @@ $("p3skip").addEventListener("click", ()=>{ S.parts.pB = null; showResults(); })
 /* ============ RESULTS ============ */
 function recomputePart(key){
   const P = S.parts[key]; if(!P || !P.allItems) return;
+  /* SPEED: first 60 seconds only */
   const read = P.allItems.filter(i=>i.read), errs = read.filter(i=>i.err);
   const rate = Math.round((read.length - errs.length) / P.elapsed * 60);
   P.read = read.length; P.errors = errs.length;
   if(key === "p1") P.cspm = rate; else P.wcpm = rate;
   P.acc = read.length ? Math.round((read.length - errs.length) / read.length * 1000) / 10 : 0;
+  /* SKILLS and missed words: every item the student read, including after the minute */
+  const chk = P.allItems.filter(i=>i.checked != null ? i.checked : i.read), cerrs = chk.filter(i=>i.err);
+  P.checked = chk.length; P.checkedErrors = cerrs.length;
+  P.afterErrors = cerrs.filter(i=>!i.read).length;
   const tally = {};
-  errs.forEach(i=>String(i.skills || i.skill || "Gen").split("·").forEach(k=>{ tally[k] = (tally[k]||0) + 1; }));
+  cerrs.forEach(i=>String(i.skills || i.skill || "Gen").split("·").forEach(k=>{ tally[k] = (tally[k]||0) + 1; }));
   P.tally = tally;
-  P.missedWords = [...new Set(errs.map(i=>i.text))];
+  P.missedWords = [...new Set(cerrs.map(i=>i.text))];
+  P.missedAfter = [...new Set(cerrs.filter(i=>!i.read).map(i=>i.text))];
 }
 let saveTimer = null;
 function scheduleSave(){
@@ -984,7 +1028,8 @@ async function showResults(recalc){
   let cards = "", accs = [];
   const mcard = (P, val, lbl, kind) => {
     const bt = bandFor(kind, val, g);
-    const sub = `Accuracy ${P.acc}% &middot; ${P.read} read &middot; ${P.errors} error${P.errors===1?"":"s"}`;
+    let sub = `Accuracy ${P.acc}% &middot; ${P.read} read &middot; ${P.errors} error${P.errors===1?"":"s"}`;
+    if(P.checked != null && P.checked > P.read) sub += `<div style="margin-top:4px">Whole page: ${P.checked} of ${P.total} read &middot; ${P.checkedErrors} error${P.checkedErrors===1?"":"s"}</div>`;
     return `<div class="card"><div class="n">${val}</div><div class="l">${lbl}</div><div style="font-size:12px;color:var(--grey);margin-top:6px">${sub}</div>${bt?`<span class="band-tag">${bt}</span>`:""}</div>`;
   };
   if(p1r){ cards += mcard(p1r, p1r.cspm, "CSPM · word list", "cspm"); accs.push(p1r.acc); }
@@ -1006,9 +1051,9 @@ async function showResults(recalc){
     wcpmB:B?B.wcpm:"", wordsB:B?B.read:"", errB:B?B.errors:"", accB:B?B.acc:"", bandB:"",
     gap, gapFlag:"", tally, missedWords,
     partDetail: {
-      ...(p1r ? {"1":{tally:p1r.tally, missed:p1r.missedWords}} : {}),
-      ...(A ? {"A":{tally:A.tally, missed:A.missedWords}} : {}),
-      ...(B ? {"B":{tally:B.tally, missed:B.missedWords}} : {})
+      ...(p1r ? {"1":{tally:p1r.tally, missed:p1r.missedWords, missedAfter:p1r.missedAfter||[], checked:p1r.checked, total:p1r.total, errorsAll:p1r.checkedErrors}} : {}),
+      ...(A ? {"A":{tally:A.tally, missed:A.missedWords, missedAfter:A.missedAfter||[], checked:A.checked, total:A.total, errorsAll:A.checkedErrors}} : {}),
+      ...(B ? {"B":{tally:B.tally, missed:B.missedWords, missedAfter:B.missedAfter||[], checked:B.checked, total:B.total, errorsAll:B.checkedErrors}} : {})
     }
   };
   if(prevNotes){ S.result.readingStyle = prevNotes.readingStyle; S.result.behavior = prevNotes.behavior; S.result.notes = prevNotes.notes; }
