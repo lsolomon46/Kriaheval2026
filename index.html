@@ -1114,8 +1114,25 @@ $("beginDiagBtn").addEventListener("click", ()=>{
   $("whoami").textContent = S.name + " · Gr " + S.grade + " · " + S.window;
   $("diagWho").textContent = S.name + " · Grade " + S.grade + " · " + S.window;
   $("levelsTitleText").textContent = S.grade === "2" ? "Kriah Assessment · choose a level" : "Decoding Diagnostic · choose a level";
-  DG.done = {}; renderLevels(); resetTagPanel("diag"); show("scr-levels");
+  DG.done = {}; loadPriorLevels(); renderLevels(); resetTagPanel("diag"); show("scr-levels");
+  refreshPriorLevels();
 });
+/* Levels already saved earlier for this student and window show as done (prior) so a returning teacher sees them. */
+function loadPriorLevels(){
+  const lv = diagMap[S.name + "|" + S.window] || [];
+  lv.forEach(str=>{
+    const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/);
+    if(m && !(DG.done[m[1]] && !DG.done[m[1]].prior)) DG.done[m[1]] = { correct:+m[2], total:+m[3], missed:[], prior:true };
+  });
+}
+async function refreshPriorLevels(){
+  try{
+    if(currentRole === "teacher" && teacherName) await loadTeacher(teacherName);
+    else if(currentRole === "admin" && adminKey){ adminLoaded = false; await loadAdmin(adminKey, true); }
+    else return;
+    if($("scr-levels").classList.contains("active")){ loadPriorLevels(); renderLevels(); }
+  }catch(e){}
+}
 
 let showLevelA = false;
 function renderLevels(){
@@ -1131,7 +1148,7 @@ function renderLevels(){
     let score = "<span class='lscore' style='color:var(--grey)'>Not assessed</span>";
     if(r){
       const pct = Math.round(r.correct/r.total*100);
-      score = `<span class="lscore">${r.correct}/${r.total} correct · ${pct}%</span>`;
+      score = `<span class="lscore">${r.correct}/${r.total} correct · ${pct}%${r.prior ? " · saved earlier" : ""}</span>`;
     }
     return `<div class="lvlcard" data-lvl="${l.id}"><div class="lid">Level ${l.id}</div><div class="ldesc">${l.desc}</div>${score}</div>`;
   }).join("");
@@ -1173,8 +1190,9 @@ $("diagFinish").addEventListener("click", async ()=>{
   const levels = {}, missedParts = [];
   LEVELS.forEach(l=>{
     const r = DG.done[l.id];
-    levels[l.id] = r ? `${r.correct}/${r.total} (${Math.round(r.correct/r.total*100)}%)` : "";
-    if(r && r.missed.length) missedParts.push(l.id + ": " + r.missed.join(" "));
+    const fresh = r && !r.prior;
+    levels[l.id] = fresh ? `${r.correct}/${r.total} (${Math.round(r.correct/r.total*100)}%)` : "";
+    if(fresh && r.missed.length) missedParts.push(l.id + ": " + r.missed.join(" "));
   });
   const payload = { action:"diagnostic", timestamp:new Date().toISOString(),
     name:S.name, grade:S.grade, window:S.window, examiner:S.examiner,
@@ -1194,6 +1212,10 @@ $("diagFinish").addEventListener("click", async ()=>{
   try{
     await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain"}, body:JSON.stringify(payload)});
     sl.textContent = "Diagnostic saved to Google Sheet ✓"; sl.className = "saveline ok";
+    const dk = S.name + "|" + S.window;
+    const kept = (diagMap[dk] || []).filter(x => !levels[String(x).charAt(0)]);
+    const added = LEVELS.filter(l => levels[l.id]).map(l => l.id + " " + levels[l.id]);
+    diagMap[dk] = kept.concat(added);
   }catch(e){ sl.textContent = "Could not save (no connection)."; sl.className = "saveline fail"; }
 });
 $("diagAgain").addEventListener("click", ()=>location.reload());
