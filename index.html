@@ -356,6 +356,10 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <h2 class="step">Errors by skill level (totals)</h2>
   <div id="anlErr"></div>
   <div style="font-size:12.5px; color:var(--grey); margin-top:8px; line-height:1.6">A Letter &amp; vowel recognition &middot; B CV/CVC blends &middot; C CVCV blends &middot; D Cholom Vav &amp; Shuruk &middot; E Similar-looking letters &middot; F Sofiot (final letters) &middot; G Patach Genuva &middot; H Silent Hei &middot; I Sounded/Silent Yud &middot; J Double-duty Cholom &middot; K Articulated Vav &middot; L Shva Na/Nach &middot; Ch Chataf vowels &middot; Gen General (no specific skill)</div>
+  <h2 class="step">Decoding diagnostic (A to L)</h2>
+  <div id="anlDiagCount" style="font-size:14px; color:var(--grey); margin-bottom:8px"></div>
+  <div id="anlDiag"></div>
+  <div style="font-size:12.5px; color:var(--grey); margin-top:6px; line-height:1.6">Bar = average percent correct on each level, across the students assessed on that level. The number shows how many students were assessed.</div>
   <div class="notice" id="anlNote" style="display:none"></div>
   <button class="btn-ghost" id="anlBack">← Back to setup</button>
 </section>
@@ -1265,7 +1269,8 @@ function renderDashboard(rows, w, whoLabel){
 $("dashBtn").addEventListener("click", async ()=>{
   const c = $("classSel").value, w = $("windowSel").value;
   if(!w){ $("setupNotice").style.display="block"; $("setupNotice").textContent = "Pick an assessment window first, then open the dashboard."; return; }
-  if(!await loadAdmin()) return;
+  if(adminKey) adminLoaded = false;
+  if(!await loadAdmin(adminKey, true)) return;
   activeResultsCache = anlCache;
   const rows = roster.filter(s => s.active && (!c || s.section === c));
   renderDashboard(rows, w, (c || "All classes") + " · " + w + " · admin view");
@@ -1529,7 +1534,7 @@ function renderAnl(){
   const lowsA = rows.map(r=>{ const a=[r.acc1,r.accA,r.accB].filter(v=>v!=null); return a.length?Math.min(...a):null; }).filter(v=>v!=null);
   const avgAccAnl = lowsA.length ? Math.round(lowsA.reduce((a,b)=>a+b,0)/lowsA.length*10)/10 : null;
   $("anlCards").innerHTML = `
-    <div class="card"><div class="n">${names.size}</div><div class="l">Students tested</div></div>
+    <div class="card"><div class="n">${names.size}</div><div class="l">Students tested (fluency)</div></div>
     <div class="card"><div class="n">${median(cspms) ?? "–"}</div><div class="l">Median CSPM</div></div>
     <div class="card"><div class="n">${median(wbs) ?? "–"}</div><div class="l">Median WCPM (unfamiliar)</div></div>
     <div class="card"><div class="n">${median(rows.map(r=>r.wcpmA).filter(v=>v!=null)) ?? "–"}</div><div class="l">Median WCPM (familiar)</div></div>
@@ -1546,13 +1551,36 @@ function renderAnl(){
   $("anlErr").innerHTML = SKILLS.map(k=>
     `<div class="hrow"><span class="hl">${k}</span><div class="htrack"><div class="hfill" style="width:${Math.round(sums[k]/mx*100)}%"></div></div><span class="hn">${sums[k]}</span></div>`
   ).join("");
+  renderAnlDiag(w, g, sec);
+}
+function renderAnlDiag(w, g, sec){
+  const LV = "ABCDEFGHIJKL".split("");
+  const per = {}; LV.forEach(l=>per[l]=[]);
+  const stu = new Set();
+  (roster||[]).forEach(st=>{
+    if(String(st.grade)!==String(g||st.grade) || (sec && st.section!==sec)) return;
+    ["Fall","Winter","Spring"].forEach(win=>{
+      if(w && win!==w) return;
+      const lv = diagMap[st.name+"|"+win]; if(!lv) return;
+      lv.forEach(str=>{
+        const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/);
+        if(m && +m[3]>0){ per[m[1]].push(+m[2]/+m[3]*100); stu.add(st.name); }
+      });
+    });
+  });
+  $("anlDiagCount").textContent = stu.size + " student" + (stu.size===1?"":"s") + " with a decoding diagnostic saved";
+  $("anlDiag").innerHTML = LV.map(l=>{
+    const a = per[l]; const avg = a.length ? Math.round(a.reduce((x,y)=>x+y,0)/a.length) : null;
+    return `<div class="hrow"><span class="hl">${l}</span><div class="htrack"><div class="hfill" style="width:${avg||0}%"></div></div><span class="hn" style="width:auto; min-width:92px">${avg==null?"not yet":avg+"% · "+a.length+" student"+(a.length===1?"":"s")}</span></div>`;
+  }).join("");
 }
 $("anlWin").addEventListener("change", renderAnl);
 $("anlGrade").addEventListener("change", renderAnl);
 $("anlSec").addEventListener("change", renderAnl);
 $("anlBack").addEventListener("click", ()=>show("scr-setup"));
 $("anlBtn").addEventListener("click", async ()=>{
-  if(!await loadAdmin()) return;
+  if(adminKey) adminLoaded = false;
+  if(!await loadAdmin(adminKey, true)) return;
   show("scr-anl");
   if(SCRIPT_URL.startsWith("PASTE")){ $("anlNote").style.display="block"; $("anlNote").textContent="Not connected to a Sheet, so there is no data to analyze yet."; }
   renderAnl();
