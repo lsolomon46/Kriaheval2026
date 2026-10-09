@@ -1099,7 +1099,7 @@ async function saveResult(){
     sl.textContent = S.corrections ? "Correction saved to Google Sheet ✓" : "Saved to Google Sheet ✓"; sl.className = "saveline ok";
   }catch(e){ sl.textContent = "Could not save (no connection). Check your connection before starting the next student."; sl.className = "saveline fail"; }
 }
-$("againBtn").addEventListener("click", ()=>location.reload());
+$("againBtn").addEventListener("click", ()=>backToSetup(true));
 $("wsFromResultsBtn").addEventListener("click", ()=>{
   const r = S.result;
   openWorksheet(r.name + " · Grade " + r.grade + " · " + r.window, "Practice Sheet",
@@ -1222,7 +1222,7 @@ $("diagFinish").addEventListener("click", async ()=>{
     diagMap[dk] = kept.concat(added);
   }catch(e){ sl.textContent = "Could not save (no connection)."; sl.className = "saveline fail"; }
 });
-$("diagAgain").addEventListener("click", ()=>location.reload());
+$("diagAgain").addEventListener("click", ()=>backToSetup(true));
 
 /* diag button enables with the same conditions */
 const _checkReady = checkReady;
@@ -1588,10 +1588,14 @@ $("anlBtn").addEventListener("click", async ()=>{
 
 document.querySelectorAll(".exitBtn").forEach(b => b.addEventListener("click", ()=>{
   if(window.confirm("Leave this assessment? Any unsaved progress will be discarded. (To keep completed fluency parts, use Skip on the remaining parts and save instead.)")) {
-    try{ if(resumeInfo) sessionStorage.setItem("kriahResume", JSON.stringify(Object.assign({}, resumeInfo, {win:$("windowSel").value, cls:$("classSel").value, stu:$("studentSel").value}))); }catch(e){}
-    location.reload();
+    backToSetup(false);
   }
 }));
+/* Return to the student setup page, keeping the teacher (or admin) signed in with the same window and class. */
+function backToSetup(clearStudent){
+  try{ if(resumeInfo) sessionStorage.setItem("kriahResume", JSON.stringify(Object.assign({}, resumeInfo, {win:$("windowSel").value, cls:$("classSel").value, stu:clearStudent ? "" : $("studentSel").value}))); }catch(e){}
+  location.reload();
+}
 
 $("examinerToggle").addEventListener("click", ()=>{ $("examinerBox").style.display = "block"; $("examinerToggle").style.display = "none"; $("examiner").focus(); });
 async function tryResume(){
