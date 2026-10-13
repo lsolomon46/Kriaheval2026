@@ -176,6 +176,10 @@ table.skills td.hot{background:var(--err-bg); color:var(--err); font-weight:700;
 .lvlcard .ldesc{font-size:13px; color:var(--grey); margin-top:2px;}
 .lvlcard .lscore{margin-top:8px; font-size:13px; font-weight:700;}
 .lvlcard .lscore.good{color:var(--ok);} .lvlcard .lscore.mid{color:#8a6d00;} .lvlcard .lscore.low{color:var(--err);}
+/* Kof sofit (final kaf with dagesh): fonts squeeze the dagesh onto the kamatz so it reads as chof sofit.
+   On the decoding screen we draw the letter without its own dagesh and add a clear dot in the middle. */
+.kof{position:relative; display:inline-block; line-height:1.5;}
+.kof .kdot{position:absolute; left:.123em; top:.685em; width:.1em; height:.1em; border-radius:50%; background:currentColor; pointer-events:none;}
 .diagbig{direction:rtl; font-family:'David Libre',serif; font-size:96px; text-align:center; background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:50px 20px; margin-top:16px; min-height:220px; display:flex; align-items:center; justify-content:center;}
 .diagmeta{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; font-size:14px; color:var(--grey);}
 .diagbtns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
@@ -1341,7 +1345,18 @@ $("lvlGrid").addEventListener("click", e=>{
   renderDiagItem(); show("scr-diag");
 });
 function renderDiagItem(){
-  $("diagItem").textContent = DG.cur.items[DG.idx];
+  const item = DG.cur.items[DG.idx], el = $("diagItem");
+  const k = item.indexOf("\uFB3A");
+  if(k === -1){ el.textContent = item; }
+  else {
+    // draw kof sofit with a clearly visible dagesh (see .kof in the styles)
+    let end = k + 1; while(end < item.length && /[\u0591-\u05C7]/.test(item[end])) end++;
+    const wrap = document.createElement("span"), kof = document.createElement("span"), dot = document.createElement("i");
+    kof.className = "kof"; dot.className = "kdot";
+    kof.append("\u05DA" + item.slice(k + 1, end), dot);
+    wrap.append(item.slice(0, k), kof, item.slice(end));
+    el.replaceChildren(wrap);
+  }
   $("diagLabel").textContent = DG.cur.labels ? DG.cur.labels[DG.idx] : "";
   $("diagProg").textContent = (DG.idx+1) + " / " + DG.cur.items.length;
 }
