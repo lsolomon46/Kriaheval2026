@@ -19,6 +19,50 @@
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 body{margin:0; font-family:'Nunito Sans',system-ui,sans-serif; background:var(--paper); color:var(--ink);}
 .screen{display:none; max-width:880px; margin:0 auto; padding:20px 18px 60px;}
+/* ============ SCHOOL PROGRESS ============ */
+#scr-prog .pg-top{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:6px;}
+#scr-prog .pg-top select{width:auto; padding:7px 10px; font-size:14px;}
+#scr-prog .pg-live{font-size:13px; color:var(--grey); display:flex; align-items:center; gap:6px;}
+#scr-prog .pg-dot{width:8px; height:8px; border-radius:50%; background:var(--ok); display:inline-block;}
+#scr-prog .pg-dot.off{background:var(--grey);}
+#scr-prog .pg-sum{font-size:15px; margin:12px 0 4px;}
+#scr-prog .pg-tabs, #scr-prog .pg-seg{display:inline-flex; gap:4px; background:#E6ECF7; padding:4px; border-radius:8px;}
+#scr-prog .pg-tabs{margin-top:14px;}
+#scr-prog .pg-tabs button, #scr-prog .pg-seg button{font-family:inherit; font-size:14px; font-weight:600; border:0; background:transparent; color:#5a6478; padding:6px 14px; border-radius:6px; cursor:pointer;}
+#scr-prog .pg-tabs button[aria-selected="true"], #scr-prog .pg-seg button[aria-selected="true"]{background:#fff; color:var(--navy); box-shadow:0 1px 3px rgba(20,40,90,.18);}
+#scr-prog .pg-box{background:#fff; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; margin-top:12px;}
+#scr-prog .pg-box h3{font-family:'Montserrat',sans-serif; font-size:15px; color:var(--navy); margin:0; padding:10px 14px; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px;}
+#scr-prog .pg-box h3 span{font-family:inherit; font-weight:400; font-size:13px; color:var(--grey);}
+#scr-prog .pg-row{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 14px; border-top:1px solid var(--line); font-size:14.5px;}
+#scr-prog .pg-box h3 + .pg-row{border-top:0;}
+#scr-prog .pg-pill{flex:none; font-size:12.5px; font-weight:700; padding:2px 10px; border-radius:999px; white-space:nowrap;}
+#scr-prog .pg-pill.go{background:#E3F1E8; color:var(--ok);}
+#scr-prog .pg-pill.no{background:#EEF1F6; color:#6b7385; font-weight:600;}
+#scr-prog .pg-scroll{overflow-x:auto;}
+#scr-prog table.pg{width:100%; border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums;}
+#scr-prog table.pg th{text-align:left; font-size:12px; font-weight:700; color:#5a6478; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; vertical-align:bottom; background:#F6F8FC;}
+#scr-prog table.pg td{padding:8px 10px; border-top:1px solid var(--line); vertical-align:top;}
+#scr-prog table.pg .n{text-align:right; white-space:nowrap;}
+#scr-prog table.pg td.nm{white-space:nowrap;}
+#scr-prog table.pg td .sm{display:block; font-size:12px; color:var(--grey);}
+#scr-prog table.pg tr.thin td{color:#9aa1ae;}
+#scr-prog table.pg tr.total td{font-weight:700; border-top:2px solid var(--line);}
+#scr-prog table.pg tr.l0 td{background:#EEF3FB; font-weight:700; color:var(--navy); border-top:2px solid var(--line);}
+#scr-prog table.pg tr.l1 td{font-weight:700;}
+#scr-prog table.pg tr.lg td{font-weight:700; background:#F7F9FD;}
+#scr-prog table.pg tr.lg td.nm{padding-left:18px;}
+#scr-prog table.pg tr.l1 td.nm{padding-left:18px;}
+#scr-prog table.pg tr.l2 td{font-weight:600;}
+#scr-prog table.pg tr.l2 td.nm{padding-left:32px;}
+#scr-prog table.pg tr.l3 td.nm{padding-left:48px;}
+#scr-prog table.pg tr.thin td{color:#9aa1ae;}
+#scr-prog .pg-lv{display:flex; flex-wrap:wrap; gap:4px;}
+#scr-prog .pg-lv span{font-size:12px; padding:1px 6px; border-radius:4px; background:#EEF1F6; white-space:nowrap;}
+#scr-prog .pg-lv span.full{background:#E3F1E8; color:var(--ok);}
+#scr-prog .pg-ctl{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin-top:14px; font-size:14px;}
+#scr-prog .pg-ctl select{width:auto; max-width:100%; padding:7px 10px; font-size:14px;}
+#scr-prog .pg-key{font-size:12.5px; color:var(--grey); line-height:1.6; margin:10px 0 0;}
+#scr-prog .pg-empty{padding:12px 14px; color:var(--grey); font-size:14px;}
 .screen.active{display:block;}
 header.app{background:#fff; color:var(--navy); padding:10px 18px; display:flex; align-items:center; gap:14px; border-bottom:4px solid var(--gold);}
 header.app img.logo{height:46px; width:auto; display:block;}
@@ -301,6 +345,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <button class="btn-ghost" id="dashBtn">View Class Dashboard (admin; pick a class, or leave blank for all) →</button>
   <button class="btn-ghost" id="myClassBtn">My Class Dashboard →</button>
   <button class="btn-ghost" id="anlBtn">View Analytics (admin) →</button>
+  <button class="btn-ghost" id="progBtn">School Progress, live (admin) →</button>
 </section>
 
 <!-- ============ PART 1 ============ -->
@@ -362,6 +407,53 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <div style="font-size:12.5px; color:var(--grey); margin-top:6px; line-height:1.6">Bar = average percent correct on each level, across the students assessed on that level. The number shows how many students were assessed.</div>
   <div class="notice" id="anlNote" style="display:none"></div>
   <button class="btn-ghost" id="anlBack">← Back to setup</button>
+</section>
+
+<!-- ============ SCHOOL PROGRESS (admin) ============ -->
+<section class="screen" id="scr-prog">
+  <h2 class="step">School Progress <span class="hint" id="pgWho">Admin view</span></h2>
+  <div class="pg-top">
+    <select id="pgWin" aria-label="Assessment window"><option>Fall</option><option>Winter</option><option>Spring</option></select>
+    <span class="pg-live"><span class="pg-dot off" id="pgDot"></span><span id="pgFresh">Loading…</span></span>
+    <span class="pg-live">Updates every minute while this screen is open</span>
+  </div>
+  <p class="pg-sum" id="pgSum"></p>
+  <div class="pg-tabs" role="tablist">
+    <button type="button" role="tab" id="pgTabProg" aria-selected="true">Progress</button>
+    <button type="button" role="tab" id="pgTabRes" aria-selected="false">Results</button>
+  </div>
+
+  <div id="pgProgress"></div>
+
+  <div id="pgResults" hidden>
+    <div class="pg-ctl">
+      <span>Show</span>
+      <div class="pg-seg" role="group" aria-label="Average type">
+        <button type="button" id="pgMedian" aria-selected="true">Median</button>
+        <button type="button" id="pgMean" aria-selected="false">Mean</button>
+      </div>
+      <span class="pg-key" id="pgModeNote" style="margin:0; flex:1 1 16rem"></span>
+    </div>
+    <div class="pg-box">
+      <h3>Fluency averages <span id="pgGradeLbl"></span></h3>
+      <div class="pg-scroll"><table class="pg" id="pgGrade"><thead><tr>
+        <th>Group</th><th class="n">Tested</th><th class="n">Word list<br>CSPM</th><th class="n">Word list<br>accuracy</th><th class="n">Passage A<br>WCPM</th><th class="n">Passage A<br>accuracy</th><th class="n">Passage B<br>WCPM</th><th class="n">Passage B<br>accuracy</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="pg-box">
+      <h3>Grade 2 decoding <span>Boys, girls and each class</span></h3>
+      <div class="pg-scroll"><table class="pg" id="pgG2"><thead><tr>
+        <th>Group</th><th class="n">Tested</th><th class="n">Items correct</th><th class="n">Levels with<br>no errors</th><th class="n">Highest level<br>reached</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="pg-ctl">
+      <label for="pgClassPick" style="margin:0">Student scores for</label>
+      <select id="pgClassPick"><option value="">All classes with results</option></select>
+    </div>
+    <div id="pgStudents"></div>
+    <p class="pg-key">Grades 3 to 5 take the same fluency test, and grades 6 to 8 take the same test, so each band has its own average. Each band also shows all boys and all girls together. Middle school is listed boys first, then girls, each by grade and then by class. Mixed classes (6/7 Mechina, 7/8 Kollel, 7/8 Midrasha) are split so each student counts in their own grade; 6/7 Mechina counts with the boys. Grey rows have fewer than 5 students tested, so read them with care. Only fluency sessions with all three parts count toward the averages. CSPM: correct syllables per minute on the word list (first minute). WCPM: words correct per minute. Passage A is familiar text, Passage B unfamiliar. Most errors lists the two skills missed most across all three parts. Grade 2: items correct is the share of all decoding items read correctly; highest level reached is the last level the student was given; a level shows green when every item was read correctly.</p>
+  </div>
+  <button class="btn-ghost" id="pgBack">← Back to setup</button>
 </section>
 
 <!-- ============ CLASS DASHBOARD ============ -->
@@ -1346,6 +1438,7 @@ function enterAsTeacher(){
   $("signedInAs").textContent = "Signed in: " + teacherName + " · " + teacherSections.join(", ");
   $("dashBtn").style.display = "none";
   $("anlBtn").style.display = "none";
+  $("progBtn").style.display = "none";
   $("myClassBtn").style.display = "block";
   $("myClassBtn").textContent = "My Class Dashboard →";
   $("examiner").value = ""; $("examinerBox").style.display = "none"; $("examinerToggle").style.display = "block";
@@ -1360,6 +1453,7 @@ function enterAsAdmin(){
   $("signedInAs").textContent = "Signed in: Admin / Proctor (full school access)";
   $("dashBtn").style.display = "block";
   $("anlBtn").style.display = "block";
+  $("progBtn").style.display = "block";
   $("myClassBtn").style.display = "none";
   applyWindows(null);
   fillClasses();
@@ -1585,6 +1679,233 @@ $("anlBtn").addEventListener("click", async ()=>{
   if(SCRIPT_URL.startsWith("PASTE")){ $("anlNote").style.display="block"; $("anlNote").textContent="Not connected to a Sheet, so there is no data to analyze yet."; }
   renderAnl();
 });
+
+/* ============ SCHOOL PROGRESS (admin, refreshes every minute) ============ */
+let pgTimer = null, pgMode = "median", pgStamp = null;
+const PG_MIN = 5;
+const PG_LV = "ABCDEFGHIJKL".split("");
+const PG_NOTES = {
+  median: "Median: the middle student's score. Not pulled up or down by one very fast or very slow reader.",
+  mean: "Mean: all scores added up and divided by the number of students. One very fast or very slow reader can move it a lot."
+};
+const pgNum = v => (v === "" || v == null || isNaN(+v)) ? null : +v;
+const pgMean = a => { const v = a.filter(x=>x!=null); return v.length ? v.reduce((x,y)=>x+y,0)/v.length : null; };
+const pgMed = a => { const v = a.filter(x=>x!=null).sort((x,y)=>x-y); if(!v.length) return null; const m = Math.floor(v.length/2); return v.length%2 ? v[m] : (v[m-1]+v[m])/2; };
+const pgStat = a => pgMode === "median" ? pgMed(a) : pgMean(a);
+const pgF0 = x => x==null ? "—" : String(Math.round(x));
+const pgFp = x => x==null ? "—" : Math.round(x) + "%";
+const PG_FIELDS = [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]];
+function pgEl(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+
+function pgModel(w){
+  const rows = (roster||[]).filter(s => s.section && s.active !== false && String(s.active).toUpperCase() !== "FALSE");
+  const last = {}; (anlCache||[]).forEach(r => { if(r.window === w) last[r.name] = r; });
+  const classes = new Map(), gradeTotals = new Map();
+  rows.forEach(s => {
+    const g = String(s.grade);
+    gradeTotals.set(g, (gradeTotals.get(g)||0) + 1);
+    if(!classes.has(s.section)) classes.set(s.section, {name:s.section, grades:new Set(), total:0, done:0, byGrade:new Map(), studs:[]});
+    const c = classes.get(s.section); c.total++; c.grades.add(+g); c.byGrade.set(g, (c.byGrade.get(g)||0) + 1);
+    if(g === "2"){
+      const lv = diagMap[s.name + "|" + w];
+      if(lv && lv.length){ c.done++; c.studs.push({name:s.name, grade:g, kind:"dg", levels:lv}); }
+    } else {
+      const r = last[s.name];
+      if(r){ c.done++; c.studs.push({name:s.name, grade:g, kind:"flu", r}); }
+    }
+  });
+  classes.forEach(c => { c.low = Math.min(...c.grades); c.studs.sort((a,b)=>a.name.localeCompare(b.name)); });
+  return {classes, gradeTotals};
+}
+
+function pgRenderProgress(M){
+  const root = $("pgProgress"); root.replaceChildren();
+  const byG = new Map();
+  M.classes.forEach(c => { if(!byG.has(c.low)) byG.set(c.low, []); byG.get(c.low).push(c); });
+  let students = 0, done = 0, started = 0;
+  [...byG.keys()].sort((a,b)=>a-b).forEach(g => {
+    const list = byG.get(g).sort((a,b)=>a.name.localeCompare(b.name));
+    const box = pgEl("div","pg-box");
+    const h = pgEl("h3", null, "Grade " + g); h.append(pgEl("span", null, list.filter(c=>c.done).length + " of " + list.length + " classes started"));
+    box.append(h);
+    list.forEach(c => {
+      students += c.total; done += c.done; if(c.done) started++;
+      const row = pgEl("div","pg-row"); row.append(pgEl("div", null, c.name));
+      row.append(c.done ? pgEl("span","pg-pill go","Started · " + c.done + " of " + c.total) : pgEl("span","pg-pill no","Not started"));
+      box.append(row);
+    });
+    root.append(box);
+  });
+  const s = $("pgSum"); s.replaceChildren();
+  s.append("So far ", pgEl("b", null, done + " of " + students), " students are done, and ", pgEl("b", null, started + " of " + M.classes.size), " classes have started. Grade 2 takes decoding; grades 3 to 8 take fluency.");
+}
+
+function pgGender(sec){ const m = String(sec).match(/^\d(?:\/\d)?([BG])/); return m ? m[1] : "B"; }
+function pgStatRow(tb, label, rs, total, sub, cls){
+  const tr = tb.insertRow(); if(cls) tr.className = cls; if(rs.length < PG_MIN) tr.classList.add("thin");
+  const n = tr.insertCell(); n.className = "nm"; n.textContent = label; if(sub) n.append(pgEl("span","sm",sub));
+  const t = tr.insertCell(); t.className = "n"; t.textContent = rs.length + " of " + total;
+  PG_FIELDS.forEach(([k,fmt]) => { const td = tr.insertCell(); td.className = "n"; td.textContent = rs.length ? fmt(pgStat(rs.map(r=>pgNum(r[k])))) : "—"; });
+}
+
+function pgLevels(levels){
+  return (levels||[]).map(str => { const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/); return m ? {L:m[1], ok:+m[2], all:+m[3]} : null; }).filter(Boolean);
+}
+function pgG2(studs){
+  const per = studs.map(s => {
+    const lv = pgLevels(s.levels); let ok = 0, all = 0, clean = 0, top = -1;
+    lv.forEach(x => { ok += x.ok; all += x.all; if(x.ok === x.all && x.all > 0) clean++; top = Math.max(top, PG_LV.indexOf(x.L)); });
+    return {pct: all ? ok/all*100 : null, clean, top};
+  });
+  const tops = per.map(p=>p.top).filter(i=>i>=0);
+  const c = pgStat(per.map(p=>p.clean));
+  return { pct: pgFp(pgStat(per.map(p=>p.pct))), clean: c==null ? "—" : String(Math.round(c*10)/10), top: tops.length ? PG_LV[Math.round(pgStat(tops))] : "—" };
+}
+
+function pgTopErr(r){
+  return Object.entries(r.tally||{}).filter(([k,v])=>v>0 && SKILLS.includes(k)).sort((a,b)=>b[1]-a[1]).slice(0,2)
+    .map(([k,v]) => (SKILL_DESC[k] || k) + " (" + v + ")").join(", ");
+}
+
+function pgRenderResults(M){
+  $("pgModeNote").textContent = PG_NOTES[pgMode];
+  $("pgGradeLbl").textContent = (pgMode === "median" ? "Median" : "Mean") + " · complete sessions only";
+  const full = s => s.kind === "flu" && s.r.parts === "1+A+B";
+
+  // units: one per class and grade (mixed classes split), tagged boys/girls from the class name
+  const units = [];
+  M.classes.forEach(c => c.byGrade.forEach((total, g) => units.push({
+    cls:c.name, grade:g, gender:pgGender(c.name), total, mixed:c.byGrade.size>1,
+    flu:c.studs.filter(s=>s.grade===g && full(s)).map(s=>s.r),
+    dg:c.studs.filter(s=>s.grade===g && s.kind==="dg") })));
+  const sumT = us => us.reduce((a,u)=>a+u.total,0);
+  const GN = {B:"boys", G:"girls"};
+  // tree: band > grade > boys/girls > class; a level with a single child shows that child's name instead of repeating
+  const tree = (tb, us, rowFn, gradeList) => {
+    gradeList.forEach(g => {
+      const ug = us.filter(u=>u.grade===g); if(!ug.length) return;
+      rowFn(tb, "Grade " + g, ug, null, "l1");
+      ["B","G"].forEach(x => {
+        const ux = ug.filter(u=>u.gender===x).sort((a,b)=>a.cls.localeCompare(b.cls)); if(!ux.length) return;
+        if(ux.length === 1){ rowFn(tb, g + x + " · " + GN[x], ux, ux[0].cls + (ux[0].mixed ? " (grade " + g + " students)" : ""), "l2"); return; }
+        rowFn(tb, g + x + " · " + GN[x], ux, ux.length + " classes", "l2");
+        ux.forEach(u => rowFn(tb, u.cls, [u], u.mixed ? "Grade " + g + " students" : null, "l3"));
+      });
+    });
+  };
+  const fluRow = (tb, label, us, sub, lvl) => pgStatRow(tb, label, us.flatMap(u=>u.flu), sumT(us), sub, lvl);
+  const gb = $("pgGrade").tBodies[0]; gb.replaceChildren();
+  [["Grades 3 to 5", ["3","4","5"], "Grades 3 to 5"], ["Grades 6 to 8", ["6","7","8"], "Middle school"]].forEach(([lbl, gl, who]) => {
+    const ub = units.filter(u=>gl.includes(u.grade)); if(!ub.length) return;
+    fluRow(gb, lbl, ub, "Same test", "l0");
+    if(gl[0] === "6"){
+      // middle school: boys first, then girls; each by grade, then by class
+      ["B","G"].forEach(x => {
+        const ux = ub.filter(u=>u.gender===x); if(!ux.length) return;
+        fluRow(gb, who + " " + GN[x], ux, "All " + GN[x] + ", grades 6 to 8", "lg");
+        gl.forEach(g => {
+          const ugx = ux.filter(u=>u.grade===g).sort((a,b)=>a.cls.localeCompare(b.cls)); if(!ugx.length) return;
+          if(ugx.length === 1){ fluRow(gb, g + x + " · " + GN[x], ugx, ugx[0].cls + (ugx[0].mixed ? " (grade " + g + " students)" : ""), "l2"); return; }
+          fluRow(gb, g + x + " · " + GN[x], ugx, ugx.length + " classes", "l2");
+          ugx.forEach(u => fluRow(gb, u.cls, [u], u.mixed ? "Grade " + g + " students" : null, "l3"));
+        });
+      });
+    } else {
+      ["B","G"].forEach(x => { const ux = ub.filter(u=>u.gender===x); if(ux.length) fluRow(gb, who + " " + GN[x], ux, "All " + GN[x] + ", grades " + gl[0] + " to " + gl[2], "lg"); });
+      tree(gb, ub, fluRow, gl);
+    }
+  });
+
+  const g2 = $("pgG2").tBodies[0]; g2.replaceChildren();
+  const g2Row = (tb, label, us, sub, lvl) => {
+    const studs = us.flatMap(u=>u.dg), tr = tb.insertRow();
+    tr.className = lvl; if(studs.length < PG_MIN) tr.classList.add("thin");
+    const s = studs.length ? pgG2(studs) : {pct:"—", clean:"—", top:"—"};
+    const n = tr.insertCell(); n.className = "nm"; n.textContent = label; if(sub) n.append(pgEl("span","sm",sub));
+    [[studs.length + " of " + sumT(us),"n"],[s.pct,"n"],[s.clean,"n"],[s.top,"n"]].forEach(([v,k]) => { const td = tr.insertCell(); td.textContent = v; td.className = k; });
+  };
+  tree(g2, units.filter(u=>u.grade==="2"), g2Row, ["2"]);
+
+  const pick = $("pgClassPick"), keep = pick.value;
+  const withRes = [...M.classes.values()].filter(c=>c.done).sort((a,b)=>a.low-b.low || a.name.localeCompare(b.name));
+  pick.replaceChildren(new Option("All classes with results",""), ...withRes.map(c => new Option(c.name + " (" + c.done + ")", c.name)));
+  pick.value = withRes.some(c=>c.name===keep) ? keep : "";
+  const root = $("pgStudents"); root.replaceChildren();
+  const showC = pick.value ? withRes.filter(c=>c.name===pick.value) : withRes;
+  if(!showC.length){ root.append(pgEl("div","notice","No results saved yet for this window.")); return; }
+  showC.forEach(c => {
+    const box = pgEl("div","pg-box");
+    const h = pgEl("h3", null, c.name); h.append(pgEl("span", null, c.done + " of " + c.total + " tested")); box.append(h);
+    const wrap = pgEl("div","pg-scroll"), t = pgEl("table","pg"); wrap.append(t); box.append(wrap);
+    const flu = c.studs.filter(s=>s.kind==="flu"), dg = c.studs.filter(s=>s.kind==="dg");
+    if(flu.length){
+      const hr = t.createTHead().insertRow();
+      [["Student",""],["Word list<br>CSPM","n"],["Word list<br>accuracy","n"],["Passage A<br>WCPM","n"],["Passage A<br>accuracy","n"],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Most errors",""]]
+        .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
+      const b = t.createTBody();
+      flu.forEach(s => {
+        const r = s.r, tr = b.insertRow();
+        const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name;
+        n.append(pgEl("span","sm","Gr " + s.grade + (r.examiner ? " · " + r.examiner : "") + (r.parts !== "1+A+B" ? " · partial (" + (r.parts||"—") + ")" : "")));
+        PG_FIELDS.forEach(([k,fmt]) => { const td = tr.insertCell(); td.className = "n"; td.textContent = fmt(pgNum(r[k])); });
+        tr.insertCell().textContent = pgTopErr(r) || "—";
+      });
+    }
+    if(dg.length){
+      const hr = t.createTHead().insertRow();
+      ["Student","Decoding levels"].forEach(v => hr.append(pgEl("th", null, v)));
+      const b = t.createTBody();
+      dg.forEach(s => {
+        const tr = b.insertRow();
+        const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name;
+        const box2 = pgEl("div","pg-lv");
+        pgLevels(s.levels).sort((a,b)=>a.L.localeCompare(b.L)).forEach(x => {
+          const chip = pgEl("span", x.ok===x.all ? "full" : "", x.L + " " + Math.round(x.all ? x.ok/x.all*100 : 0) + "%");
+          chip.title = x.L + ": " + x.ok + "/" + x.all; box2.append(chip);
+        });
+        tr.insertCell().append(box2);
+      });
+    }
+    root.append(box);
+  });
+}
+
+function pgRender(){
+  const M = pgModel($("pgWin").value);
+  pgRenderProgress(M); pgRenderResults(M);
+  if(pgStamp){ $("pgFresh").textContent = "Updated " + pgStamp.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}); $("pgDot").className = "pg-dot"; }
+}
+
+async function pgRefresh(){
+  if(!$("scr-prog").classList.contains("active")) return pgStop();
+  if(document.hidden) return;
+  adminLoaded = false;
+  const ok = await loadAdmin(adminKey, true);
+  if(ok){ pgStamp = new Date(); pgRender(); }
+  else { $("pgDot").className = "pg-dot off"; $("pgFresh").textContent = "Couldn't reach the Sheet just now. Showing the last results; trying again in a minute."; }
+}
+function pgStop(){ if(pgTimer){ clearInterval(pgTimer); pgTimer = null; } }
+
+$("progBtn").addEventListener("click", async ()=>{
+  const w = $("windowSel").value; if(w) $("pgWin").value = w;
+  show("scr-prog");
+  $("pgFresh").textContent = "Loading…";
+  await pgRefresh();
+  pgStop(); pgTimer = setInterval(pgRefresh, 60000);
+});
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && pgTimer) pgRefresh(); });
+$("pgBack").addEventListener("click", ()=>{ pgStop(); show("scr-setup"); });
+$("pgWin").addEventListener("change", pgRender);
+$("pgClassPick").addEventListener("change", pgRender);
+function pgTab(res){
+  $("pgProgress").hidden = res; $("pgResults").hidden = !res;
+  $("pgTabProg").setAttribute("aria-selected", String(!res)); $("pgTabRes").setAttribute("aria-selected", String(res));
+}
+$("pgTabProg").addEventListener("click", ()=>pgTab(false));
+$("pgTabRes").addEventListener("click", ()=>pgTab(true));
+function pgSetMode(m){ pgMode = m; $("pgMedian").setAttribute("aria-selected", String(m==="median")); $("pgMean").setAttribute("aria-selected", String(m==="mean")); pgRender(); }
+$("pgMedian").addEventListener("click", ()=>pgSetMode("median"));
+$("pgMean").addEventListener("click", ()=>pgSetMode("mean"));
 
 document.querySelectorAll(".exitBtn").forEach(b => b.addEventListener("click", ()=>{
   if(window.confirm("Leave this assessment? Any unsaved progress will be discarded. (To keep completed fluency parts, use Skip on the remaining parts and save instead.)")) {
