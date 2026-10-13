@@ -180,6 +180,8 @@ table.skills td.hot{background:var(--err-bg); color:var(--err); font-weight:700;
    On the decoding screen we draw the letter without its own dagesh and add a clear dot in the middle. */
 .kof{position:relative; display:inline-block; line-height:1.5;}
 .kof .kdot{position:absolute; left:.123em; top:.685em; width:.1em; height:.1em; border-radius:50%; background:currentColor; pointer-events:none;}
+.kof .kbase{display:inline-block; width:0; height:0; vertical-align:baseline;}
+.kof .kvow{position:absolute; pointer-events:none; max-width:none;}
 .diagbig{direction:rtl; font-family:'David Libre',serif; font-size:96px; text-align:center; background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:50px 20px; margin-top:16px; min-height:220px; display:flex; align-items:center; justify-content:center;}
 .diagmeta{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; font-size:14px; color:var(--grey);}
 .diagbtns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
@@ -1344,6 +1346,61 @@ $("lvlGrid").addEventListener("click", e=>{
   $("diagLvlTitle").textContent = "Level " + DG.cur.id + " · " + DG.cur.desc;
   renderDiagItem(); show("scr-diag");
 });
+/* Kof sofit: in every font the kamatz sits right under the top bar, leaving no room for the dagesh.
+   We measure the letter as this device draws it, redraw the kamatz a little lower inside the letter,
+   and put a clear dagesh in the middle of the space above it. If anything fails, the normal text stays. */
+function placeKofDot(kof){
+  try{
+    const dot = kof.querySelector(".kdot"), probe = kof.querySelector(".kbase");
+    const txt = kof.firstChild; if(!txt || txt.nodeType !== 3) return;
+    const marks = kof.dataset.marks || txt.nodeValue.slice(1); kof.dataset.marks = marks;
+    const cs = getComputedStyle(kof), fs = parseFloat(cs.fontSize), r = Math.max(1, window.devicePixelRatio || 1);
+    const W = Math.ceil(fs * 2), H = Math.ceil(fs * 2.4), ox = Math.round(fs * 0.5), oy = Math.round(fs * 1.6);
+    const draw = (t) => {
+      const c = document.createElement("canvas"); c.width = W * r; c.height = H * r;
+      const x = c.getContext("2d", {willReadFrequently:true}); x.scale(r, r);
+      x.font = cs.fontStyle + " " + cs.fontWeight + " " + fs + "px " + cs.fontFamily;
+      x.fillStyle = cs.color; x.textBaseline = "alphabetic"; x.fillText(t, ox, oy);
+      return {c, d: x.getImageData(0, 0, W * r, H * r).data};
+    };
+    const A = draw("ך"), B = draw("ך" + marks), WW = W * r, HH = H * r;
+    const on = (d, px, py) => d[(py * WW + px) * 4 + 3] > 100;
+    // vowel pixels = drawn with the vowel but not without it
+    const M = document.createElement("canvas"); M.width = WW; M.height = HH;
+    const mx = M.getContext("2d"), mimg = mx.createImageData(WW, HH);
+    let kTop = HH, kBot = -1;
+    for(let py = 0; py < HH; py++) for(let px = 0; px < WW; px++){
+      const i = (py * WW + px) * 4;
+      if(B.d[i+3] > 30 && A.d[i+3] < 30){ mimg.data[i] = B.d[i]; mimg.data[i+1] = B.d[i+1]; mimg.data[i+2] = B.d[i+2]; mimg.data[i+3] = B.d[i+3];
+        if(B.d[i+3] > 100){ if(py < kTop) kTop = py; if(py > kBot) kBot = py; } }
+    }
+    mx.putImageData(mimg, 0, 0);
+    // the letter: bottom of its top bar, and bottom of its stem
+    let top = -1, bottom = -1, maxRow = 0; const rowW = [];
+    for(let py = 0; py < HH; py++){ let n = 0; for(let px = 0; px < WW; px++) if(on(A.d, px, py)) n++; rowW.push(n); if(n){ if(top < 0) top = py; bottom = py; } if(n > maxRow) maxRow = n; }
+    let barBot = top; while(barBot < HH && rowW[barBot] < maxRow * 0.6) barBot++;   // skip the bar's slanted tip
+    while(barBot < HH && rowW[barBot] > maxRow * 0.45) barBot++;                     // then to the bar's bottom edge
+    if(top < 0 || kBot < 0 || barBot >= kTop) throw new Error("measure");
+    // move the kamatz down to the lower end of the letter, so there is a clear space above it
+    const shift = Math.max(0, bottom - kBot - Math.round(fs * 0.03 * r));
+    const nkTop = kTop + shift, gap = nkTop - barBot;
+    const d = Math.max(fs * 0.085, Math.min(fs * 0.13, gap / r * 0.45));
+    // horizontal centre of the kamatz
+    let kL = WW, kR = -1;
+    for(let py = kTop; py <= kBot; py++) for(let px = 0; px < WW; px++) if(mimg.data[(py * WW + px) * 4 + 3] > 100){ if(px < kL) kL = px; if(px > kR) kR = px; }
+    const cx = (kL + kR) / 2 / r, cy = (barBot + gap / 2) / r;
+    const baseY = probe.offsetTop;
+    let img = kof.querySelector(".kvow");
+    if(!img){ img = document.createElement("img"); img.className = "kvow"; img.alt = ""; kof.append(img); }
+    img.src = M.toDataURL();
+    img.style.width = W + "px"; img.style.height = H + "px";
+    img.style.left = (-ox) + "px"; img.style.top = (baseY - oy + shift / r) + "px";
+    txt.nodeValue = "ך";
+    dot.style.width = dot.style.height = d + "px";
+    dot.style.left = (cx - ox - d / 2) + "px";
+    dot.style.top = (baseY + (cy - oy) - d / 2) + "px";
+  }catch(e){ /* keep the plain text with its own marks */ }
+}
 function renderDiagItem(){
   const item = DG.cur.items[DG.idx], el = $("diagItem");
   const k = item.indexOf("\uFB3A");
@@ -1353,9 +1410,12 @@ function renderDiagItem(){
     let end = k + 1; while(end < item.length && /[\u0591-\u05C7]/.test(item[end])) end++;
     const wrap = document.createElement("span"), kof = document.createElement("span"), dot = document.createElement("i");
     kof.className = "kof"; dot.className = "kdot";
-    kof.append("\u05DA" + item.slice(k + 1, end), dot);
+    const probe = document.createElement("i"); probe.className = "kbase";
+    kof.append("\u05DA" + item.slice(k + 1, end), dot, probe);
     wrap.append(item.slice(0, k), kof, item.slice(end));
     el.replaceChildren(wrap);
+    placeKofDot(kof);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if(kof.isConnected) placeKofDot(kof); });
   }
   $("diagLabel").textContent = DG.cur.labels ? DG.cur.labels[DG.idx] : "";
   $("diagProg").textContent = (DG.idx+1) + " / " + DG.cur.items.length;
