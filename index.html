@@ -495,9 +495,9 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
       <div class="notice" id="pgTrackNote" hidden style="margin:10px 14px">Tracks are grouped by ability, so a gap between Accel and GL is expected and says nothing about the teachers. Compare each track with itself from Fall to Spring.</div>
       <div class="pg-scroll"><table class="pg" id="pgGrade"><thead><tr>
         <th>Group</th><th class="n">Tested</th>
-        <th class="n pg-head">Passage B WCPM<br><span>unfamiliar · headline</span></th>
-        <th class="pg-head">Passage B accuracy level<br><span><i class="pg-k i"></i>95%+ <i class="pg-k s"></i>90–94% <i class="pg-k f"></i>under 90%</span></th>
-        <th class="n">Passage A<br>WCPM</th><th class="n">Word list<br>CSPM</th><th class="n">Word list<br>accuracy</th>
+        <th class="n">Word list<br>CSPM</th><th class="n">Word list<br>accuracy</th>
+        <th class="n">Passage A<br>WCPM</th><th class="n">Passage A<br>accuracy</th>
+        <th class="n">Passage B<br>WCPM</th><th class="n">Passage B<br>accuracy</th>
       </tr></thead><tbody></tbody></table></div>
     </div>
     <div class="pg-box">
@@ -511,17 +511,18 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
       <select id="pgClassPick"><option value="">All classes with results</option></select>
     </div>
     <div id="pgStudents"></div>
-    <p class="pg-key">Passage B (unfamiliar text) is the headline: it is the truest measure of fluency. The numbers in brackets are the middle half of the group: half the students score inside that range. Accuracy levels use Passage B: 95% or more reads independently, 90 to 94% can read with teaching support, under 90% is frustration level. Grades 3 to 5 take the same test, and so do grades 6 to 8, so each grade should score higher than the one below it; the line under each grade's Passage B number shows the change from the grade below, flagged when it is flat or lower (only when both have 5 or more tested). Mixed classes (6/7 Mechina, 7/8 Kollel, 7/8 Midrasha) appear whole in the Class view, with each grade underneath; in grade views each student counts in their own grade. 6/7 Mechina counts with the boys. Grey rows have fewer than 5 students tested, so read them with care. Only fluency sessions with all three parts count toward the averages. CSPM: correct syllables per minute on the word list (first minute). WCPM: words correct per minute. Passage A is familiar text, Passage B unfamiliar. Most errors lists the two skills missed most across all three parts. Grade 2: items correct is the share of all decoding items read correctly; highest level reached is the last level the student was given; a level shows green when every item was read correctly.</p>
+    <p class="pg-key">Each row shows the plain average for its group: syllables correct per minute on the word list (CSPM), words correct per minute on each passage (WCPM), and accuracy for each part. Use the Median / Mean switch to choose the kind of average. Grades 3 to 5 take the same test, and so do grades 6 to 8. Mixed classes (6/7 Mechina, 7/8 Kollel, 7/8 Midrasha) appear whole in the Class view, with each grade underneath; in grade views each student counts in their own grade. 6/7 Mechina counts with the boys. Grey rows have fewer than 5 students tested, so read them with care. Only fluency sessions with all three parts count toward the averages. CSPM: correct syllables per minute on the word list (first minute). WCPM: words correct per minute. Passage A is familiar text, Passage B unfamiliar. Most errors lists the two skills missed most across all three parts. Grade 2: items correct is the share of all decoding items read correctly; highest level reached is the last level the student was given; a level shows green when every item was read correctly.</p>
   </div>
   <div id="pgWatch" hidden>
     <div class="pg-ctl">
       <label for="pgWatchPick" style="margin:0">Show the lowest</label>
       <select id="pgWatchPick"><option value="0.1">10%</option><option value="0.15" selected>15%</option><option value="0.2">20%</option><option value="0.25">25%</option></select>
-      <span>of each grade, by Passage B (unfamiliar) WCPM</span>
+      <span>of each grade, ranked by</span>
+      <select id="pgWatchBy"><option value="wcpmB">Passage B (unfamiliar) WCPM</option><option value="wcpmA">Passage A (familiar) WCPM</option><option value="cspm">Word list CSPM</option></select>
     </div>
     <div class="notice" id="pgWatchNote" hidden>This is a starting list for referrals to Morah Rut. Check any flagged result first, and add students you know need help even if they are not listed.</div>
     <div id="pgWatchBody"></div>
-    <p class="pg-key">Ranked within each grade, using complete fluency sessions only. A grade is ranked once at least 5 students are tested. Grade 2 is ranked by the share of decoding items read correctly.</p>
+    <p class="pg-key">Ranked within each grade by the score you choose, using complete fluency sessions only. A grade is ranked once at least 5 students are tested. Grade 2 is ranked by the share of decoding items read correctly.</p>
   </div>
 
   <div id="pgChecks" hidden>
@@ -531,12 +532,12 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
     </div>
     <p class="pg-key">A result is flagged when a passage scores 0 WCPM, any part is under 50% accuracy, the familiar passage is 10 or more WCPM above the unfamiliar one, or the result was saved less than 2 minutes after the same examiner's previous result (a full fluency session takes longer). Flags ask someone to check or retest; they do not change any score. <span id="pgVoidNote"></span></p>
     <div class="pg-box">
-      <h3>Examiner consistency <span>Median Passage B, complete sessions, within each grade</span></h3>
+      <h3>Examiner consistency <span>Average scores, complete sessions, within each grade</span></h3>
       <div class="pg-scroll"><table class="pg" id="pgExamTable"><thead><tr>
-        <th>Examiner</th><th class="n">Tested</th><th class="n">Passage B<br>WCPM</th><th class="n">Passage B<br>accuracy</th><th class="n">Word list<br>accuracy</th><th class="n">Difference from<br>grade median</th>
+        <th>Examiner</th><th class="n">Tested</th><th class="n">Word list<br>CSPM</th><th class="n">Passage A<br>WCPM</th><th class="n">Passage B<br>WCPM</th><th class="n">Word list<br>accuracy</th>
       </tr></thead><tbody></tbody></table></div>
     </div>
-    <p class="pg-key">Some examiners mark more strictly than others. When one examiner's students sit well above or below the grade median (10 or more WCPM, with 5 or more tested), compare notes on how errors are marked before setting benchmark cut points. Names typed in different ways are grouped together. Students differ from class to class, so a difference is a question to ask, not a conclusion.</p>
+    <p class="pg-key">Some examiners mark more strictly than others. Compare each examiner's averages with the whole grade's averages in the row above; if one examiner's students sit well above or below, compare notes on how errors are marked before setting benchmark cut points. Names typed in different ways are grouped together. Students differ from class to class, so a difference is a question to ask, not a conclusion.</p>
   </div>
 
   <button class="btn-ghost" id="pgBack">← Back to setup</button>
@@ -1916,35 +1917,14 @@ function pgRenderProgress(M){
 
 function pgGender(sec){ const m = String(sec).match(/^\d(?:\/\d)?([BG])/); return m ? m[1] : "B"; }
 function pgQ(a, p){ const v = a.filter(x=>x!=null).sort((x,y)=>x-y); if(!v.length) return null; const i = (v.length-1)*p, lo = Math.floor(i), hi = Math.ceil(i); return v[lo] + (v[hi]-v[lo])*(i-lo); }
-function pgAccLevel(v){ return v==null ? null : v >= 95 ? "i" : v >= 90 ? "s" : "f"; }
-// one summary row: Passage B is the headline (with middle-half range and optional grade step), then accuracy levels, Passage A, word list
-function pgStatRow(tb, label, rs, total, sub, cls, step){
+// one summary row: the plain average (median or mean) of each score
+function pgStatRow(tb, label, rs, total, sub, cls){
   const tr = tb.insertRow(); if(cls) tr.className = cls; if(rs.length < PG_MIN) tr.classList.add("thin");
   const n = tr.insertCell(); n.className = "nm"; n.textContent = label; if(sub) n.append(pgEl("span","sm",sub));
   const t = tr.insertCell(); t.className = "n"; t.textContent = rs.length + " of " + total;
-  const numCell = (key, big, stepInfo) => {
-    const td = tr.insertCell(); td.className = "n" + (big ? " big" : "");
-    if(!rs.length){ td.textContent = "—"; return; }
-    const vals = rs.map(r=>pgNum(r[key]));
-    td.append(pgF0(pgStat(vals)));
-    if(rs.length >= 2) td.append(pgEl("span","rng","(" + pgF0(pgQ(vals,.25)) + "–" + pgF0(pgQ(vals,.75)) + ")"));
-    if(stepInfo) td.append(stepInfo);
-  };
-  let stepEl = null;
-  if(step && step.prev && rs.length >= PG_MIN && step.prev.length >= PG_MIN){
-    const d = Math.round(pgStat(rs.map(r=>pgNum(r.wcpmB))) - pgStat(step.prev.map(r=>pgNum(r.wcpmB))));
-    stepEl = pgEl("span", "step " + (d > 0 ? "up" : "warn"), (d > 0 ? "+" + d : d === 0 ? "flat" : String(d)) + " vs " + step.label + (d > 0 ? "" : " ⚠"));
-  }
-  numCell("wcpmB", true, stepEl);
-  const acc = tr.insertCell();
-  if(rs.length){
-    const c = {i:0, s:0, f:0}; rs.forEach(r => { const l = pgAccLevel(pgNum(r.accB)); if(l) c[l]++; });
-    const tot = c.i + c.s + c.f, bar = pgEl("div","pg-acc");
-    ["i","s","f"].forEach(k => { if(c[k]){ const d = pgEl("div", k); d.style.width = (c[k]/tot*100) + "%"; bar.append(d); } });
-    acc.append(bar, pgEl("div","pg-accn", c.i + " independent · " + c.s + " support · " + c.f + " frustration"));
-  } else acc.textContent = "—";
-  numCell("wcpmA"); numCell("cspm");
-  const wl = tr.insertCell(); wl.className = "n"; wl.textContent = rs.length ? pgFp(pgStat(rs.map(r=>pgNum(r.acc1)))) : "—";
+  [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]].forEach(([k,fmt]) => {
+    const td = tr.insertCell(); td.className = "n"; td.textContent = rs.length ? fmt(pgStat(rs.map(r=>pgNum(r[k])))) : "—";
+  });
 }
 function pgTeacher(sec){ return String(sec).split(" - ").slice(1).join(" - ") || sec; }
 function pgTrack(sec){ const x = String(sec); return /Accel/.test(x) ? "Accel" : /\bGL\b/.test(x) ? "GL" : /Mechina/.test(x) ? "Mechina" : /Kollel/.test(x) ? "Kollel" : /Midrasha/.test(x) ? "Midrasha" : null; }
@@ -1995,7 +1975,7 @@ function pgRenderResults(M){
       });
     });
   };
-  const fluRow = (tb, label, us, sub, lvl, step) => pgStatRow(tb, label, us.flatMap(u=>u.flu), sumT(us), sub, lvl, step);
+  const fluRow = (tb, label, us, sub, lvl) => pgStatRow(tb, label, us.flatMap(u=>u.flu), sumT(us), sub, lvl);
   const flus = us => us.flatMap(u=>u.flu);
   const BANDS = [["Grades 3 to 5", ["3","4","5"], "Grades 3 to 5"], ["Grades 6 to 8", ["6","7","8"], "Middle school"]];
   const TITLES = {grade:"Fluency by grade", class:"Fluency by class", teacher:"Fluency by teacher", gender:"Fluency by boys and girls", band:"Fluency by band", track:"Fluency by track, grades 6 to 8"};
@@ -2078,17 +2058,15 @@ function pgRenderResults(M){
     const flu = c.studs.filter(s=>s.kind==="flu"), dg = c.studs.filter(s=>s.kind==="dg");
     if(flu.length){
       const hr = t.createTHead().insertRow();
-      [["Student",""],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Passage A<br>WCPM","n"],["Passage A<br>accuracy","n"],["Word list<br>CSPM","n"],["Word list<br>accuracy","n"],["Most errors",""],["",""]]
+      [["Student",""],["Word list<br>CSPM","n"],["Word list<br>accuracy","n"],["Passage A<br>WCPM","n"],["Passage A<br>accuracy","n"],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Most errors",""],["",""]]
         .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
       const b = t.createTBody();
       flu.forEach(s => {
         const r = s.r, tr = b.insertRow();
         const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name;
         n.append(pgEl("span","sm","Gr " + s.grade + (r.examiner ? " · " + r.examiner : "") + (r.parts !== "1+A+B" ? " · partial (" + (r.parts||"—") + ")" : "")));
-        [["wcpmB",pgF0],["accB",pgFp],["wcpmA",pgF0],["accA",pgFp],["cspm",pgF0],["acc1",pgFp]].forEach(([k,fmt]) => {
+        [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]].forEach(([k,fmt]) => {
           const td = tr.insertCell(), v = pgNum(r[k]); td.className = "n"; td.textContent = fmt(v);
-          if(k === "wcpmB") td.classList.add("big");
-          if(k === "accB" && v != null) td.classList.add("acc-" + pgAccLevel(v));
         });
         const ec = tr.insertCell(); ec.textContent = pgTopErr(r) || "—";
         if(s.flags && s.flags.length) ec.append(pgFlagChips(s.flags));
@@ -2130,7 +2108,7 @@ function pgRender(){
 const PG_WINDOWS = { Fall:["2026-10-06","2026-11-02"], Winter:["2026-12-14","2027-01-08"], Spring:["2027-04-05","2027-05-28"] };
 const PG_GAP = 10;        // familiar minus unfamiliar WCPM at or above this is flagged
 const PG_QUICK = 120;     // seconds: a result saved this soon after the same examiner's previous one is flagged
-let pgWatchPct = 0.15, pgSkipFlagged = false, pgExtras = false;
+let pgWatchBy = "wcpmB", pgWatchPct = 0.15, pgSkipFlagged = false, pgExtras = false;
 
 function pgWeekdays(a, b){ let n = 0; const d = new Date(a); while(d <= b){ const k = d.getDay(); if(k > 0 && k < 6) n++; d.setDate(d.getDate() + 1); } return n; }
 function pgPace(w){
@@ -2208,7 +2186,7 @@ function pgRenderWatch(M, w){
     const hr = t.createTHead().insertRow();
     const isG2 = gl[0] === "2";
     (isG2 ? [["Student",""],["Class",""],["Items correct","n"],["Highest level","n"],["",""]]
-          : [["Student",""],["Class",""],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Passage A<br>WCPM","n"],["Most errors",""],["Checks",""]])
+          : [["Student",""],["Class",""],["Word list<br>CSPM","n"],["Passage A<br>WCPM","n"],["Passage B<br>WCPM","n"],["Most errors",""],["Checks",""]])
       .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
     const b = t.createTBody(); let shown = 0, tested = 0;
     gl.forEach(g => {
@@ -2219,8 +2197,9 @@ function pgRenderWatch(M, w){
           return Object.assign(s, {score: n ? ok/n*100 : null, top});
         }).filter(s => s.score != null);
       } else {
-        list = all.filter(s => s.grade === g && s.kind === "flu" && s.r.parts === "1+A+B" && pgNum(s.r.wcpmB) != null)
-          .map(s => Object.assign(s, {score: pgNum(s.r.wcpmB)}));
+        const hk = pgWatchBy;
+        list = all.filter(s => s.grade === g && s.kind === "flu" && s.r.parts === "1+A+B" && pgNum(s.r[hk]) != null)
+          .map(s => Object.assign(s, {score: pgNum(s.r[hk])}));
       }
       tested += list.length;
       if(list.length < 5) return;
@@ -2234,9 +2213,7 @@ function pgRenderWatch(M, w){
           tr.insertCell();
         } else {
           const r = s.r;
-          const t1 = tr.insertCell(); t1.className = "n big"; t1.textContent = pgF0(pgNum(r.wcpmB));
-          const t2 = tr.insertCell(); const av = pgNum(r.accB); t2.className = "n" + (av != null ? " acc-" + pgAccLevel(av) : ""); t2.textContent = pgFp(av);
-          const t3 = tr.insertCell(); t3.className = "n"; t3.textContent = pgF0(pgNum(r.wcpmA));
+          ["cspm","wcpmA","wcpmB"].forEach(k => { const td = tr.insertCell(); td.className = "n" + (k === pgWatchBy ? " big" : ""); td.textContent = pgF0(pgNum(r[k])); });
           tr.insertCell().textContent = pgTopErr(r) || "—";
           const fc = tr.insertCell(); if(s.flags && s.flags.length) fc.append(pgFlagChips(s.flags)); else fc.textContent = "—";
         }
@@ -2259,14 +2236,14 @@ function pgRenderChecks(M, w){
   else {
     const wrap = pgEl("div","pg-scroll"), t = pgEl("table","pg"); wrap.append(t);
     const hr = t.createTHead().insertRow();
-    ["Student","Class","Examiner","Passage B<br>WCPM","Why it's flagged",""].forEach((v,i) => { const th = pgEl("th", i === 3 ? "n" : ""); th.innerHTML = v; hr.append(th); });
+    ["Student","Class","Examiner","Scores<br>CSPM · A · B","Why it's flagged",""].forEach((v,i) => { const th = pgEl("th", i === 3 ? "n" : ""); th.innerHTML = v; hr.append(th); });
     const b = t.createTBody();
     all.sort((a,b2) => (pgTs(b2.r)||0) - (pgTs(a.r)||0)).forEach(s => {
       const tr = b.insertRow();
       const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name; const d = pgTs(s.r); n.append(pgEl("span","sm","Grade " + s.grade + (d ? " · " + d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) : "")));
       tr.insertCell().textContent = s.cls;
       tr.insertCell().textContent = pgTitle(s.r.examiner) || "—";
-      const wc = tr.insertCell(); wc.className = "n"; wc.textContent = pgF0(pgNum(s.r.wcpmB));
+      const wc = tr.insertCell(); wc.className = "n"; wc.textContent = ["cspm","wcpmA","wcpmB"].map(k => pgF0(pgNum(s.r[k]))).join(" · ");
       tr.insertCell().append(pgFlagChips(s.flags));
       tr.insertCell().append(pgVoidBtn(s, w));
     });
@@ -2280,21 +2257,19 @@ function pgRenderChecks(M, w){
   if(!grades.length){ const td = eb.insertRow().insertCell(); td.colSpan = 6; td.className = "pg-empty"; td.textContent = "No complete fluency results yet."; return; }
   grades.forEach(g => {
     const fg = flu.filter(s => s.grade === g);
-    const gMed = pgMed(fg.map(s => pgNum(s.r.wcpmB)));
     const byE = new Map();
     fg.forEach(s => { const k = pgExam(s.r.examiner) || "(none)"; if(!byE.has(k)) byE.set(k, {names:new Set(), rs:[]}); const e = byE.get(k); e.names.add(String(s.r.examiner||"").trim()); e.rs.push(s.r); });
+    const cells = (tr, rs, cls) => [["cspm",pgF0],["wcpmA",pgF0],["wcpmB",pgF0],["acc1",pgFp]].forEach(([k,fmt]) => { const td = tr.insertCell(); td.className = "n" + (cls || ""); td.textContent = fmt(pgStat(rs.map(r => pgNum(r[k])))); });
     const head = eb.insertRow(); head.className = "l1";
-    const hc = head.insertCell(); hc.className = "nm"; hc.textContent = "Grade " + g; hc.append(pgEl("span","sm", fg.length + " tested · grade median " + pgF0(gMed) + " WCPM"));
-    for(let i = 0; i < 5; i++) head.insertCell();
+    const hc = head.insertCell(); hc.className = "nm"; hc.textContent = "Grade " + g; hc.append(pgEl("span","sm","whole grade"));
+    const ht = head.insertCell(); ht.className = "n"; ht.textContent = String(fg.length);
+    cells(head, fg.map(s => s.r));
     [...byE.entries()].sort((a,b) => b[1].rs.length - a[1].rs.length).forEach(([k, e]) => {
       const tr = eb.insertRow(); tr.className = "l3"; if(e.rs.length < PG_MIN) tr.classList.add("thin");
       const n = tr.insertCell(); n.className = "nm"; n.textContent = pgTitle(k);
       if(e.names.size > 1) n.append(pgEl("span","sm","Entered " + e.names.size + " ways: " + [...e.names].join(", ")));
-      const med = pgMed(e.rs.map(r => pgNum(r.wcpmB)));
-      [[String(e.rs.length),"n"],[pgF0(med),"n big"],[pgFp(pgMed(e.rs.map(r => pgNum(r.accB)))),"n"],[pgFp(pgMed(e.rs.map(r => pgNum(r.acc1)))),"n"]].forEach(([v,c]) => { const td = tr.insertCell(); td.className = c; td.textContent = v; });
-      const dc = tr.insertCell(); dc.className = "n";
-      if(med != null && gMed != null && byE.size > 1){ const d = Math.round(med - gMed); dc.textContent = (d > 0 ? "+" : "") + d; if(Math.abs(d) >= 10 && e.rs.length >= PG_MIN) dc.classList.add("pg-warnc"); }
-      else dc.textContent = "—";
+      const tc = tr.insertCell(); tc.className = "n"; tc.textContent = String(e.rs.length);
+      cells(tr, e.rs);
     });
   });
 }
@@ -2327,6 +2302,7 @@ function pgTab(which){
 }
 Object.keys(PG_TABS).forEach(k => $("pgTab" + k).addEventListener("click", () => pgTab(k)));
 $("pgWatchPick").addEventListener("change", () => { pgWatchPct = +$("pgWatchPick").value; pgRender(); });
+$("pgWatchBy").addEventListener("change", () => { pgWatchBy = $("pgWatchBy").value; pgRender(); });
 $("pgSkipFlag").addEventListener("change", () => { pgSkipFlagged = $("pgSkipFlag").checked; pgRender(); });
 function pgSetMode(m){ pgMode = m; $("pgMedian").setAttribute("aria-selected", String(m==="median")); $("pgMean").setAttribute("aria-selected", String(m==="mean")); pgRender(); }
 $("pgMedian").addEventListener("click", ()=>pgSetMode("median"));
