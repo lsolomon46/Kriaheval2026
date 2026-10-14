@@ -44,6 +44,7 @@ body{margin:0; font-family:'Nunito Sans',system-ui,sans-serif; background:var(--
 #scr-prog table.pg td{padding:8px 10px; border-top:1px solid var(--line); vertical-align:top;}
 #scr-prog table.pg .n{text-align:right; white-space:nowrap;}
 #scr-prog table.pg td.nm{white-space:nowrap;}
+#scr-prog table.pg td.nm .pg-flags{white-space:normal; max-width:16rem; margin-top:4px;}
 #scr-prog table.pg td .sm{display:block; font-size:12px; color:var(--grey);}
 #scr-prog table.pg tr.thin td{color:#9aa1ae;}
 #scr-prog table.pg tr.total td{font-weight:700; border-top:2px solid var(--line);}
@@ -95,6 +96,7 @@ body{margin:0; font-family:'Nunito Sans',system-ui,sans-serif; background:var(--
 #scr-prog .pg-lv{display:flex; flex-wrap:wrap; gap:4px;}
 #scr-prog .pg-lv span{font-size:12px; padding:1px 6px; border-radius:4px; background:#EEF1F6; white-space:nowrap;}
 #scr-prog .pg-lv span.full{background:#E3F1E8; color:var(--ok);}
+#scr-prog .pg-lv span.todo{background:#FFF4E0; color:#8A5A00; font-weight:700;}
 #scr-prog .pg-ctl{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin-top:14px; font-size:14px;}
 #scr-prog .pg-ctl select{width:auto; max-width:100%; padding:7px 10px; font-size:14px;}
 #scr-prog .pg-key{font-size:12.5px; color:var(--grey); line-height:1.6; margin:10px 0 0;}
@@ -530,7 +532,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
       <h3>Results to check <span id="pgFlagCount"></span></h3>
       <div id="pgFlagBody"></div>
     </div>
-    <p class="pg-key">A result is flagged when a passage scores 0 WCPM, any part is under 50% accuracy, the familiar passage is 10 or more WCPM above the unfamiliar one, or the result was saved less than 2 minutes after the same examiner's previous result (a full fluency session takes longer). Flags ask someone to check or retest; they do not change any score. <span id="pgVoidNote"></span></p>
+    <p class="pg-key">Decoding Diagnostic results are flagged when every item in a level is marked wrong, when fewer than half are right, or (grade 2 only, which goes through the levels in order) when a level was skipped. Fluency results are flagged when a passage scores 0 WCPM, any part is under 50% accuracy, the familiar passage is 10 or more WCPM above the unfamiliar one, or the result was saved less than 2 minutes after the same examiner's previous result (a full fluency session takes longer). Flags ask someone to check or retest; they do not change any score. <span id="pgVoidNote"></span></p>
     <div class="pg-box">
       <h3>Examiner consistency <span>Average scores, complete sessions, within each grade</span></h3>
       <div class="pg-scroll"><table class="pg" id="pgExamTable"><thead><tr>
@@ -1501,9 +1503,11 @@ function renderDashboard(rows, w, whoLabel){
       : flu;
     const fluCell = `<td>${fluInner}</td>`;
     const lv = diagMap[s.name + "|" + w];
-    const dgInner = lv && lv.length
+    const sugg = (!isG2 && row) ? pgSuggestLv(row.tally, lv).filter(x => !x.done).map(x => x.L) : [];
+    const suggHTML = sugg.length ? `<div style='color:#8a6d00; font-weight:700; margin-top:2px'>Give levels: ${sugg.join(", ")}</div>` : "";
+    const dgInner = (lv && lv.length
       ? `<span style='color:var(--navy); font-weight:600'>${lv.join(" · ")}</span>`
-      : "<span style='color:var(--grey)'>—</span>";
+      : "<span style='color:var(--grey)'>—</span>") + suggHTML;
     const dg = lv && lv.length
       ? `<button class="btn-ghost" style="padding:2px; font-size:inherit; text-align:left" data-srname="${s.name}" data-srwin="${w}" data-srtype="diag">${dgInner}</button>`
       : dgInner;
@@ -2058,7 +2062,7 @@ function pgRenderResults(M){
     const flu = c.studs.filter(s=>s.kind==="flu"), dg = c.studs.filter(s=>s.kind==="dg");
     if(flu.length){
       const hr = t.createTHead().insertRow();
-      [["Student",""],["Word list<br>CSPM","n"],["Word list<br>accuracy","n"],["Passage A<br>WCPM","n"],["Passage A<br>accuracy","n"],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Most errors",""],["",""]]
+      [["Student",""],["Word list<br>CSPM","n"],["Word list<br>accuracy","n"],["Passage A<br>WCPM","n"],["Passage A<br>accuracy","n"],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Most errors",""],["Give decoding<br>levels",""],["",""]]
         .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
       const b = t.createTBody();
       flu.forEach(s => {
@@ -2068,8 +2072,9 @@ function pgRenderResults(M){
         [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]].forEach(([k,fmt]) => {
           const td = tr.insertCell(), v = pgNum(r[k]); td.className = "n"; td.textContent = fmt(v);
         });
+        if(s.flags && s.flags.length) n.append(pgFlagChips(s.flags));
         const ec = tr.insertCell(); ec.textContent = pgTopErr(r) || "—";
-        if(s.flags && s.flags.length) ec.append(pgFlagChips(s.flags));
+        tr.insertCell().append(pgSuggestChips(s.suggest || []));
         tr.insertCell().append(pgVoidBtn(s, $("pgWin").value));
       });
     }
@@ -2085,7 +2090,7 @@ function pgRenderResults(M){
           const chip = pgEl("span", x.ok===x.all ? "full" : "", x.L + " " + Math.round(x.all ? x.ok/x.all*100 : 0) + "%");
           chip.title = x.L + ": " + x.ok + "/" + x.all; box2.append(chip);
         });
-        tr.insertCell().append(box2);
+        const lc = tr.insertCell(); lc.append(box2); if(s.flags && s.flags.length) lc.append(pgFlagChips(s.flags));
         tr.insertCell().append(pgVoidBtn(s, $("pgWin").value));
       });
     }
@@ -2097,7 +2102,7 @@ function pgRender(){
   const w = $("pgWin").value, M = pgModel(w);
   pgAttachFlags(M, w);
   pgRenderProgress(M); pgRenderResults(M); pgRenderWatch(M, w); pgRenderChecks(M, w);
-  const nf = [...M.classes.values()].reduce((a,c) => a + c.studs.filter(s => s.flags && s.flags.length).length, 0);
+  const nf = [...M.classes.values()].reduce((a,c) => a + c.studs.filter(s => s.flags && s.flags.length).length, 0) + (M.dgChecks || []).length;
   $("pgFlagBadge").hidden = !nf; $("pgFlagBadge").textContent = nf;
   $("pgVoidNote").textContent = pgExtras ? "Use Void to move a result that should not count to the Voided tab of the Sheet, with the reason." : "The Void button turns on once the Apps Script update is installed.";
   if(pgStamp){ $("pgFresh").textContent = "Updated " + pgStamp.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}); $("pgDot").className = "pg-dot"; }
@@ -2132,7 +2137,7 @@ function pgFlagsFor(r, quick, sheetFlags){
   if(low.length) f.push("Accuracy under 50% on " + low.join(", "));
   if(n("wcpmA") != null && n("wcpmB") != null && n("wcpmA") - n("wcpmB") >= PG_GAP) f.push("Big gap: familiar " + n("wcpmA") + " vs unfamiliar " + n("wcpmB"));
   if(quick != null && quick < PG_QUICK) f.push("Saved " + Math.floor(quick/60) + "m " + Math.round(quick%60) + "s after this examiner's previous result");
-  (sheetFlags || []).forEach(x => { const t = String(x); if(t && !/gap/i.test(t)) f.push(t); });
+  // (the sheet's own "flags" list is skill levels with 2+ errors, not a data problem, so it is not used here)
   return f;
 }
 /* attach flags to every fluency student in the model */
@@ -2141,7 +2146,42 @@ function pgAttachFlags(M, w){
   (anlCache||[]).filter(r => r.window === w && pgTs(r)).forEach(r => { const k = pgExam(r.examiner); if(!byEx.has(k)) byEx.set(k, []); byEx.get(k).push(r); });
   const gapSec = new Map();
   byEx.forEach(list => { list.sort((a,b) => pgTs(a) - pgTs(b)); list.forEach((r,i) => { if(i) gapSec.set(r, (pgTs(r) - pgTs(list[i-1])) / 1000); }); });
-  M.classes.forEach(c => c.studs.forEach(s => { if(s.kind === "flu") s.flags = pgFlagsFor(s.r, gapSec.has(s.r) ? gapSec.get(s.r) : null, flagsMap[s.name + "|" + w]); }));
+  M.classes.forEach(c => c.studs.forEach(s => {
+    if(s.kind === "flu"){ s.flags = pgFlagsFor(s.r, gapSec.has(s.r) ? gapSec.get(s.r) : null, flagsMap[s.name + "|" + w]); s.suggest = pgSuggestLv(s.r.tally, diagMap[s.name + "|" + w]); }
+    else if(s.kind === "dg") s.flags = pgDiagFlags(s.levels, s.grade);
+  }));
+  // decoding checks for grades 3-8 too (their diagnostics are not in the class lists above)
+  M.dgChecks = [];
+  (roster || []).filter(st => st.section && String(st.grade) !== "2" && st.active !== false).forEach(st => {
+    const lv = diagMap[st.name + "|" + w]; if(!lv || !lv.length) return;
+    const fl = pgDiagFlags(lv, st.grade);
+    if(fl.length) M.dgChecks.push({name:st.name, grade:String(st.grade), cls:st.section, kind:"dg", levels:lv, flags:fl});
+  });
+}
+/* Decoding levels to give next: skill levels C-L where the fluency test shows 2 or more errors.
+   done = levels already saved in the Decoding Diagnostic for this window. */
+function pgSuggestLv(tally, doneLevels){
+  const done = new Set((doneLevels || []).map(x => String(x).charAt(0)));
+  return "CDEFGHIJKL".split("").filter(L => (Number((tally || {})[L]) || 0) >= 2).map(L => ({L, done: done.has(L)}));
+}
+function pgSuggestChips(list){
+  const d = pgEl("div","pg-lv");
+  if(!list.length){ d.append(pgEl("span", null, "None")); return d; }
+  list.forEach(x => { const c = pgEl("span", x.done ? "full" : "todo", x.L + (x.done ? " ✓" : "")); c.title = x.done ? "Level " + x.L + " already given" : "Give Decoding Diagnostic level " + x.L; d.append(c); });
+  return d;
+}
+/* Data checks for a Decoding Diagnostic. Skipped levels only count for grade 2, which goes through the levels in order. */
+function pgDiagFlags(levels, grade){
+  const f = [], lv = pgLevels(levels);
+  lv.forEach(x => {
+    if(x.all && x.ok === 0) f.push("Level " + x.L + ": every item marked wrong");
+    else if(x.all && x.ok / x.all < 0.5) f.push("Level " + x.L + ": under half right (" + x.ok + "/" + x.all + ")");
+  });
+  if(String(grade) === "2" && lv.length){
+    const idx = lv.map(x => PG_LV.indexOf(x.L)).filter(i => i >= 0), hi = Math.max(...idx), have = new Set(idx);
+    for(let i = 0; i < hi; i++) if(!have.has(i)) f.push("Level " + PG_LV[i] + " skipped");
+  }
+  return f;
 }
 function pgFlagChips(flags){
   const d = pgEl("div","pg-flags");
@@ -2186,7 +2226,7 @@ function pgRenderWatch(M, w){
     const hr = t.createTHead().insertRow();
     const isG2 = gl[0] === "2";
     (isG2 ? [["Student",""],["Class",""],["Items correct","n"],["Highest level","n"],["",""]]
-          : [["Student",""],["Class",""],["Word list<br>CSPM","n"],["Passage A<br>WCPM","n"],["Passage B<br>WCPM","n"],["Most errors",""],["Checks",""]])
+          : [["Student",""],["Class",""],["Word list<br>CSPM","n"],["Passage A<br>WCPM","n"],["Passage B<br>WCPM","n"],["Most errors",""],["Give decoding<br>levels",""],["Checks",""]])
       .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
     const b = t.createTBody(); let shown = 0, tested = 0;
     gl.forEach(g => {
@@ -2215,6 +2255,7 @@ function pgRenderWatch(M, w){
           const r = s.r;
           ["cspm","wcpmA","wcpmB"].forEach(k => { const td = tr.insertCell(); td.className = "n" + (k === pgWatchBy ? " big" : ""); td.textContent = pgF0(pgNum(r[k])); });
           tr.insertCell().textContent = pgTopErr(r) || "—";
+          tr.insertCell().append(pgSuggestChips(s.suggest || []));
           const fc = tr.insertCell(); if(s.flags && s.flags.length) fc.append(pgFlagChips(s.flags)); else fc.textContent = "—";
         }
       });
@@ -2230,20 +2271,20 @@ function pgRenderWatch(M, w){
 /* ---------- checks: flagged results + examiner consistency ---------- */
 function pgRenderChecks(M, w){
   const root = $("pgFlagBody"); root.replaceChildren();
-  const all = [...M.classes.values()].flatMap(c => c.studs.filter(s => s.kind === "flu" && s.flags && s.flags.length).map(s => Object.assign({cls:c.name}, s)));
+  const all = [...M.classes.values()].flatMap(c => c.studs.filter(s => s.flags && s.flags.length).map(s => Object.assign({cls:c.name}, s))).concat(M.dgChecks || []);
   $("pgFlagCount").textContent = all.length ? all.length + " result" + (all.length === 1 ? "" : "s") + " to check" : "Nothing flagged";
   if(!all.length){ root.append(pgEl("div","pg-empty","No results are flagged for this window.")); }
   else {
     const wrap = pgEl("div","pg-scroll"), t = pgEl("table","pg"); wrap.append(t);
     const hr = t.createTHead().insertRow();
-    ["Student","Class","Examiner","Scores<br>CSPM · A · B","Why it's flagged",""].forEach((v,i) => { const th = pgEl("th", i === 3 ? "n" : ""); th.innerHTML = v; hr.append(th); });
+    ["Student","Class","Examiner","Test / scores<br>CSPM · A · B","Why it's flagged",""].forEach((v,i) => { const th = pgEl("th", i === 3 ? "n" : ""); th.innerHTML = v; hr.append(th); });
     const b = t.createTBody();
-    all.sort((a,b2) => (pgTs(b2.r)||0) - (pgTs(a.r)||0)).forEach(s => {
+    all.sort((a,b2) => (b2.r ? pgTs(b2.r)||0 : 0) - (a.r ? pgTs(a.r)||0 : 0)).forEach(s => {
       const tr = b.insertRow();
-      const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name; const d = pgTs(s.r); n.append(pgEl("span","sm","Grade " + s.grade + (d ? " · " + d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) : "")));
+      const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name; const d = s.r ? pgTs(s.r) : null; n.append(pgEl("span","sm","Grade " + s.grade + (d ? " · " + d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) : "")));
       tr.insertCell().textContent = s.cls;
-      tr.insertCell().textContent = pgTitle(s.r.examiner) || "—";
-      const wc = tr.insertCell(); wc.className = "n"; wc.textContent = ["cspm","wcpmA","wcpmB"].map(k => pgF0(pgNum(s.r[k]))).join(" · ");
+      tr.insertCell().textContent = s.r ? (pgTitle(s.r.examiner) || "—") : "—";
+      const wc = tr.insertCell(); wc.className = "n"; wc.textContent = s.kind === "dg" ? "Decoding" : ["cspm","wcpmA","wcpmB"].map(k => pgF0(pgNum(s.r[k]))).join(" · ");
       tr.insertCell().append(pgFlagChips(s.flags));
       tr.insertCell().append(pgVoidBtn(s, w));
     });
