@@ -19,88 +19,6 @@
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 body{margin:0; font-family:'Nunito Sans',system-ui,sans-serif; background:var(--paper); color:var(--ink);}
 .screen{display:none; max-width:880px; margin:0 auto; padding:20px 18px 60px;}
-/* ============ SCHOOL PROGRESS ============ */
-#scr-prog .pg-top{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:6px;}
-#scr-prog .pg-top select{width:auto; padding:7px 10px; font-size:14px;}
-#scr-prog .pg-live{font-size:13px; color:var(--grey); display:flex; align-items:center; gap:6px;}
-#scr-prog .pg-dot{width:8px; height:8px; border-radius:50%; background:var(--ok); display:inline-block;}
-#scr-prog .pg-dot.off{background:var(--grey);}
-#scr-prog .pg-sum{font-size:15px; margin:12px 0 4px;}
-#scr-prog .pg-tabs, #scr-prog .pg-seg{display:inline-flex; gap:4px; background:#E6ECF7; padding:4px; border-radius:8px;}
-#scr-prog .pg-tabs{margin-top:14px;}
-#scr-prog .pg-tabs button, #scr-prog .pg-seg button{font-family:inherit; font-size:14px; font-weight:600; border:0; background:transparent; color:#5a6478; padding:6px 14px; border-radius:6px; cursor:pointer;}
-#scr-prog .pg-tabs button[aria-selected="true"], #scr-prog .pg-seg button[aria-selected="true"]{background:#fff; color:var(--navy); box-shadow:0 1px 3px rgba(20,40,90,.18);}
-#scr-prog .pg-box{background:#fff; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; margin-top:12px;}
-#scr-prog .pg-box h3{font-family:'Montserrat',sans-serif; font-size:15px; color:var(--navy); margin:0; padding:10px 14px; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px;}
-#scr-prog .pg-box h3 span{font-family:inherit; font-weight:400; font-size:13px; color:var(--grey);}
-#scr-prog .pg-row{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 14px; border-top:1px solid var(--line); font-size:14.5px;}
-#scr-prog .pg-box h3 + .pg-row{border-top:0;}
-#scr-prog .pg-pill{flex:none; font-size:12.5px; font-weight:700; padding:2px 10px; border-radius:999px; white-space:nowrap;}
-#scr-prog .pg-pill.go{background:#E3F1E8; color:var(--ok);}
-#scr-prog .pg-pill.no{background:#EEF1F6; color:#6b7385; font-weight:600;}
-#scr-prog .pg-scroll{overflow-x:auto;}
-#scr-prog table.pg{width:100%; border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums;}
-#scr-prog table.pg th{text-align:left; font-size:12px; font-weight:700; color:#5a6478; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; vertical-align:bottom; background:#F6F8FC;}
-#scr-prog table.pg td{padding:8px 10px; border-top:1px solid var(--line); vertical-align:top;}
-#scr-prog table.pg .n{text-align:right; white-space:nowrap;}
-#scr-prog table.pg td.nm{white-space:nowrap;}
-#scr-prog table.pg td.nm .pg-flags{white-space:normal; max-width:16rem; margin-top:4px;}
-#scr-prog table.pg td .sm{display:block; font-size:12px; color:var(--grey);}
-#scr-prog table.pg tr.thin td{color:#9aa1ae;}
-#scr-prog table.pg tr.total td{font-weight:700; border-top:2px solid var(--line);}
-#scr-prog table.pg tr.l0 td{background:#EEF3FB; font-weight:700; color:var(--navy); border-top:2px solid var(--line);}
-#scr-prog table.pg tr.l1 td{font-weight:700;}
-#scr-prog .pg-views{flex-wrap:wrap;}
-#scr-prog .pg-tabs{flex-wrap:wrap;}
-#scr-prog .pg-badge{display:inline-block; min-width:18px; padding:0 5px; border-radius:9px; background:var(--err); color:#fff; font-size:11.5px; line-height:18px; margin-left:4px;}
-#scr-prog .pg-flags{display:flex; flex-wrap:wrap; gap:4px;}
-#scr-prog .pg-flag{font-size:12px; padding:2px 8px; border-radius:6px; background:#FFF4E0; color:#8A5A00; border:1px solid #F1D39A; white-space:normal;}
-#scr-prog .pg-void{font:inherit; font-size:12.5px; font-weight:700; color:var(--err); background:none; border:1px solid #E7B3AD; border-radius:6px; padding:3px 10px; cursor:pointer;}
-#scr-prog .pg-void:disabled{color:#a9adb7; border-color:var(--line); cursor:not-allowed;}
-#scr-prog .pg-chk{display:flex; align-items:center; gap:8px; font-size:14px; margin-top:10px; font-weight:600; color:#4A5568;}
-#scr-prog .pg-chk input{width:auto;}
-#scr-prog .pg-pace{display:flex; align-items:center; gap:10px; flex:none;}
-#scr-prog .pg-pace .pct{font-size:12.5px; color:#5a6478; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
-#scr-prog .pg-pbar{position:relative; width:90px; height:8px; background:#EEF1F6; border-radius:4px; overflow:visible;}
-#scr-prog .pg-pbar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--ok);}
-#scr-prog .pg-pbar .exp{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--navy);}
-#scr-prog .pg-pill.behind{background:#FFF1DB; color:#9A5B00;}
-#scr-prog .pg-pill.late{background:var(--err-bg); color:var(--err);}
-#scr-prog .pg-warnc{color:#B9770E; font-weight:700;}
-@media (max-width:560px){ #scr-prog .pg-row{flex-wrap:wrap;} #scr-prog .pg-pbar{display:none;} }
-#scr-prog th.pg-head{color:var(--navy);}
-#scr-prog th span{font-weight:400; color:#7a8294; font-size:11px;}
-#scr-prog .pg-k{display:inline-block; width:8px; height:8px; border-radius:2px; margin:0 2px 0 6px; vertical-align:middle;}
-#scr-prog .pg-k.i, #scr-prog .pg-acc .i{background:#2E7D4F;}
-#scr-prog .pg-k.s, #scr-prog .pg-acc .s{background:#D9A520;}
-#scr-prog .pg-k.f, #scr-prog .pg-acc .f{background:#C0392B;}
-#scr-prog .pg-acc{display:flex; width:110px; height:9px; border-radius:5px; overflow:hidden; background:#EEF1F6;}
-#scr-prog .pg-acc div{height:100%;}
-#scr-prog .pg-accn{font-size:12px; color:#5a6478; margin-top:3px; white-space:nowrap; font-weight:400;}
-#scr-prog td.big{font-size:16px; font-weight:700; color:var(--navy);}
-#scr-prog tr.thin td.big{color:#9aa1ae;}
-#scr-prog td .rng{display:block; font-size:11.5px; font-weight:400; color:#7a8294;}
-#scr-prog td .step{display:block; font-size:11.5px; font-weight:600;}
-#scr-prog td .step.up{color:var(--ok);}
-#scr-prog td .step.warn{color:#B9770E;}
-#scr-prog td.acc-i{color:var(--ok); font-weight:700;}
-#scr-prog td.acc-s{color:#9A6B00; font-weight:700;}
-#scr-prog td.acc-f{color:var(--err); font-weight:700;}
-#scr-prog table.pg tr.lg td{font-weight:700; background:#F7F9FD;}
-#scr-prog table.pg tr.lg td.nm{padding-left:18px;}
-#scr-prog table.pg tr.l1 td.nm{padding-left:18px;}
-#scr-prog table.pg tr.l2 td{font-weight:600;}
-#scr-prog table.pg tr.l2 td.nm{padding-left:32px;}
-#scr-prog table.pg tr.l3 td.nm{padding-left:48px;}
-#scr-prog table.pg tr.thin td{color:#9aa1ae;}
-#scr-prog .pg-lv{display:flex; flex-wrap:wrap; gap:4px;}
-#scr-prog .pg-lv span{font-size:12px; padding:1px 6px; border-radius:4px; background:#EEF1F6; white-space:nowrap;}
-#scr-prog .pg-lv span.full{background:#E3F1E8; color:var(--ok);}
-#scr-prog .pg-lv span.todo{background:#FFF4E0; color:#8A5A00; font-weight:700;}
-#scr-prog .pg-ctl{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin-top:14px; font-size:14px;}
-#scr-prog .pg-ctl select{width:auto; max-width:100%; padding:7px 10px; font-size:14px;}
-#scr-prog .pg-key{font-size:12.5px; color:var(--grey); line-height:1.6; margin:10px 0 0;}
-#scr-prog .pg-empty{padding:12px 14px; color:var(--grey); font-size:14px;}
 .screen.active{display:block;}
 header.app{background:#fff; color:var(--navy); padding:10px 18px; display:flex; align-items:center; gap:14px; border-bottom:4px solid var(--gold);}
 header.app img.logo{height:46px; width:auto; display:block;}
@@ -178,12 +96,6 @@ table.skills td.hot{background:var(--err-bg); color:var(--err); font-weight:700;
 .lvlcard .ldesc{font-size:13px; color:var(--grey); margin-top:2px;}
 .lvlcard .lscore{margin-top:8px; font-size:13px; font-weight:700;}
 .lvlcard .lscore.good{color:var(--ok);} .lvlcard .lscore.mid{color:#8a6d00;} .lvlcard .lscore.low{color:var(--err);}
-/* Kof sofit (final kaf with dagesh): fonts squeeze the dagesh onto the kamatz so it reads as chof sofit.
-   On the decoding screen we draw the letter without its own dagesh and add a clear dot in the middle. */
-.kof{position:relative; display:inline-block; line-height:1.5;}
-.kof .kdot{position:absolute; left:.123em; top:.685em; width:.1em; height:.1em; border-radius:50%; background:currentColor; pointer-events:none;}
-.kof .kbase{display:inline-block; width:0; height:0; vertical-align:baseline;}
-.kof .kvow{position:absolute; pointer-events:none; max-width:none;}
 .diagbig{direction:rtl; font-family:'David Libre',serif; font-size:96px; text-align:center; background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:50px 20px; margin-top:16px; min-height:220px; display:flex; align-items:center; justify-content:center;}
 .diagmeta{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; font-size:14px; color:var(--grey);}
 .diagbtns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
@@ -389,7 +301,6 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <button class="btn-ghost" id="dashBtn">View Class Dashboard (admin; pick a class, or leave blank for all) →</button>
   <button class="btn-ghost" id="myClassBtn">My Class Dashboard →</button>
   <button class="btn-ghost" id="anlBtn">View Analytics (admin) →</button>
-  <button class="btn-ghost" id="progBtn">School Progress, live (admin) →</button>
 </section>
 
 <!-- ============ PART 1 ============ -->
@@ -414,6 +325,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   </div>
   <div class="passage" id="pasA"></div>
   <button class="btn-primary" id="p2next" style="display:none">Continue to Passage B</button>
+  <button class="btn-ghost" id="p2back" style="display:none">← Back to review Part 1</button>
   <button class="btn-ghost" id="p2skip">Skip this part (administer another day)</button>
   <button class="btn-ghost exitBtn">✕ Exit to student setup (discard unsaved)</button>
 </section>
@@ -427,6 +339,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   </div>
   <div class="passage" id="pasB"></div>
   <button class="btn-primary" id="p3next" style="display:none">See Results</button>
+  <button class="btn-ghost" id="p3back" style="display:none">← Back to review Passage A</button>
   <button class="btn-ghost" id="p3skip">Skip this part (administer another day)</button>
   <button class="btn-ghost exitBtn">✕ Exit to student setup (discard unsaved)</button>
 </section>
@@ -451,98 +364,6 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <div style="font-size:12.5px; color:var(--grey); margin-top:6px; line-height:1.6">Bar = average percent correct on each level, across the students assessed on that level. The number shows how many students were assessed.</div>
   <div class="notice" id="anlNote" style="display:none"></div>
   <button class="btn-ghost" id="anlBack">← Back to setup</button>
-</section>
-
-<!-- ============ SCHOOL PROGRESS (admin) ============ -->
-<section class="screen" id="scr-prog">
-  <h2 class="step">School Progress <span class="hint" id="pgWho">Admin view</span></h2>
-  <div class="pg-top">
-    <select id="pgWin" aria-label="Assessment window"><option>Fall</option><option>Winter</option><option>Spring</option></select>
-    <span class="pg-live"><span class="pg-dot off" id="pgDot"></span><span id="pgFresh">Loading…</span></span>
-    <span class="pg-live">Updates every minute while this screen is open</span>
-  </div>
-  <p class="pg-sum" id="pgSum"></p>
-  <div class="pg-tabs" role="tablist">
-    <button type="button" role="tab" id="pgTabProg" aria-selected="true">Progress</button>
-    <button type="button" role="tab" id="pgTabRes" aria-selected="false">Results</button>
-    <button type="button" role="tab" id="pgTabWatch" aria-selected="false">Watch list</button>
-    <button type="button" role="tab" id="pgTabChecks" aria-selected="false">Checks <span id="pgFlagBadge" class="pg-badge" hidden></span></button>
-  </div>
-
-  <div id="pgProgress"></div>
-
-  <div id="pgResults" hidden>
-    <div class="pg-ctl">
-      <span>Show</span>
-      <div class="pg-seg" role="group" aria-label="Average type">
-        <button type="button" id="pgMedian" aria-selected="true">Median</button>
-        <button type="button" id="pgMean" aria-selected="false">Mean</button>
-      </div>
-      <span class="pg-key" id="pgModeNote" style="margin:0; flex:1 1 16rem"></span>
-    </div>
-    <label class="pg-chk"><input type="checkbox" id="pgSkipFlag"> Leave out flagged results until they are checked</label>
-    <div class="pg-ctl">
-      <span>Break down by</span>
-      <div class="pg-seg pg-views" role="group" aria-label="Break down by">
-        <button type="button" data-view="grade" aria-selected="true">Grade</button>
-        <button type="button" data-view="class" aria-selected="false">Class</button>
-        <button type="button" data-view="teacher" aria-selected="false">Teacher</button>
-        <button type="button" data-view="gender" aria-selected="false">Boys &amp; girls</button>
-        <button type="button" data-view="band" aria-selected="false">Band</button>
-        <button type="button" data-view="track" aria-selected="false">Track (6–8)</button>
-      </div>
-    </div>
-    <div class="pg-box">
-      <h3><span id="pgViewTitle" style="font:inherit; color:inherit">Fluency by grade</span> <span id="pgGradeLbl"></span></h3>
-      <div class="notice" id="pgTrackNote" hidden style="margin:10px 14px">Tracks are grouped by ability, so a gap between Accel and GL is expected and says nothing about the teachers. Compare each track with itself from Fall to Spring.</div>
-      <div class="pg-scroll"><table class="pg" id="pgGrade"><thead><tr>
-        <th>Group</th><th class="n">Tested</th>
-        <th class="n">Word list<br>CSPM</th><th class="n">Word list<br>accuracy</th>
-        <th class="n">Passage A<br>WCPM</th><th class="n">Passage A<br>accuracy</th>
-        <th class="n">Passage B<br>WCPM</th><th class="n">Passage B<br>accuracy</th>
-      </tr></thead><tbody></tbody></table></div>
-    </div>
-    <div class="pg-box">
-      <h3>Grade 2 decoding <span>Boys, girls and each class</span></h3>
-      <div class="pg-scroll"><table class="pg" id="pgG2"><thead><tr>
-        <th>Group</th><th class="n">Tested</th><th class="n">Items correct</th><th class="n">Levels with<br>no errors</th><th class="n">Highest level<br>reached</th>
-      </tr></thead><tbody></tbody></table></div>
-    </div>
-    <div class="pg-ctl">
-      <label for="pgClassPick" style="margin:0">Student scores for</label>
-      <select id="pgClassPick"><option value="">All classes with results</option></select>
-    </div>
-    <div id="pgStudents"></div>
-    <p class="pg-key">Each row shows the plain average for its group: syllables correct per minute on the word list (CSPM), words correct per minute on each passage (WCPM), and accuracy for each part. Use the Median / Mean switch to choose the kind of average. Grades 3 to 5 take the same test, and so do grades 6 to 8. Mixed classes (6/7 Mechina, 7/8 Kollel, 7/8 Midrasha) appear whole in the Class view, with each grade underneath; in grade views each student counts in their own grade. 6/7 Mechina counts with the boys. Grey rows have fewer than 5 students tested, so read them with care. Only fluency sessions with all three parts count toward the averages. CSPM: correct syllables per minute on the word list (first minute). WCPM: words correct per minute. Passage A is familiar text, Passage B unfamiliar. Most errors lists the two skills missed most across all three parts. Grade 2: items correct is the share of all decoding items read correctly; highest level reached is the last level the student was given; a level shows green when every item was read correctly.</p>
-  </div>
-  <div id="pgWatch" hidden>
-    <div class="pg-ctl">
-      <label for="pgWatchPick" style="margin:0">Show the lowest</label>
-      <select id="pgWatchPick"><option value="0.1">10%</option><option value="0.15" selected>15%</option><option value="0.2">20%</option><option value="0.25">25%</option></select>
-      <span>of each grade, ranked by</span>
-      <select id="pgWatchBy"><option value="wcpmB">Passage B (unfamiliar) WCPM</option><option value="wcpmA">Passage A (familiar) WCPM</option><option value="cspm">Word list CSPM</option></select>
-    </div>
-    <div class="notice" id="pgWatchNote" hidden>This is a starting list for referrals to Morah Rut. Check any flagged result first, and add students you know need help even if they are not listed.</div>
-    <div id="pgWatchBody"></div>
-    <p class="pg-key">Ranked within each grade by the score you choose, using complete fluency sessions only. A grade is ranked once at least 5 students are tested. Grade 2 is ranked by the share of decoding items read correctly.</p>
-  </div>
-
-  <div id="pgChecks" hidden>
-    <div class="pg-box">
-      <h3>Results to check <span id="pgFlagCount"></span></h3>
-      <div id="pgFlagBody"></div>
-    </div>
-    <p class="pg-key">Decoding Diagnostic results are flagged when every item in a level is marked wrong, when fewer than half are right, or (grade 2 only, which goes through the levels in order) when a level was skipped. Fluency results are flagged when a passage scores 0 WCPM, any part is under 50% accuracy, the familiar passage is 10 or more WCPM above the unfamiliar one, or the result was saved less than 2 minutes after the same examiner's previous result (a full fluency session takes longer). Flags ask someone to check or retest; they do not change any score. <span id="pgVoidNote"></span></p>
-    <div class="pg-box">
-      <h3>Examiner consistency <span>Average scores, complete sessions, within each grade</span></h3>
-      <div class="pg-scroll"><table class="pg" id="pgExamTable"><thead><tr>
-        <th>Examiner</th><th class="n">Tested</th><th class="n">Word list<br>CSPM</th><th class="n">Passage A<br>WCPM</th><th class="n">Passage B<br>WCPM</th><th class="n">Word list<br>accuracy</th>
-      </tr></thead><tbody></tbody></table></div>
-    </div>
-    <p class="pg-key">Some examiners mark more strictly than others. Compare each examiner's averages with the whole grade's averages in the row above; if one examiner's students sit well above or below, compare notes on how errors are marked before setting benchmark cut points. Names typed in different ways are grouped together. Students differ from class to class, so a difference is a question to ask, not a conclusion.</p>
-  </div>
-
-  <button class="btn-ghost" id="pgBack">← Back to setup</button>
 </section>
 
 <!-- ============ CLASS DASHBOARD ============ -->
@@ -708,7 +529,7 @@ function show(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.r
 
 /* ============ SESSION NOTES (reading style / behavior tags) ============ */
 const TAGS = {
-  readingStyle: ["Fluent","Choppy","Hesitant","Slow","Skip & Guess","Strong reader","Reading from memory","Rushing through"],
+  readingStyle: ["Fluent","Choppy","Hesitant","Frequent self-corrections","Slow","Skip & Guess","Strong reader","Reading from memory","Rushing through"],
   behavior: ["On task","Distracted","Anxious","Rushing","Needed encouragement","Fidgety","Reluctant / avoidant","Overconfident","Frustrated","Engaged / cooperative"]
 };
 function renderTagRow(rowId, tags){
@@ -806,12 +627,21 @@ function recFromLive(){
   return { name:r.name, grade:g, window:r.window, date:r.timestamp, examiner:r.examiner, tally:r.tally||{}, parts,
            notes:{ rs:r.readingStyle||[], bh:r.behavior||[], txt:r.notes||"" }, live:true };
 }
-function recFromRow(r){
-  const g = r.grade, parts = [], m = r.missed || {};
-  if(r.cspm != null) parts.push({ code:"1", title:partTitle("1",g), measure:"CSPM", score:r.cspm, band:bandFor("cspm", r.cspm, g), acc:r.acc1, read:r.syllRead, errors:r.syllErrors, missed:m["1"]||[] });
-  if(r.wcpmA != null) parts.push({ code:"A", title:partTitle("A",g), measure:"WCPM", score:r.wcpmA, band:bandFor("wcpm", r.wcpmA, g), acc:r.accA, read:r.wordsA, errors:r.errA, missed:m["A"]||[] });
-  if(r.wcpmB != null) parts.push({ code:"B", title:partTitle("B",g), measure:"WCPM", score:r.wcpmB, band:bandFor("wcpm", r.wcpmB, g), acc:r.accB, read:r.wordsB, errors:r.errB, missed:m["B"]||[] });
-  return { name:r.name, grade:g, window:r.window, date:r.ts, examiner:r.examiner, tally:r.tally||{}, parts, notes:null, live:false };
+/* Rebuild the word-by-word items of one part from the compact record saved in the Sheet. */
+function itemsFromDetail(d){
+  if(!d || !d.t) return null;
+  const errs = new Set(d.e || []);
+  return d.t.map((t,i)=>({ g:i, text:t, skills:(d.s||[])[i] || "Gen", skill:String((d.s||[])[i] || "Gen").split("·")[0], err:errs.has(i), read:i<=d.l, checked:i<=d.f }));
+}
+function recFromRow(r, full){
+  const g = r.grade, parts = [], m = r.missed || {}, det = (full && full.detail) || {};
+  const add = (code, measure, score, kind, acc, read, errors) => parts.push({ code, title:partTitle(code,g), measure, score, band:bandFor(kind, score, g), acc, read, errors, missed:m[code]||[], items:itemsFromDetail(det[code]) });
+  if(r.cspm != null) add("1","CSPM", r.cspm, "cspm", r.acc1, r.syllRead, r.syllErrors);
+  if(r.wcpmA != null) add("A","WCPM", r.wcpmA, "wcpm", r.accA, r.wordsA, r.errA);
+  if(r.wcpmB != null) add("B","WCPM", r.wcpmB, "wcpm", r.accB, r.wordsB, r.errB);
+  const nt = full && full.notes;
+  return { name:r.name, grade:g, window:r.window, date:r.ts, examiner:r.examiner, tally:r.tally||{}, parts,
+           notes: nt ? { rs:nt.readingStyle||[], bh:nt.behavior||[], txt:nt.text||"" } : null, live:false };
 }
 function benchLine(code, g){
   if(!BENCH.enabled) return "";
@@ -876,13 +706,13 @@ function openRunRecord(html, returnTo, landscape){
 $("rrPrintBtn").addEventListener("click", ()=>window.print());
 $("rrBackBtn").addEventListener("click", ()=>show(rrReturnTo));
 $("rrFromResultsBtn").addEventListener("click", ()=>openRunRecord(runRecordHTML(recFromLive()), "scr-res", false));
-let dashCtx = null, srCurrent = null;
+let dashCtx = null, srCurrent = null, srFull = null;
 $("dashRunRecBtn").addEventListener("click", ()=>{
   if(!dashCtx) return;
   openRunRecord(classRecordHTML(dashCtx.rows, dashCtx.w, dashCtx.label), "scr-dash", true);
 });
 $("srBody").addEventListener("click", e=>{
-  if(e.target.closest("#srRunRec") && srCurrent) openRunRecord(runRecordHTML(recFromRow(srCurrent)), "scr-studentres", false);
+  if(e.target.closest("#srRunRec") && srCurrent) openRunRecord(runRecordHTML(recFromRow(srCurrent, srFull)), "scr-studentres", false);
 });
 
 /* ============ PRACTICE SHEET GENERATOR ============ */
@@ -900,15 +730,15 @@ function renderLegend(){
     `<span class="legchip"><span class="dot" style="background:var(--bkt-${b})"></span>${BUCKET_LABEL[b]}</span>`).join("") +
     `<div class="legnote">Word-list items with a dotted gold underline were read after the 60-second mark. They count toward skill errors and missed words, but not toward the speed score or the accuracy shown on the cards.</div>`;
 }
-function renderAnnoBlock(labelText, items, partKey){
+function renderAnnoBlock(labelText, items, partKey, readOnly){
   const html = items.map(it=>{
     const cls = ["aw"];
     if(it.err) cls.push("bkt-"+bucketOf(String(it.skill||"Gen").split("·")[0]));
     const chk = it.checked != null ? it.checked : it.read;
     if(!chk) cls.push("beyond");
     if(chk && !it.read) cls.push("after");
-    if(chk) cls.push("fixable");
-    return `<span class="${cls.join(" ")}" data-part="${partKey}" data-g="${it.g}">${it.text}</span>`;
+    if(chk && !readOnly) cls.push("fixable");
+    return `<span class="${cls.join(" ")}" data-part="${partKey}" data-g="${it.g}">${esc(it.text)}</span>`;
   }).join(" ");
   return `<div class="annoBlock"><div class="annoLabel">${labelText}</div><div class="annoPassage">${html}</div></div>`;
 }
@@ -1055,13 +885,27 @@ function makeProbe(prefix, container, onDone, whole){
   const svg = scr.querySelector(".ring"), prog = svg.querySelector(".prog"), txt = svg.querySelector("text");
   const CIRC = 2*Math.PI*27; prog.style.strokeDasharray = CIRC; prog.style.strokeDashoffset = 0;
   const btn = $(prefix+"btn"), msg = $(prefix+"msg"), next = $(prefix+"next");
-  /* secondary button: student cannot finish the page */
+  const bar = scr.querySelector(".timerbar");
+  /* extra buttons under the timer bar */
+  const mk = (id, label) => { const b = document.createElement("button"); b.id = prefix+id; b.className = "btn-ghost"; b.style.display = "none"; b.textContent = label; return b; };
   let cant = $(prefix+"cant");
-  if(!cant && whole){ cant = document.createElement("button"); cant.id = prefix+"cant"; cant.className = "btn-ghost"; cant.style.display = "none";
-    cant.textContent = "Student can't finish the page"; scr.querySelector(".timerbar").insertAdjacentElement("afterend", cant); }
-  let t0=null, timer=null, elapsed=60, phase="idle", minuteIdx=-1;
-  /* idle > running > picklast (mark where the student was at 60 sec) > continue (student finishes the page) > done */
+  if(!cant && whole){ cant = mk("cant", "Student can't finish the page"); bar.insertAdjacentElement("afterend", cant); }
+  const lastBtn = mk("lasterr", ""); bar.insertAdjacentElement("afterend", lastBtn);       /* mark the 60-second word as an error */
+  const repickBtn = mk("repick", "Change where the minute ended"); bar.insertAdjacentElement("afterend", repickBtn);
+  let t0=null, timer=null, elapsed=60, phase="idle", minuteIdx=-1, finalSaved=-1;
+  /* idle > running > picklast (mark where the student was at 60 sec) > continue (student finishes the page) > done.
+     In "done" every tap still corrects the page, "Change where the minute ended" re-opens the pick (repick). */
   const total = () => container.querySelectorAll("[data-g]").length;
+  function setPhase(p){ phase = p; if(typeof updateBackBtns === "function") updateBackBtns(); }
+  function syncLast(){
+    const lm = container.querySelector(".lastmark");
+    const show = lm && (phase==="continue" || phase==="done" || phase==="picklast2");
+    if(!show){ lastBtn.style.display = "none"; return; }
+    lastBtn.style.display = "";
+    lastBtn.textContent = lm.classList.contains("err")
+      ? "\u2713 The word at 60 seconds is marked as an error (tap to undo)"
+      : "Student misread the word at 60 seconds? Tap here to mark it as an error";
+  }
   function tick(){
     const el = (Date.now()-t0)/1000, left = Math.max(0, 60-el);
     txt.textContent = Math.ceil(left);
@@ -1071,21 +915,23 @@ function makeProbe(prefix, container, onDone, whole){
   }
   function stop(el){
     clearInterval(timer); elapsed = Math.min(60, el);
-    phase = "picklast";
+    setPhase("picklast");
     container.classList.add("pick-last");
-    msg.innerHTML = whole ? "<b style='color:var(--err)'>Time!</b> Tap the item the student was reading at 60 seconds. The student then keeps reading to the end of the page." : "<b style='color:var(--err)'>Time!</b> Now tap the LAST item the student read.";
+    msg.innerHTML = whole ? "<b style='color:var(--err)'>Time!</b> Tap the item the student was reading at 60 seconds. The student then keeps reading to the end of the page. (If that item was misread, you can mark it as an error right after.)" : "<b style='color:var(--err)'>Time!</b> Now tap the LAST item the student read. (If that word was misread, you can mark it as an error right after.)";
     btn.style.display = "none"; if(cant) cant.style.display = "none";
   }
   function complete(finalIdx){
-    phase="done"; container.classList.remove("pick-last");
+    setPhase("done"); container.classList.remove("pick-last");
+    finalSaved = finalIdx;
     btn.style.display = "none"; if(cant) cant.style.display = "none";
-    msg.textContent = "Done. Review taps if needed, then continue.";
-    next.style.display = "block";
+    msg.textContent = "Done. You can still tap any word to correct it. Then continue.";
+    next.style.display = "block"; repickBtn.style.display = "";
     onDone(minuteIdx, elapsed, finalIdx);
+    syncLast();
   }
   btn.addEventListener("click", ()=>{
     if(phase==="idle"){
-      phase="running"; t0=Date.now(); timer=setInterval(tick,200);
+      setPhase("running"); t0=Date.now(); timer=setInterval(tick,200);
       btn.textContent = whole ? "Student finished the whole page" : "Student finished page";
       msg.textContent = whole ? "Timer running. Tap errors as you hear them. The student must read the whole list, even after 60 seconds." : "Timer running. Tap errors as you hear them.";
     } else if(phase==="running"){
@@ -1099,22 +945,40 @@ function makeProbe(prefix, container, onDone, whole){
   });
   if(cant) cant.addEventListener("click", ()=>{
     if(phase!=="continue") return;
-    phase="picklast2"; container.classList.add("pick-last");
+    setPhase("picklast2"); container.classList.add("pick-last");
     btn.style.display = "none"; cant.style.display = "none";
     msg.innerHTML = "Tap the LAST item the student read.";
+  });
+  repickBtn.addEventListener("click", ()=>{
+    if(phase!=="done") return;
+    setPhase("repick"); container.classList.add("pick-last");
+    repickBtn.style.display = "none"; lastBtn.style.display = "none"; next.style.display = "none";
+    msg.innerHTML = "Tap the item the student was reading at 60 seconds.";
+  });
+  lastBtn.addEventListener("click", ()=>{
+    const lm = container.querySelector(".lastmark"); if(!lm) return;
+    lm.classList.toggle("err");
+    if(phase==="done") onDone(minuteIdx, elapsed, finalSaved);
+    syncLast();
   });
   return {
     getPhase:()=>phase,
     getElapsed:()=>t0 ? (Date.now()-t0)/1000 : 0,
+    /* called by the page after a tap toggled an error */
+    toggled(){ if(phase==="done") onDone(minuteIdx, elapsed, finalSaved); syncLast(); },
     finishPick(idx){
       if(phase==="picklast"){
         minuteIdx = idx; container.classList.remove("pick-last");
         if(!whole || idx >= total()-1){ complete(idx); return; }
-        phase="continue";
+        setPhase("continue");
         msg.innerHTML = "Student keeps reading to the end of the page. Tap errors as you hear them. Tap <b>Student finished the whole page</b> when done.";
         btn.style.display = ""; btn.textContent = "Student finished the whole page"; if(cant) cant.style.display = "";
+        syncLast();
       } else if(phase==="picklast2"){
         complete(Math.max(idx, minuteIdx));
+      } else if(phase==="repick"){
+        minuteIdx = idx; container.classList.remove("pick-last");
+        complete(whole ? Math.max(finalSaved, idx) : idx);
       }
     }
   };
@@ -1143,15 +1007,26 @@ function buildP1(){
   }, true);
   grid.addEventListener("click", e=>{
     const sp = e.target.closest(".seg"); if(!sp) return;
-    if(p1.getPhase()==="picklast"){ grid.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); p1.finishPick(+sp.dataset.g); }
-    else if(p1.getPhase()==="picklast2"){ p1.finishPick(+sp.dataset.g); }
-    else if(p1.getPhase()==="running" || p1.getPhase()==="continue"){
-      sp.classList.toggle("err");
-    }
+    const ph = p1.getPhase();
+    if(ph==="picklast" || ph==="repick"){ grid.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); p1.finishPick(+sp.dataset.g); }
+    else if(ph==="picklast2"){ p1.finishPick(+sp.dataset.g); }
+    else if(ph==="running" || ph==="continue"){ sp.classList.toggle("err"); p1.toggled(); }
+    else if(ph==="done" && !sp.classList.contains("beyond")){ sp.classList.toggle("err"); p1.toggled(); }
   });
 }
-$("p1next").addEventListener("click", ()=>{ buildPassage("pasA", BANK.pasA, "p2", "pA"); show("scr-p2"); });
-$("p1skip").addEventListener("click", ()=>{ S.parts.p1 = null; buildPassage("pasA", BANK.pasA, "p2", "pA"); show("scr-p2"); });
+/* Going forward never rebuilds a page the teacher already started, so "Back" keeps everything that was tapped. */
+function updateBackBtns(){
+  const done = pr => !!pr && pr.getPhase()==="done";
+  const idleOrDone = pr => !!pr && (pr.getPhase()==="idle" || pr.getPhase()==="done");
+  if($("p2back")) $("p2back").style.display = (done(p1) && idleOrDone(probes.pA)) ? "" : "none";
+  if($("p3back")) $("p3back").style.display = (done(probes.pA) && idleOrDone(probes.pB)) ? "" : "none";
+  /* a finished page cannot be skipped by accident */
+  [["p1skip",p1],["p2skip",probes.pA],["p3skip",probes.pB]].forEach(([id,pr])=>{ $(id).style.display = done(pr) ? "none" : ""; });
+}
+$("p2back").addEventListener("click", ()=>show("scr-p1"));
+$("p3back").addEventListener("click", ()=>show("scr-p2"));
+$("p1next").addEventListener("click", ()=>{ if(!probes.pA) buildPassage("pasA", BANK.pasA, "p2", "pA"); show("scr-p2"); updateBackBtns(); });
+$("p1skip").addEventListener("click", ()=>{ S.parts.p1 = null; if(!probes.pA) buildPassage("pasA", BANK.pasA, "p2", "pA"); show("scr-p2"); updateBackBtns(); });
 
 /* ============ PASSAGES ============ */
 const probes = {};
@@ -1176,15 +1051,15 @@ function buildPassage(elId, lines, prefix, key){
   box.addEventListener("click", e=>{
     const sp = e.target.closest(".pw"); if(!sp) return;
     const pr = probes[key];
-    if(pr.getPhase()==="picklast"){ box.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); pr.finishPick(+sp.dataset.g); }
-    else if(pr.getPhase()==="picklast2"){ pr.finishPick(+sp.dataset.g); }
-    else if(pr.getPhase()==="running" || pr.getPhase()==="continue"){
-      sp.classList.toggle("err");
-    }
+    const ph = pr.getPhase();
+    if(ph==="picklast" || ph==="repick"){ box.querySelectorAll(".lastmark").forEach(x=>x.classList.remove("lastmark")); sp.classList.add("lastmark"); pr.finishPick(+sp.dataset.g); }
+    else if(ph==="picklast2"){ pr.finishPick(+sp.dataset.g); }
+    else if(ph==="running" || ph==="continue"){ sp.classList.toggle("err"); pr.toggled(); }
+    else if(ph==="done" && !sp.classList.contains("beyond")){ sp.classList.toggle("err"); pr.toggled(); }
   });
 }
-$("p2next").addEventListener("click", ()=>{ buildPassage("pasB", BANK.pasB, "p3", "pB"); show("scr-p3"); });
-$("p2skip").addEventListener("click", ()=>{ S.parts.pA = null; buildPassage("pasB", BANK.pasB, "p3", "pB"); show("scr-p3"); });
+$("p2next").addEventListener("click", ()=>{ if(!probes.pB) buildPassage("pasB", BANK.pasB, "p3", "pB"); show("scr-p3"); updateBackBtns(); });
+$("p2skip").addEventListener("click", ()=>{ S.parts.pA = null; if(!probes.pB) buildPassage("pasB", BANK.pasB, "p3", "pB"); show("scr-p3"); updateBackBtns(); });
 $("p3next").addEventListener("click", showResults);
 $("p3skip").addEventListener("click", ()=>{ S.parts.pB = null; showResults(); });
 
@@ -1206,6 +1081,14 @@ function recomputePart(key){
   P.tally = tally;
   P.missedWords = [...new Set(cerrs.map(i=>i.text))];
   P.missedAfter = [...new Set(cerrs.filter(i=>!i.read).map(i=>i.text))];
+}
+/* Word-by-word record of a part, small enough to store, so the full annotated page can be rebuilt later from the Sheet. */
+function compactPart(P){
+  const it = P.allItems || [];
+  const read = it.filter(i=>i.read).map(i=>i.g), chk = it.filter(i=>i.checked != null ? i.checked : i.read).map(i=>i.g);
+  return { t: it.map(i=>i.text), s: it.map(i=>String(i.skills || i.skill || "Gen")),
+           e: it.filter(i=>i.err).map(i=>i.g), l: read.length ? Math.max(...read) : -1, f: chk.length ? Math.max(...chk) : -1,
+           el: Math.round((P.elapsed || 60) * 10) / 10 };
 }
 let saveTimer = null;
 function scheduleSave(){
@@ -1243,9 +1126,9 @@ async function showResults(recalc){
     wcpmB:B?B.wcpm:"", wordsB:B?B.read:"", errB:B?B.errors:"", accB:B?B.acc:"", bandB:"",
     gap, gapFlag:"", tally, missedWords,
     partDetail: {
-      ...(p1r ? {"1":{tally:p1r.tally, missed:p1r.missedWords, missedAfter:p1r.missedAfter||[], checked:p1r.checked, total:p1r.total, errorsAll:p1r.checkedErrors}} : {}),
-      ...(A ? {"A":{tally:A.tally, missed:A.missedWords, missedAfter:A.missedAfter||[], checked:A.checked, total:A.total, errorsAll:A.checkedErrors}} : {}),
-      ...(B ? {"B":{tally:B.tally, missed:B.missedWords, missedAfter:B.missedAfter||[], checked:B.checked, total:B.total, errorsAll:B.checkedErrors}} : {})
+      ...(p1r ? {"1":{tally:p1r.tally, missed:p1r.missedWords, missedAfter:p1r.missedAfter||[], checked:p1r.checked, total:p1r.total, errorsAll:p1r.checkedErrors, ...compactPart(p1r)}} : {}),
+      ...(A ? {"A":{tally:A.tally, missed:A.missedWords, missedAfter:A.missedAfter||[], checked:A.checked, total:A.total, errorsAll:A.checkedErrors, ...compactPart(A)}} : {}),
+      ...(B ? {"B":{tally:B.tally, missed:B.missedWords, missedAfter:B.missedAfter||[], checked:B.checked, total:B.total, errorsAll:B.checkedErrors, ...compactPart(B)}} : {})
     }
   };
   if(prevNotes){ S.result.readingStyle = prevNotes.readingStyle; S.result.behavior = prevNotes.behavior; S.result.notes = prevNotes.notes; }
@@ -1289,7 +1172,7 @@ $("wsFromResultsBtn").addEventListener("click", ()=>{
 });
 
 /* ============ DECODING DIAGNOSTIC (A–L) ============ */
-const LEVELS = [{"id":"A","desc":"Letter / Sound + Vowel Recognition","items":["ל","ז","תּ","ר","ם","ב","צ","מ","שׁ","ך","פּ","ו","ק","ף","ג","כ","ט","א","נ","ת","ץ","בּ","י","ה","ן","כּ","שׂ","פ","ס","ד","ח","ע","ָ","ַ","ֵ","ֶ","ִ","ֻ","ְ","וּ","וֹ"],"labels":["Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel"]},{"id":"B","desc":"C+V blend / C+V+C blend","items":["פֶּ","טֹ","בֻ","קֵ","חִ","שֻׁב","גָד","רֵק","דֻר","מָן"],"labels":["CV blend","CV blend","CV blend","CV blend","CV blend","CVC blend","CVC blend","CVC blend","CVC blend","CVC blend"]},{"id":"C","desc":"CVCV / CVCVCV blend","items":["פֶּלֶ","עַמִ","יָבֹ","צֻרֵ","בִּקֵעַ","זַמֵרֻ","כֹּתָבֵ","טַפֵּנֻ"],"labels":["CVCV","CVCV","CVCV","CVCV","CVCVCV","CVCVCV","CVCVCV","CVCVCV"]},{"id":"D","desc":"Cholom Vav (Maleh) / Shoorook","items":["בּוֹקֶר","יַכּוּ","חוֹלֵק","וֶעֶזוּז","יוֹצֵא","וּמָלֵא","שׁוֹפָר","לוּלָב"],"labels":["Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook"]},{"id":"E","desc":"Similar looking letters","items":["כָּזֶה","בֶּצַע","הִנוֹ","חָלָב","וֶרֶד","זֶבֶד","טַלִית","מֶלַח","כֻּלָם","כַּנֵס","אוֹצָרוֹ","עָנָוִים","הַשְׂכֵּל","הַשֵׂמוֹת"],"labels":["Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters"]},{"id":"F","desc":"Similar looking Sofiot","items":["מְצַוֶךָּ","כָּמוֹךָ","דֶרֶךְ","רָצוּף","קִבּוּץ","חַלּוֹן","קִבֵּץ","אַף"],"labels":["Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit"]},{"id":"G","desc":"Patach Ganuva (Ach vs Cha)","items":["נִתּוּחַ","פָּתַח","יָרֵחַ","שׁוֹלֵחַ","טָבוּחַ","פּוֹתֵחַ","יִפָּתֵחַ","שָׁלַח"],"labels":["Ganuva (ach)","Normal order","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Normal order"]},{"id":"H","desc":"Silent Hei","items":["הֻכָּה","אֶמוּנָה","תּוֹרָה","בְּרָכָה","לַיְלָה","מִשְׁפָּחָה","קוֹמָה","שָׂדֶה"],"labels":["Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei"]},{"id":"I","desc":"Sounded & Silent Yud","items":["אַבוֹתַי","גוֹיֶךָ","אַבוֹתָיו","גָלוּי","עָלָיו","בָּנָיו","דְּבָרָיו","עָלַי"],"labels":["Sounded","Sounded","Silent","Sounded","Silent","Silent","Silent","Sounded"]},{"id":"J","desc":"Double duty Cholom","items":["מֹשֵׁל","תִּגשֹׁ","לָשׂבַע","נְפָשֹׁת","יִטשׁ","עֹשֶׂה","שֹׁמֵעַ","חַשׂךְ"],"labels":["Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom"]},{"id":"K","desc":"Articulated Vav","items":["עָוֹן","עַוֹנֵי","מִצְוֹת","עֲוֹנוֹת","מִצְוֹתֵיכֶם","עֲוֹנוֹתֵינוּ","תִּקְוָה","מִקְוֶה"],"labels":["Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav"]},{"id":"L","desc":"Shva Nah / Shva Nach","items":["מְאֹד","זִמְּרָה","הַלְלוּ","תִּשְׁמְרוּ","בָּךְ","וַיַשְׁקְ","חֶבְלֵי","יִצְרֵי"],"labels":["Shva Nah","Shva Nah","Shva Nach","Shva Nach","Shva Nach","Shva Nah","Shva Nach","Shva Nah"]}];
+const LEVELS = [{"id":"A","desc":"Letter / Sound + Vowel Recognition","items":["ל","ז","תּ","ר","ם","ב","צ","מ","שׁ","ך","פּ","ו","ק","ף","ג","כ","ט","א","נ","ת","ץ","בּ","י","ה","ן","כּ","שׂ","פ","ס","ד","ח","ע","ָ","ַ","ֵ","ֶ","ִ","ֻ","ְ","וּ","וֹ"],"labels":["Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel"]},{"id":"B","desc":"C+V blend / C+V+C blend","items":["פֶּ","טֹ","בֻ","קֵ","חִ","שֻׁב","גָד","רֵק","דֻר","מָן"],"labels":["CV blend","CV blend","CV blend","CV blend","CV blend","CVC blend","CVC blend","CVC blend","CVC blend","CVC blend"]},{"id":"C","desc":"CVCV / CVCVCV blend","items":["פֶּלֶ","עַמִ","יָבֹ","צֻרֵ","בִּקֵעַ","זַמֵרֻ","כֹּתָבֵ","טַפֵּנֻ"],"labels":["CVCV","CVCV","CVCV","CVCV","CVCVCV","CVCVCV","CVCVCV","CVCVCV"]},{"id":"D","desc":"Cholom Vav (Maleh) / Shoorook","items":["בּוֹקֶר","יַכּוּ","חוֹלֵק","וֶעֶזוּז","יוֹצֵא","וּמָלֵא","שׁוֹפָר","לוּלָב"],"labels":["Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook"]},{"id":"E","desc":"Similar looking letters","items":["כָּזֶה","בֶּצַע","הִנוֹ","חָלָב","וֶרֶד","זֶבֶד","טַלִית","מֶלַח","כֻּלָם","כַּנֵס","אוֹצָרוֹ","עָנָוִים","הַשְׂכֵּל","הַשֵׂמוֹת"],"labels":["Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters"]},{"id":"F","desc":"Similar looking Sofiot","items":["מְצַוֶךָּ","כָּמוֹךָ","דֶרֶךְ","רָצוּף","קִבּוּץ","חַלּוֹן","קִבֵּץ","אַף"],"labels":["Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit"]},{"id":"G","desc":"Patach Ganuva (Ach vs Cha)","items":["נִתּוּחַ","פָּתַח","יָרֵחַ","שׁוֹלֵחַ","טָבוּחַ","פּוֹתֵחַ","יִפָּתֵחַ","שָׁלַח"],"labels":["Ganuva (ach)","Normal order","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Normal order"]},{"id":"H","desc":"Silent Hei","items":["הֻכָּה","אֶמוּנָה","תּוֹרָה","בְּרָכָה","לַיְלָה","מִשְׁפָּחָה","קוֹמָה","שָׂדֶה"],"labels":["Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei"]},{"id":"I","desc":"Sounded & Silent Yud","items":["אַבוֹתַי","גוֹיֶךָ","אַבוֹתָיו","גָלוּי","עָלָיו","בָּנָיו","דְּבָרָיו","עָלַי"],"labels":["Sounded","Sounded","Silent","Sounded","Silent","Silent","Silent","Sounded"]},{"id":"J","desc":"Double duty Cholom","items":["מֹשֵׁל","תִּגשֹׁ","לָשׂבַע","נְפָשֹׁת","יִטשׁ","עֹשֶׂה","שֹׁמֵעַ","חַשׂךְ"],"labels":["Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom"]},{"id":"K","desc":"Articulated Vav","items":["עָוֹן","עַוֹנֵי","מִצְוֹת","עֲוֹנוֹת","מִצְוֹתֵיכֶם","עֲוֹנוֹתֵינוּ","תִּקְוָה","מִקְוֶה"],"labels":["Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav"]},{"id":"L","desc":"Shva Nah / Shva Nach","items":["מְאֹד","זִמְּרָה","הַלְלוּ","תִּשְׁמְרוּ","בָּךְ","וַיַשְׁקְ","חֶבְלֵי","יִצְרֵי"],"labels":["Shva Nah","Shva Nah","Shva Nach","Shva Nach","Shva Nach","Shva Nah","Shva Nach","Shva Nah"]}];
 
 const DG = { done:{}, cur:null, idx:0, answers:[] };
 
@@ -1349,77 +1232,8 @@ $("lvlGrid").addEventListener("click", e=>{
   $("diagLvlTitle").textContent = "Level " + DG.cur.id + " · " + DG.cur.desc;
   renderDiagItem(); show("scr-diag");
 });
-/* Kof sofit: in every font the kamatz sits right under the top bar, leaving no room for the dagesh.
-   We measure the letter as this device draws it, redraw the kamatz a little lower inside the letter,
-   and put a clear dagesh in the middle of the space above it. If anything fails, the normal text stays. */
-function placeKofDot(kof){
-  try{
-    const dot = kof.querySelector(".kdot"), probe = kof.querySelector(".kbase");
-    const txt = kof.firstChild; if(!txt || txt.nodeType !== 3) return;
-    const marks = kof.dataset.marks || txt.nodeValue.slice(1); kof.dataset.marks = marks;
-    const cs = getComputedStyle(kof), fs = parseFloat(cs.fontSize), r = Math.max(1, window.devicePixelRatio || 1);
-    const W = Math.ceil(fs * 2), H = Math.ceil(fs * 2.4), ox = Math.round(fs * 0.5), oy = Math.round(fs * 1.6);
-    const draw = (t) => {
-      const c = document.createElement("canvas"); c.width = W * r; c.height = H * r;
-      const x = c.getContext("2d", {willReadFrequently:true}); x.scale(r, r);
-      x.font = cs.fontStyle + " " + cs.fontWeight + " " + fs + "px " + cs.fontFamily;
-      x.fillStyle = cs.color; x.textBaseline = "alphabetic"; x.fillText(t, ox, oy);
-      return {c, d: x.getImageData(0, 0, W * r, H * r).data};
-    };
-    const A = draw("ך"), B = draw("ך" + marks), WW = W * r, HH = H * r;
-    const on = (d, px, py) => d[(py * WW + px) * 4 + 3] > 100;
-    // vowel pixels = drawn with the vowel but not without it
-    const M = document.createElement("canvas"); M.width = WW; M.height = HH;
-    const mx = M.getContext("2d"), mimg = mx.createImageData(WW, HH);
-    let kTop = HH, kBot = -1;
-    for(let py = 0; py < HH; py++) for(let px = 0; px < WW; px++){
-      const i = (py * WW + px) * 4;
-      if(B.d[i+3] > 30 && A.d[i+3] < 30){ mimg.data[i] = B.d[i]; mimg.data[i+1] = B.d[i+1]; mimg.data[i+2] = B.d[i+2]; mimg.data[i+3] = B.d[i+3];
-        if(B.d[i+3] > 100){ if(py < kTop) kTop = py; if(py > kBot) kBot = py; } }
-    }
-    mx.putImageData(mimg, 0, 0);
-    // the letter: bottom of its top bar, and bottom of its stem
-    let top = -1, bottom = -1, maxRow = 0; const rowW = [];
-    for(let py = 0; py < HH; py++){ let n = 0; for(let px = 0; px < WW; px++) if(on(A.d, px, py)) n++; rowW.push(n); if(n){ if(top < 0) top = py; bottom = py; } if(n > maxRow) maxRow = n; }
-    let barBot = top; while(barBot < HH && rowW[barBot] < maxRow * 0.6) barBot++;   // skip the bar's slanted tip
-    while(barBot < HH && rowW[barBot] > maxRow * 0.45) barBot++;                     // then to the bar's bottom edge
-    if(top < 0 || kBot < 0 || barBot >= kTop) throw new Error("measure");
-    // move the kamatz down to the lower end of the letter, so there is a clear space above it
-    const shift = Math.max(0, bottom - kBot - Math.round(fs * 0.03 * r));
-    const nkTop = kTop + shift, gap = nkTop - barBot;
-    const d = Math.max(fs * 0.085, Math.min(fs * 0.13, gap / r * 0.45));
-    // horizontal centre of the kamatz
-    let kL = WW, kR = -1;
-    for(let py = kTop; py <= kBot; py++) for(let px = 0; px < WW; px++) if(mimg.data[(py * WW + px) * 4 + 3] > 100){ if(px < kL) kL = px; if(px > kR) kR = px; }
-    const cx = (kL + kR) / 2 / r, cy = (barBot + gap / 2) / r;
-    const baseY = probe.offsetTop;
-    let img = kof.querySelector(".kvow");
-    if(!img){ img = document.createElement("img"); img.className = "kvow"; img.alt = ""; kof.append(img); }
-    img.src = M.toDataURL();
-    img.style.width = W + "px"; img.style.height = H + "px";
-    img.style.left = (-ox) + "px"; img.style.top = (baseY - oy + shift / r) + "px";
-    txt.nodeValue = "ך";
-    dot.style.width = dot.style.height = d + "px";
-    dot.style.left = (cx - ox - d / 2) + "px";
-    dot.style.top = (baseY + (cy - oy) - d / 2) + "px";
-  }catch(e){ /* keep the plain text with its own marks */ }
-}
 function renderDiagItem(){
-  const item = DG.cur.items[DG.idx], el = $("diagItem");
-  const k = item.indexOf("\uFB3A");
-  if(k === -1){ el.textContent = item; }
-  else {
-    // draw kof sofit with a clearly visible dagesh (see .kof in the styles)
-    let end = k + 1; while(end < item.length && /[\u0591-\u05C7]/.test(item[end])) end++;
-    const wrap = document.createElement("span"), kof = document.createElement("span"), dot = document.createElement("i");
-    kof.className = "kof"; dot.className = "kdot";
-    const probe = document.createElement("i"); probe.className = "kbase";
-    kof.append("\u05DA" + item.slice(k + 1, end), dot, probe);
-    wrap.append(item.slice(0, k), kof, item.slice(end));
-    el.replaceChildren(wrap);
-    placeKofDot(kof);
-    if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if(kof.isConnected) placeKofDot(kof); });
-  }
+  $("diagItem").textContent = DG.cur.items[DG.idx];
   $("diagLabel").textContent = DG.cur.labels ? DG.cur.labels[DG.idx] : "";
   $("diagProg").textContent = (DG.idx+1) + " / " + DG.cur.items.length;
 }
@@ -1503,11 +1317,9 @@ function renderDashboard(rows, w, whoLabel){
       : flu;
     const fluCell = `<td>${fluInner}</td>`;
     const lv = diagMap[s.name + "|" + w];
-    const sugg = (!isG2 && row) ? pgSuggestLv(row.tally, lv).filter(x => !x.done).map(x => x.L) : [];
-    const suggHTML = sugg.length ? `<div style='color:#8a6d00; font-weight:700; margin-top:2px'>Give levels: ${sugg.join(", ")}</div>` : "";
-    const dgInner = (lv && lv.length
+    const dgInner = lv && lv.length
       ? `<span style='color:var(--navy); font-weight:600'>${lv.join(" · ")}</span>`
-      : "<span style='color:var(--grey)'>—</span>") + suggHTML;
+      : "<span style='color:var(--grey)'>—</span>";
     const dg = lv && lv.length
       ? `<button class="btn-ghost" style="padding:2px; font-size:inherit; text-align:left" data-srname="${s.name}" data-srwin="${w}" data-srtype="diag">${dgInner}</button>`
       : dgInner;
@@ -1598,7 +1410,6 @@ function enterAsTeacher(){
   $("signedInAs").textContent = "Signed in: " + teacherName + " · " + teacherSections.join(", ");
   $("dashBtn").style.display = "none";
   $("anlBtn").style.display = "none";
-  $("progBtn").style.display = "none";
   $("myClassBtn").style.display = "block";
   $("myClassBtn").textContent = "My Class Dashboard →";
   $("examiner").value = ""; $("examinerBox").style.display = "none"; $("examinerToggle").style.display = "block";
@@ -1613,7 +1424,6 @@ function enterAsAdmin(){
   $("signedInAs").textContent = "Signed in: Admin / Proctor (full school access)";
   $("dashBtn").style.display = "block";
   $("anlBtn").style.display = "block";
-  $("progBtn").style.display = "block";
   $("myClassBtn").style.display = "none";
   applyWindows(null);
   fillClasses();
@@ -1703,12 +1513,7 @@ function openStudentResult(name, w, type){
     if(r.wcpmB != null && r.wcpmB !== "") cards += dcard(r.wcpmB, "WCPM · unfamiliar", r.accB, r.wordsB, r.errB, "wcpm");
     html += `<h2 class="step">Fluency Exam <span class="hint">Parts: ${r.parts||"—"}</span></h2>`;
     html += cards ? `<div class="scorecards">${cards}</div>` : "<div class='notice'>No fluency parts saved for this window.</div>";
-    const missedAll = [...new Set(Object.values(r.missed||{}).flat())];
-    if(missedAll.length) html += `<h2 class="step">Missed words / syllables</h2><div class="rr-missed" style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px">${missedAll.map(esc).join(" &nbsp; ")}</div>`;
-    const errEntries = SKILLS.filter(k => (r.tally||{})[k]);
-    if(errEntries.length){
-      html += `<h2 class="step">Errors by skill level</h2><table class="skills"><thead><tr>${errEntries.map(k=>`<th>${k}</th>`).join("")}</tr></thead><tbody><tr>${errEntries.map(k=>`<td class="${r.tally[k]>=2?'hot':''}">${r.tally[k]}</td>`).join("")}</tr></tbody></table>`;
-    }
+    html += `<div id="srFull"><div class="notice">Loading the full page and notes…</div></div>`;
   } else {
     html += "<div class='notice'>No fluency result found for this student and window.</div>";
   }
@@ -1719,14 +1524,64 @@ function openStudentResult(name, w, type){
     ? `<div class="notice" style="border-left-color:var(--gold)">${lv.join(" &middot; ")}</div>`
     : "<div class='notice'>No diagnostic levels recorded for this window.</div>";
 
+  if(!r) html += `<div id="srFull"></div>`;
   if(r) html += `<button class="btn-primary" id="srRunRec" style="margin-top:16px">Print Running Record</button>`;
   $("srBody").innerHTML = html;
   show("scr-studentres");
+  srFull = null;
+  loadFullPage(name, w, r);
+}
+/* Word-by-word pages and session notes live in the Sheet; fetch them for the student being viewed. */
+async function loadFullPage(name, w, r){
+  const box = $("srFull"); if(!box) return;
+  let full = null;
+  try{
+    if(!SCRIPT_URL.startsWith("PASTE")){
+      const who = currentRole === "admin" ? "&key=" + encodeURIComponent(adminKey || "") : "&teacher=" + encodeURIComponent(teacherName || "");
+      const res = await fetch(SCRIPT_URL + "?action=detail&name=" + encodeURIComponent(name) + "&window=" + encodeURIComponent(w) + who);
+      const j = await res.json();
+      if(!j.error) full = j;
+    }
+  }catch(e){}
+  if($("srFull") !== box) return;                      /* the teacher moved on to another student */
+  srFull = full;
+  const det = (full && full.detail) || {};
+  let h = "";
+  if(r){
+    const tally = r.tally || {};
+    const missedAll = [...new Set(Object.values(r.missed||{}).flat())];
+    const blocks = [["1", partTitle("1", r.grade)], ["A","Passage A (familiar)"], ["B","Passage B (unfamiliar)"]]
+      .map(([k,label]) => { const it = itemsFromDetail(det[k]); return it ? renderAnnoBlock(label, it, k, true) : ""; }).join("");
+    if(blocks){
+      h += `<h2 class="step">Reading pages, annotated</h2><div class="wsLegend">${renderLegend()}</div><div class="notice" style="margin-top:6px">Colored words were read incorrectly.</div><div>${blocks}</div>`;
+    } else if(missedAll.length){
+      h += `<h2 class="step">Missed words / syllables</h2><div class="rr-missed" style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px">${missedAll.map(esc).join(" &nbsp; ")}</div><div class="notice" style="margin-top:6px">The full word-by-word page was not saved for this older result, so only the missed words can be shown.</div>`;
+    }
+    h += `<h2 class="step">Attention areas</h2><div class="attnGrid">${renderAttentionAreas(tally, missedAll)}</div>`;
+  }
+  const nt = full && full.notes;
+  h += `<h2 class="step">Session notes</h2>`;
+  if(nt && ((nt.readingStyle||[]).length || (nt.behavior||[]).length || nt.text)){
+    const chips = a => a.map(t=>`<span class="tagChip on" style="cursor:default">${esc(t)}</span>`).join("");
+    h += ((nt.readingStyle||[]).length ? `<div class="tagGroupLabel">Reading style</div><div class="tagRow">${chips(nt.readingStyle)}</div>` : "") +
+         ((nt.behavior||[]).length ? `<div class="tagGroupLabel">Behavior during the assessment</div><div class="tagRow">${chips(nt.behavior)}</div>` : "") +
+         (nt.text ? `<div class="tagGroupLabel">Additional notes</div><div style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14.5px;line-height:1.55;white-space:pre-wrap">${esc(nt.text)}</div>` : "");
+  } else {
+    h += `<div class="notice">${full ? "No session notes were saved for this student and window." : "Could not load the notes right now. Check your connection and reopen this student."}</div>`;
+  }
+  if(r){
+    const tally = r.tally || {};
+    const hot = SKILLS.filter(k => tally[k]);
+    h += `<h2 class="step">Error analysis by skill level</h2>` + (hot.length
+      ? `<table class="skills"><thead><tr>${hot.map(k=>`<th>${k}</th>`).join("")}</tr></thead><tbody><tr>${hot.map(k=>`<td class="${tally[k]>=2?'hot':''}">${tally[k]}</td>`).join("")}</tr></tbody></table>`
+      : `<div class="notice">No errors recorded.</div>`);
+  }
+  box.innerHTML = h;
 }
 $("srBack").addEventListener("click", ()=>show("scr-dash"));
 
 /* ============ ADMIN GATE ============ */
-let adminKey = null, adminLoaded = false, pgExtrasChecked = false;
+let adminKey = null, adminLoaded = false;
 let adminErr = "";
 async function loadAdmin(keyArg, silent){
   adminErr = "";
@@ -1735,10 +1590,7 @@ async function loadAdmin(keyArg, silent){
   const key = keyArg || adminKey || window.prompt("Enter the admin passcode:");
   if(!key) return false;
   try{
-    if(!pgExtrasChecked){ pgExtrasChecked = true; await pgCheckExtras(); }
-    const r = pgExtras
-      ? await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain"}, body:JSON.stringify({action:"adminPost", key})})
-      : await fetch(SCRIPT_URL + "?action=admin&key=" + encodeURIComponent(key));
+    const r = await fetch(SCRIPT_URL + "?action=admin&key=" + encodeURIComponent(key));
     const j = await r.json();
     if(j.error){ adminErr = "That admin passcode is not correct."; if(!silent) window.alert(adminErr); adminKey = null; return false; }
     adminKey = key; adminLoaded = true;
@@ -1842,513 +1694,6 @@ $("anlBtn").addEventListener("click", async ()=>{
   if(SCRIPT_URL.startsWith("PASTE")){ $("anlNote").style.display="block"; $("anlNote").textContent="Not connected to a Sheet, so there is no data to analyze yet."; }
   renderAnl();
 });
-
-/* ============ SCHOOL PROGRESS (admin, refreshes every minute) ============ */
-let pgTimer = null, pgMode = "median", pgStamp = null;
-const PG_MIN = 5;
-const PG_LV = "ABCDEFGHIJKL".split("");
-const PG_NOTES = {
-  median: "Median: the middle student's score. Not pulled up or down by one very fast or very slow reader.",
-  mean: "Mean: all scores added up and divided by the number of students. One very fast or very slow reader can move it a lot."
-};
-const pgNum = v => (v === "" || v == null || isNaN(+v)) ? null : +v;
-const pgMean = a => { const v = a.filter(x=>x!=null); return v.length ? v.reduce((x,y)=>x+y,0)/v.length : null; };
-const pgMed = a => { const v = a.filter(x=>x!=null).sort((x,y)=>x-y); if(!v.length) return null; const m = Math.floor(v.length/2); return v.length%2 ? v[m] : (v[m-1]+v[m])/2; };
-const pgStat = a => pgMode === "median" ? pgMed(a) : pgMean(a);
-const pgF0 = x => x==null ? "—" : String(Math.round(x));
-const pgFp = x => x==null ? "—" : Math.round(x) + "%";
-const PG_FIELDS = [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]];
-function pgEl(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
-
-function pgModel(w){
-  const rows = (roster||[]).filter(s => s.section && s.active !== false && String(s.active).toUpperCase() !== "FALSE");
-  const last = {}; (anlCache||[]).forEach(r => { if(r.window === w) last[r.name] = r; });
-  const classes = new Map(), gradeTotals = new Map();
-  rows.forEach(s => {
-    const g = String(s.grade);
-    gradeTotals.set(g, (gradeTotals.get(g)||0) + 1);
-    if(!classes.has(s.section)) classes.set(s.section, {name:s.section, grades:new Set(), total:0, done:0, byGrade:new Map(), studs:[]});
-    const c = classes.get(s.section); c.total++; c.grades.add(+g); c.byGrade.set(g, (c.byGrade.get(g)||0) + 1);
-    if(g === "2"){
-      const lv = diagMap[s.name + "|" + w];
-      if(lv && lv.length){ c.done++; c.studs.push({name:s.name, grade:g, kind:"dg", levels:lv}); }
-    } else {
-      const r = last[s.name];
-      if(r){ c.done++; c.studs.push({name:s.name, grade:g, kind:"flu", r}); }
-    }
-  });
-  classes.forEach(c => { c.low = Math.min(...c.grades); c.studs.sort((a,b)=>a.name.localeCompare(b.name)); });
-  return {classes, gradeTotals};
-}
-
-function pgRenderProgress(M){
-  const root = $("pgProgress"); root.replaceChildren();
-  const pace = pgPace($("pgWin").value);
-  const byG = new Map();
-  M.classes.forEach(c => { if(!byG.has(c.low)) byG.set(c.low, []); byG.get(c.low).push(c); });
-  let students = 0, done = 0, started = 0;
-  [...byG.keys()].sort((a,b)=>a-b).forEach(g => {
-    const list = byG.get(g).sort((a,b)=>a.name.localeCompare(b.name));
-    const box = pgEl("div","pg-box");
-    const h = pgEl("h3", null, "Grade " + g); h.append(pgEl("span", null, list.filter(c=>c.done).length + " of " + list.length + " classes started"));
-    box.append(h);
-    list.forEach(c => {
-      students += c.total; done += c.done; if(c.done) started++;
-      const row = pgEl("div","pg-row"); row.append(pgEl("div", null, c.name));
-      const pct = c.total ? c.done / c.total : 0, exp = pace ? pace.expected : 0;
-      const wrapP = pgEl("div","pg-pace");
-      wrapP.append(pgEl("span","pct", c.done + " of " + c.total + " · " + Math.round(pct*100) + "%"));
-      const bar = pgEl("div","pg-pbar"); const fl = pgEl("div","fill"); fl.style.width = Math.min(100, pct*100) + "%"; bar.append(fl);
-      if(pace && exp > 0){ const ex = pgEl("div","exp"); ex.style.left = Math.min(100, exp*100) + "%"; ex.title = "Expected by today: " + Math.round(exp*100) + "%"; bar.append(ex); }
-      wrapP.append(bar);
-      let pill;
-      if(!c.done) pill = pgEl("span", "pg-pill " + (exp >= 0.2 ? "late" : "no"), "Not started");
-      else if(pct >= 1) pill = pgEl("span","pg-pill go","Complete");
-      else if(pace && pct < exp - 0.1) pill = pgEl("span","pg-pill behind","Behind pace");
-      else pill = pgEl("span","pg-pill go","On pace");
-      wrapP.append(pill); row.append(wrapP);
-      box.append(row);
-    });
-    root.append(box);
-  });
-  const s = $("pgSum"); s.replaceChildren();
-  s.append("So far ", pgEl("b", null, done + " of " + students + " (" + Math.round(students ? done/students*100 : 0) + "%)"), " students are done, and ", pgEl("b", null, started + " of " + M.classes.size), " classes have started.");
-  if(pace){
-    const ex = Math.round(pace.expected*100);
-    s.append(" " + $("pgWin").value + " runs " + pgFmtDay(pace.start) + " to " + pgFmtDay(pace.end) + ": ", pgEl("b", null, pace.gone + " of " + pace.total + " school days"), " gone, so about ", pgEl("b", null, ex + "%"), " should be done by today. The navy mark on each bar shows that point.");
-  }
-}
-
-function pgGender(sec){ const m = String(sec).match(/^\d(?:\/\d)?([BG])/); return m ? m[1] : "B"; }
-function pgQ(a, p){ const v = a.filter(x=>x!=null).sort((x,y)=>x-y); if(!v.length) return null; const i = (v.length-1)*p, lo = Math.floor(i), hi = Math.ceil(i); return v[lo] + (v[hi]-v[lo])*(i-lo); }
-// one summary row: the plain average (median or mean) of each score
-function pgStatRow(tb, label, rs, total, sub, cls){
-  const tr = tb.insertRow(); if(cls) tr.className = cls; if(rs.length < PG_MIN) tr.classList.add("thin");
-  const n = tr.insertCell(); n.className = "nm"; n.textContent = label; if(sub) n.append(pgEl("span","sm",sub));
-  const t = tr.insertCell(); t.className = "n"; t.textContent = rs.length + " of " + total;
-  [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]].forEach(([k,fmt]) => {
-    const td = tr.insertCell(); td.className = "n"; td.textContent = rs.length ? fmt(pgStat(rs.map(r=>pgNum(r[k])))) : "—";
-  });
-}
-function pgTeacher(sec){ return String(sec).split(" - ").slice(1).join(" - ") || sec; }
-function pgTrack(sec){ const x = String(sec); return /Accel/.test(x) ? "Accel" : /\bGL\b/.test(x) ? "GL" : /Mechina/.test(x) ? "Mechina" : /Kollel/.test(x) ? "Kollel" : /Midrasha/.test(x) ? "Midrasha" : null; }
-let pgView = "grade";
-
-function pgLevels(levels){
-  return (levels||[]).map(str => { const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/); return m ? {L:m[1], ok:+m[2], all:+m[3]} : null; }).filter(Boolean);
-}
-function pgG2(studs){
-  const per = studs.map(s => {
-    const lv = pgLevels(s.levels); let ok = 0, all = 0, clean = 0, top = -1;
-    lv.forEach(x => { ok += x.ok; all += x.all; if(x.ok === x.all && x.all > 0) clean++; top = Math.max(top, PG_LV.indexOf(x.L)); });
-    return {pct: all ? ok/all*100 : null, clean, top};
-  });
-  const tops = per.map(p=>p.top).filter(i=>i>=0);
-  const c = pgStat(per.map(p=>p.clean));
-  return { pct: pgFp(pgStat(per.map(p=>p.pct))), clean: c==null ? "—" : String(Math.round(c*10)/10), top: tops.length ? PG_LV[Math.round(pgStat(tops))] : "—" };
-}
-
-function pgTopErr(r){
-  return Object.entries(r.tally||{}).filter(([k,v])=>v>0 && SKILLS.includes(k)).sort((a,b)=>b[1]-a[1]).slice(0,2)
-    .map(([k,v]) => (SKILL_DESC[k] || k) + " (" + v + ")").join(", ");
-}
-
-function pgRenderResults(M){
-  $("pgModeNote").textContent = PG_NOTES[pgMode];
-  $("pgGradeLbl").textContent = (pgMode === "median" ? "Median" : "Mean") + " · complete sessions only";
-  const full = s => s.kind === "flu" && s.r.parts === "1+A+B" && !(pgSkipFlagged && s.flags && s.flags.length);
-
-  // units: one per class and grade (mixed classes split), tagged boys/girls from the class name
-  const units = [];
-  M.classes.forEach(c => c.byGrade.forEach((total, g) => units.push({
-    cls:c.name, grade:g, gender:pgGender(c.name), total, mixed:c.byGrade.size>1,
-    flu:c.studs.filter(s=>s.grade===g && full(s)).map(s=>s.r),
-    dg:c.studs.filter(s=>s.grade===g && s.kind==="dg") })));
-  const sumT = us => us.reduce((a,u)=>a+u.total,0);
-  const GN = {B:"boys", G:"girls"};
-  // tree: band > grade > boys/girls > class; a level with a single child shows that child's name instead of repeating
-  const tree = (tb, us, rowFn, gradeList) => {
-    gradeList.forEach(g => {
-      const ug = us.filter(u=>u.grade===g); if(!ug.length) return;
-      rowFn(tb, "Grade " + g, ug, null, "l1");
-      ["B","G"].forEach(x => {
-        const ux = ug.filter(u=>u.gender===x).sort((a,b)=>a.cls.localeCompare(b.cls)); if(!ux.length) return;
-        if(ux.length === 1){ rowFn(tb, g + x + " · " + GN[x], ux, ux[0].cls + (ux[0].mixed ? " (grade " + g + " students)" : ""), "l2"); return; }
-        rowFn(tb, g + x + " · " + GN[x], ux, ux.length + " classes", "l2");
-        ux.forEach(u => rowFn(tb, u.cls, [u], u.mixed ? "Grade " + g + " students" : null, "l3"));
-      });
-    });
-  };
-  const fluRow = (tb, label, us, sub, lvl) => pgStatRow(tb, label, us.flatMap(u=>u.flu), sumT(us), sub, lvl);
-  const flus = us => us.flatMap(u=>u.flu);
-  const BANDS = [["Grades 3 to 5", ["3","4","5"], "Grades 3 to 5"], ["Grades 6 to 8", ["6","7","8"], "Middle school"]];
-  const TITLES = {grade:"Fluency by grade", class:"Fluency by class", teacher:"Fluency by teacher", gender:"Fluency by boys and girls", band:"Fluency by band", track:"Fluency by track, grades 6 to 8"};
-  $("pgViewTitle").textContent = TITLES[pgView];
-  $("pgTrackNote").hidden = pgView !== "track";
-  document.querySelectorAll("#scr-prog .pg-views button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.view === pgView)));
-  const gb = $("pgGrade").tBodies[0]; gb.replaceChildren();
-  BANDS.forEach(([lbl, gl, who]) => {
-    const ub = units.filter(u=>gl.includes(u.grade)); if(!ub.length) return;
-    if(pgView === "track" && gl[0] !== "6") return;
-    fluRow(gb, lbl, ub, "Same test", "l0");
-    if(pgView === "band") return;
-    if(pgView === "grade"){
-      gl.forEach((g, i) => {
-        const ug = ub.filter(u=>u.grade===g); if(!ug.length) return;
-        const prev = i ? ub.filter(u=>u.grade===gl[i-1]) : null;
-        fluRow(gb, "Grade " + g, ug, "Boys and girls", "l1", prev && prev.length ? {prev:flus(prev), label:"gr " + gl[i-1]} : null);
-      });
-    }
-    if(pgView === "gender"){
-      ["B","G"].forEach(x => {
-        const ux = ub.filter(u=>u.gender===x); if(!ux.length) return;
-        fluRow(gb, who + " " + GN[x], ux, "All " + GN[x] + ", grades " + gl[0] + " to " + gl[2], "lg");
-        gl.forEach((g, i) => {
-          const ugx = ux.filter(u=>u.grade===g); if(!ugx.length) return;
-          const prev = i ? ux.filter(u=>u.grade===gl[i-1]) : null;
-          fluRow(gb, g + x + " · " + GN[x], ugx, ugx.length > 1 ? ugx.length + " classes" : ugx[0].cls, "l2", prev && prev.length ? {prev:flus(prev), label:gl[i-1] + x} : null);
-        });
-      });
-    }
-    if(pgView === "class"){
-      [...M.classes.values()].filter(c => gl.includes(String(c.low))).sort((a,b)=>a.low-b.low || a.name.localeCompare(b.name)).forEach(c => {
-        const uc = ub.filter(u=>u.cls===c.name);
-        if(uc.length > 1){
-          fluRow(gb, c.name, uc, "Whole class", "l1");
-          uc.sort((a,b)=>a.grade-b.grade).forEach(u => fluRow(gb, "Grade " + u.grade + " students", [u], null, "l3"));
-        } else fluRow(gb, c.name, uc, null, "l1");
-      });
-    }
-    if(pgView === "teacher"){
-      const byT = new Map();
-      ub.forEach(u => { const t = pgTeacher(u.cls); if(!byT.has(t)) byT.set(t, []); byT.get(t).push(u); });
-      [...byT.entries()].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([t, ut]) => {
-        const names = [...new Set(ut.map(u=>u.cls.split(" - ")[0]))];
-        fluRow(gb, t, ut, names.join(", "), "l1");
-      });
-    }
-    if(pgView === "track"){
-      ["Accel","GL","Mechina","Kollel","Midrasha"].forEach(k => {
-        const uk = ub.filter(u=>pgTrack(u.cls)===k); if(!uk.length) return;
-        const name = k === "GL" ? "GL (general level)" : k;
-        const gs = ["B","G"].filter(x => uk.some(u=>u.gender===x));
-        fluRow(gb, name, uk, gs.length > 1 ? "Boys and girls" : (gs[0] === "B" ? "Boys" : "Girls"), "l1");
-        if(gs.length > 1) gs.forEach(x => fluRow(gb, name + " " + GN[x], uk.filter(u=>u.gender===x), null, "l3"));
-      });
-    }
-  });
-
-  const g2 = $("pgG2").tBodies[0]; g2.replaceChildren();
-  const g2Row = (tb, label, us, sub, lvl) => {
-    const studs = us.flatMap(u=>u.dg), tr = tb.insertRow();
-    tr.className = lvl; if(studs.length < PG_MIN) tr.classList.add("thin");
-    const s = studs.length ? pgG2(studs) : {pct:"—", clean:"—", top:"—"};
-    const n = tr.insertCell(); n.className = "nm"; n.textContent = label; if(sub) n.append(pgEl("span","sm",sub));
-    [[studs.length + " of " + sumT(us),"n"],[s.pct,"n"],[s.clean,"n"],[s.top,"n"]].forEach(([v,k]) => { const td = tr.insertCell(); td.textContent = v; td.className = k; });
-  };
-  tree(g2, units.filter(u=>u.grade==="2"), g2Row, ["2"]);
-
-  const pick = $("pgClassPick"), keep = pick.value;
-  const withRes = [...M.classes.values()].filter(c=>c.done).sort((a,b)=>a.low-b.low || a.name.localeCompare(b.name));
-  pick.replaceChildren(new Option("All classes with results",""), ...withRes.map(c => new Option(c.name + " (" + c.done + ")", c.name)));
-  pick.value = withRes.some(c=>c.name===keep) ? keep : "";
-  const root = $("pgStudents"); root.replaceChildren();
-  const showC = pick.value ? withRes.filter(c=>c.name===pick.value) : withRes;
-  if(!showC.length){ root.append(pgEl("div","notice","No results saved yet for this window.")); return; }
-  showC.forEach(c => {
-    const box = pgEl("div","pg-box");
-    const h = pgEl("h3", null, c.name); h.append(pgEl("span", null, c.done + " of " + c.total + " tested")); box.append(h);
-    const wrap = pgEl("div","pg-scroll"), t = pgEl("table","pg"); wrap.append(t); box.append(wrap);
-    const flu = c.studs.filter(s=>s.kind==="flu"), dg = c.studs.filter(s=>s.kind==="dg");
-    if(flu.length){
-      const hr = t.createTHead().insertRow();
-      [["Student",""],["Word list<br>CSPM","n"],["Word list<br>accuracy","n"],["Passage A<br>WCPM","n"],["Passage A<br>accuracy","n"],["Passage B<br>WCPM","n"],["Passage B<br>accuracy","n"],["Most errors",""],["Give decoding<br>levels",""],["",""]]
-        .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
-      const b = t.createTBody();
-      flu.forEach(s => {
-        const r = s.r, tr = b.insertRow();
-        const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name;
-        n.append(pgEl("span","sm","Gr " + s.grade + (r.examiner ? " · " + r.examiner : "") + (r.parts !== "1+A+B" ? " · partial (" + (r.parts||"—") + ")" : "")));
-        [["cspm",pgF0],["acc1",pgFp],["wcpmA",pgF0],["accA",pgFp],["wcpmB",pgF0],["accB",pgFp]].forEach(([k,fmt]) => {
-          const td = tr.insertCell(), v = pgNum(r[k]); td.className = "n"; td.textContent = fmt(v);
-        });
-        if(s.flags && s.flags.length) n.append(pgFlagChips(s.flags));
-        const ec = tr.insertCell(); ec.textContent = pgTopErr(r) || "—";
-        tr.insertCell().append(pgSuggestChips(s.suggest || []));
-        tr.insertCell().append(pgVoidBtn(s, $("pgWin").value));
-      });
-    }
-    if(dg.length){
-      const hr = t.createTHead().insertRow();
-      ["Student","Decoding levels",""].forEach(v => hr.append(pgEl("th", null, v)));
-      const b = t.createTBody();
-      dg.forEach(s => {
-        const tr = b.insertRow();
-        const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name;
-        const box2 = pgEl("div","pg-lv");
-        pgLevels(s.levels).sort((a,b)=>a.L.localeCompare(b.L)).forEach(x => {
-          const chip = pgEl("span", x.ok===x.all ? "full" : "", x.L + " " + Math.round(x.all ? x.ok/x.all*100 : 0) + "%");
-          chip.title = x.L + ": " + x.ok + "/" + x.all; box2.append(chip);
-        });
-        const lc = tr.insertCell(); lc.append(box2); if(s.flags && s.flags.length) lc.append(pgFlagChips(s.flags));
-        tr.insertCell().append(pgVoidBtn(s, $("pgWin").value));
-      });
-    }
-    root.append(box);
-  });
-}
-
-function pgRender(){
-  const w = $("pgWin").value, M = pgModel(w);
-  pgAttachFlags(M, w);
-  pgRenderProgress(M); pgRenderResults(M); pgRenderWatch(M, w); pgRenderChecks(M, w);
-  const nf = [...M.classes.values()].reduce((a,c) => a + c.studs.filter(s => s.flags && s.flags.length).length, 0) + (M.dgChecks || []).length;
-  $("pgFlagBadge").hidden = !nf; $("pgFlagBadge").textContent = nf;
-  $("pgVoidNote").textContent = pgExtras ? "Use Void to move a result that should not count to the Voided tab of the Sheet, with the reason." : "The Void button turns on once the Apps Script update is installed.";
-  if(pgStamp){ $("pgFresh").textContent = "Updated " + pgStamp.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}); $("pgDot").className = "pg-dot"; }
-}
-
-/* ============ SCHOOL PROGRESS: pace, flags, watch list, examiners, void ============ */
-/* Assessment windows (first and last day). Winter dates are provisional: change them here when they are set. */
-const PG_WINDOWS = { Fall:["2026-10-06","2026-11-02"], Winter:["2026-12-14","2027-01-08"], Spring:["2027-04-05","2027-05-28"] };
-const PG_GAP = 10;        // familiar minus unfamiliar WCPM at or above this is flagged
-const PG_QUICK = 120;     // seconds: a result saved this soon after the same examiner's previous one is flagged
-let pgWatchBy = "wcpmB", pgWatchPct = 0.15, pgSkipFlagged = false, pgExtras = false;
-
-function pgWeekdays(a, b){ let n = 0; const d = new Date(a); while(d <= b){ const k = d.getDay(); if(k > 0 && k < 6) n++; d.setDate(d.getDate() + 1); } return n; }
-function pgPace(w){
-  const win = PG_WINDOWS[w]; if(!win) return null;
-  const start = new Date(win[0] + "T00:00:00"), end = new Date(win[1] + "T23:59:59"), now = new Date();
-  const total = pgWeekdays(start, end);
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-  const gone = now < start ? 0 : now > end ? total : pgWeekdays(start, today);
-  return { total, gone, expected: total ? gone / total : 0, start, end };
-}
-function pgFmtDay(d){ return d.toLocaleDateString(undefined, {month:"short", day:"numeric"}); }
-function pgExam(x){ return String(x||"").trim().replace(/\s+/g," ").toLowerCase(); }
-function pgTitle(x){ return String(x||"").trim().replace(/\s+/g," ").replace(/\b\w/g, c => c.toUpperCase()); }
-function pgTs(r){ const d = new Date(r.ts || r.timestamp || ""); return isNaN(d) ? null : d; }
-
-/* flags for one fluency result; quick = seconds since the same examiner's previous save (or null) */
-function pgFlagsFor(r, quick, sheetFlags){
-  const f = [], n = k => pgNum(r[k]);
-  [["wcpmA","Passage A"],["wcpmB","Passage B"]].forEach(([k,lbl]) => { if(r[k] !== "" && r[k] != null && n(k) === 0) f.push("0 WCPM on " + lbl); });
-  const low = [["acc1","word list"],["accA","Passage A"],["accB","Passage B"]].filter(([k]) => n(k) != null && n(k) < 50).map(([,lbl]) => lbl);
-  if(low.length) f.push("Accuracy under 50% on " + low.join(", "));
-  if(n("wcpmA") != null && n("wcpmB") != null && n("wcpmA") - n("wcpmB") >= PG_GAP) f.push("Big gap: familiar " + n("wcpmA") + " vs unfamiliar " + n("wcpmB"));
-  if(quick != null && quick < PG_QUICK) f.push("Saved " + Math.floor(quick/60) + "m " + Math.round(quick%60) + "s after this examiner's previous result");
-  // (the sheet's own "flags" list is skill levels with 2+ errors, not a data problem, so it is not used here)
-  return f;
-}
-/* attach flags to every fluency student in the model */
-function pgAttachFlags(M, w){
-  const byEx = new Map();
-  (anlCache||[]).filter(r => r.window === w && pgTs(r)).forEach(r => { const k = pgExam(r.examiner); if(!byEx.has(k)) byEx.set(k, []); byEx.get(k).push(r); });
-  const gapSec = new Map();
-  byEx.forEach(list => { list.sort((a,b) => pgTs(a) - pgTs(b)); list.forEach((r,i) => { if(i) gapSec.set(r, (pgTs(r) - pgTs(list[i-1])) / 1000); }); });
-  M.classes.forEach(c => c.studs.forEach(s => {
-    if(s.kind === "flu"){ s.flags = pgFlagsFor(s.r, gapSec.has(s.r) ? gapSec.get(s.r) : null, flagsMap[s.name + "|" + w]); s.suggest = pgSuggestLv(s.r.tally, diagMap[s.name + "|" + w]); }
-    else if(s.kind === "dg") s.flags = pgDiagFlags(s.levels, s.grade);
-  }));
-  // decoding checks for grades 3-8 too (their diagnostics are not in the class lists above)
-  M.dgChecks = [];
-  (roster || []).filter(st => st.section && String(st.grade) !== "2" && st.active !== false).forEach(st => {
-    const lv = diagMap[st.name + "|" + w]; if(!lv || !lv.length) return;
-    const fl = pgDiagFlags(lv, st.grade);
-    if(fl.length) M.dgChecks.push({name:st.name, grade:String(st.grade), cls:st.section, kind:"dg", levels:lv, flags:fl});
-  });
-}
-/* Decoding levels to give next: skill levels C-L where the fluency test shows 2 or more errors.
-   done = levels already saved in the Decoding Diagnostic for this window. */
-function pgSuggestLv(tally, doneLevels){
-  const done = new Set((doneLevels || []).map(x => String(x).charAt(0)));
-  return "CDEFGHIJKL".split("").filter(L => (Number((tally || {})[L]) || 0) >= 2).map(L => ({L, done: done.has(L)}));
-}
-function pgSuggestChips(list){
-  const d = pgEl("div","pg-lv");
-  if(!list.length){ d.append(pgEl("span", null, "None")); return d; }
-  list.forEach(x => { const c = pgEl("span", x.done ? "full" : "todo", x.L + (x.done ? " ✓" : "")); c.title = x.done ? "Level " + x.L + " already given" : "Give Decoding Diagnostic level " + x.L; d.append(c); });
-  return d;
-}
-/* Data checks for a Decoding Diagnostic. Skipped levels only count for grade 2, which goes through the levels in order. */
-function pgDiagFlags(levels, grade){
-  const f = [], lv = pgLevels(levels);
-  lv.forEach(x => {
-    if(x.all && x.ok === 0) f.push("Level " + x.L + ": every item marked wrong");
-    else if(x.all && x.ok / x.all < 0.5) f.push("Level " + x.L + ": under half right (" + x.ok + "/" + x.all + ")");
-  });
-  if(String(grade) === "2" && lv.length){
-    const idx = lv.map(x => PG_LV.indexOf(x.L)).filter(i => i >= 0), hi = Math.max(...idx), have = new Set(idx);
-    for(let i = 0; i < hi; i++) if(!have.has(i)) f.push("Level " + PG_LV[i] + " skipped");
-  }
-  return f;
-}
-function pgFlagChips(flags){
-  const d = pgEl("div","pg-flags");
-  flags.forEach(t => d.append(pgEl("span","pg-flag", t)));
-  return d;
-}
-
-/* ---------- void (needs the Apps Script addition) ---------- */
-async function pgCheckExtras(){
-  try{ const r = await fetch(SCRIPT_URL + "?action=extras"); const j = await r.json(); pgExtras = !!(j && j.extras); }catch(e){ pgExtras = false; }
-  return pgExtras;
-}
-function pgVoidBtn(s, w){
-  const b = pgEl("button","pg-void","Void");
-  b.type = "button";
-  if(!pgExtras){ b.disabled = true; b.title = "Voiding needs the Apps Script update (see the setup note)."; return b; }
-  b.addEventListener("click", async () => {
-    const what = s.kind === "dg" ? "decoding diagnostic" : "fluency result";
-    const reason = window.prompt("Void " + s.name + "'s " + w + " " + what + "?\nIt will be moved to the Voided tab of the Sheet, not deleted.\n\nReason (required):", "");
-    if(reason == null) return;
-    if(!reason.trim()){ window.alert("Please give a reason, so the record shows why it was removed."); return; }
-    b.disabled = true; b.textContent = "Voiding…";
-    try{
-      const r = await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain"}, body:JSON.stringify({action:"void", key:adminKey, name:s.name, window:w, type:s.kind, reason:reason.trim(), by:"Admin"})});
-      const j = await r.json();
-      if(!j || !j.ok) throw new Error(j && j.error || "not voided");
-      await pgRefresh(true);
-    }catch(e){ b.disabled = false; b.textContent = "Void"; window.alert("Could not void this result. Check your connection and try again."); }
-  });
-  return b;
-}
-
-/* ---------- watch list ---------- */
-function pgRenderWatch(M, w){
-  const root = $("pgWatchBody"); root.replaceChildren();
-  const all = [...M.classes.values()].flatMap(c => c.studs.map(s => Object.assign({cls:c.name}, s)));
-  const groups = [["Grade 2 decoding", ["2"]], ["Grades 3 to 5", ["3","4","5"]], ["Grades 6 to 8", ["6","7","8"]]];
-  let any = false;
-  groups.forEach(([lbl, gl]) => {
-    const box = pgEl("div","pg-box"); const h = pgEl("h3", null, lbl); box.append(h);
-    const wrap = pgEl("div","pg-scroll"), t = pgEl("table","pg"); wrap.append(t);
-    const hr = t.createTHead().insertRow();
-    const isG2 = gl[0] === "2";
-    (isG2 ? [["Student",""],["Class",""],["Items correct","n"],["Highest level","n"],["",""]]
-          : [["Student",""],["Class",""],["Word list<br>CSPM","n"],["Passage A<br>WCPM","n"],["Passage B<br>WCPM","n"],["Most errors",""],["Give decoding<br>levels",""],["Checks",""]])
-      .forEach(([v,k]) => { const th = pgEl("th",k); th.innerHTML = v; hr.append(th); });
-    const b = t.createTBody(); let shown = 0, tested = 0;
-    gl.forEach(g => {
-      let list;
-      if(isG2){
-        list = all.filter(s => s.grade === g && s.kind === "dg").map(s => {
-          const lv = pgLevels(s.levels); let ok = 0, n = 0, top = -1; lv.forEach(x => { ok += x.ok; n += x.all; top = Math.max(top, PG_LV.indexOf(x.L)); });
-          return Object.assign(s, {score: n ? ok/n*100 : null, top});
-        }).filter(s => s.score != null);
-      } else {
-        const hk = pgWatchBy;
-        list = all.filter(s => s.grade === g && s.kind === "flu" && s.r.parts === "1+A+B" && pgNum(s.r[hk]) != null)
-          .map(s => Object.assign(s, {score: pgNum(s.r[hk])}));
-      }
-      tested += list.length;
-      if(list.length < 5) return;
-      const k = Math.max(1, Math.ceil(list.length * pgWatchPct));
-      list.sort((a,b) => a.score - b.score).slice(0, k).forEach(s => {
-        shown++; const tr = b.insertRow();
-        const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name; n.append(pgEl("span","sm","Grade " + s.grade));
-        const c = tr.insertCell(); c.textContent = s.cls.split(" - ")[0]; c.append(pgEl("span","sm", pgTeacher(s.cls)));
-        if(isG2){
-          [[pgFp(s.score),"n"],[s.top >= 0 ? PG_LV[s.top] : "—","n"]].forEach(([v,k2]) => { const td = tr.insertCell(); td.className = k2; td.textContent = v; });
-          tr.insertCell();
-        } else {
-          const r = s.r;
-          ["cspm","wcpmA","wcpmB"].forEach(k => { const td = tr.insertCell(); td.className = "n" + (k === pgWatchBy ? " big" : ""); td.textContent = pgF0(pgNum(r[k])); });
-          tr.insertCell().textContent = pgTopErr(r) || "—";
-          tr.insertCell().append(pgSuggestChips(s.suggest || []));
-          const fc = tr.insertCell(); if(s.flags && s.flags.length) fc.append(pgFlagChips(s.flags)); else fc.textContent = "—";
-        }
-      });
-    });
-    h.append(pgEl("span", null, shown ? shown + " students · lowest " + Math.round(pgWatchPct*100) + "% of each grade" : "Waiting for at least 5 students tested in a grade"));
-    if(!shown){ const td = b.insertRow().insertCell(); td.colSpan = 7; td.className = "pg-empty"; td.textContent = tested ? "Not enough students tested yet. Each grade needs at least 5 before it is ranked." : "No results yet."; }
-    else any = true;
-    box.append(wrap); root.append(box);
-  });
-  $("pgWatchNote").hidden = !any;
-}
-
-/* ---------- checks: flagged results + examiner consistency ---------- */
-function pgRenderChecks(M, w){
-  const root = $("pgFlagBody"); root.replaceChildren();
-  const all = [...M.classes.values()].flatMap(c => c.studs.filter(s => s.flags && s.flags.length).map(s => Object.assign({cls:c.name}, s))).concat(M.dgChecks || []);
-  $("pgFlagCount").textContent = all.length ? all.length + " result" + (all.length === 1 ? "" : "s") + " to check" : "Nothing flagged";
-  if(!all.length){ root.append(pgEl("div","pg-empty","No results are flagged for this window.")); }
-  else {
-    const wrap = pgEl("div","pg-scroll"), t = pgEl("table","pg"); wrap.append(t);
-    const hr = t.createTHead().insertRow();
-    ["Student","Class","Examiner","Test / scores<br>CSPM · A · B","Why it's flagged",""].forEach((v,i) => { const th = pgEl("th", i === 3 ? "n" : ""); th.innerHTML = v; hr.append(th); });
-    const b = t.createTBody();
-    all.sort((a,b2) => (b2.r ? pgTs(b2.r)||0 : 0) - (a.r ? pgTs(a.r)||0 : 0)).forEach(s => {
-      const tr = b.insertRow();
-      const n = tr.insertCell(); n.className = "nm"; n.textContent = s.name; const d = s.r ? pgTs(s.r) : null; n.append(pgEl("span","sm","Grade " + s.grade + (d ? " · " + d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) : "")));
-      tr.insertCell().textContent = s.cls;
-      tr.insertCell().textContent = s.r ? (pgTitle(s.r.examiner) || "—") : "—";
-      const wc = tr.insertCell(); wc.className = "n"; wc.textContent = s.kind === "dg" ? "Decoding" : ["cspm","wcpmA","wcpmB"].map(k => pgF0(pgNum(s.r[k]))).join(" · ");
-      tr.insertCell().append(pgFlagChips(s.flags));
-      tr.insertCell().append(pgVoidBtn(s, w));
-    });
-    root.append(wrap);
-  }
-
-  // examiner consistency, within each grade, complete sessions only
-  const eb = $("pgExamTable").tBodies[0]; eb.replaceChildren();
-  const flu = [...M.classes.values()].flatMap(c => c.studs.filter(s => s.kind === "flu" && s.r.parts === "1+A+B"));
-  const grades = [...new Set(flu.map(s => s.grade))].sort((a,b) => a-b);
-  if(!grades.length){ const td = eb.insertRow().insertCell(); td.colSpan = 6; td.className = "pg-empty"; td.textContent = "No complete fluency results yet."; return; }
-  grades.forEach(g => {
-    const fg = flu.filter(s => s.grade === g);
-    const byE = new Map();
-    fg.forEach(s => { const k = pgExam(s.r.examiner) || "(none)"; if(!byE.has(k)) byE.set(k, {names:new Set(), rs:[]}); const e = byE.get(k); e.names.add(String(s.r.examiner||"").trim()); e.rs.push(s.r); });
-    const cells = (tr, rs, cls) => [["cspm",pgF0],["wcpmA",pgF0],["wcpmB",pgF0],["acc1",pgFp]].forEach(([k,fmt]) => { const td = tr.insertCell(); td.className = "n" + (cls || ""); td.textContent = fmt(pgStat(rs.map(r => pgNum(r[k])))); });
-    const head = eb.insertRow(); head.className = "l1";
-    const hc = head.insertCell(); hc.className = "nm"; hc.textContent = "Grade " + g; hc.append(pgEl("span","sm","whole grade"));
-    const ht = head.insertCell(); ht.className = "n"; ht.textContent = String(fg.length);
-    cells(head, fg.map(s => s.r));
-    [...byE.entries()].sort((a,b) => b[1].rs.length - a[1].rs.length).forEach(([k, e]) => {
-      const tr = eb.insertRow(); tr.className = "l3"; if(e.rs.length < PG_MIN) tr.classList.add("thin");
-      const n = tr.insertCell(); n.className = "nm"; n.textContent = pgTitle(k);
-      if(e.names.size > 1) n.append(pgEl("span","sm","Entered " + e.names.size + " ways: " + [...e.names].join(", ")));
-      const tc = tr.insertCell(); tc.className = "n"; tc.textContent = String(e.rs.length);
-      cells(tr, e.rs);
-    });
-  });
-}
-
-async function pgRefresh(){
-  if(!$("scr-prog").classList.contains("active")) return pgStop();
-  if(document.hidden) return;
-  adminLoaded = false;
-  const ok = await loadAdmin(adminKey, true);
-  if(ok){ pgStamp = new Date(); pgRender(); }
-  else { $("pgDot").className = "pg-dot off"; $("pgFresh").textContent = "Couldn't reach the Sheet just now. Showing the last results; trying again in a minute."; }
-}
-function pgStop(){ if(pgTimer){ clearInterval(pgTimer); pgTimer = null; } }
-
-$("progBtn").addEventListener("click", async ()=>{
-  const w = $("windowSel").value; if(w) $("pgWin").value = w;
-  show("scr-prog");
-  $("pgFresh").textContent = "Loading…";
-  await pgCheckExtras();
-  await pgRefresh();
-  pgStop(); pgTimer = setInterval(pgRefresh, 60000);
-});
-document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && pgTimer) pgRefresh(); });
-$("pgBack").addEventListener("click", ()=>{ pgStop(); show("scr-setup"); });
-$("pgWin").addEventListener("change", pgRender);
-$("pgClassPick").addEventListener("change", pgRender);
-const PG_TABS = {Prog:"pgProgress", Res:"pgResults", Watch:"pgWatch", Checks:"pgChecks"};
-function pgTab(which){
-  Object.entries(PG_TABS).forEach(([k, id]) => { $(id).hidden = k !== which; $("pgTab" + k).setAttribute("aria-selected", String(k === which)); });
-}
-Object.keys(PG_TABS).forEach(k => $("pgTab" + k).addEventListener("click", () => pgTab(k)));
-$("pgWatchPick").addEventListener("change", () => { pgWatchPct = +$("pgWatchPick").value; pgRender(); });
-$("pgWatchBy").addEventListener("change", () => { pgWatchBy = $("pgWatchBy").value; pgRender(); });
-$("pgSkipFlag").addEventListener("change", () => { pgSkipFlagged = $("pgSkipFlag").checked; pgRender(); });
-function pgSetMode(m){ pgMode = m; $("pgMedian").setAttribute("aria-selected", String(m==="median")); $("pgMean").setAttribute("aria-selected", String(m==="mean")); pgRender(); }
-$("pgMedian").addEventListener("click", ()=>pgSetMode("median"));
-document.querySelectorAll("#scr-prog .pg-views button").forEach(b => b.addEventListener("click", ()=>{ pgView = b.dataset.view; pgRender(); }));
-$("pgMean").addEventListener("click", ()=>pgSetMode("mean"));
 
 document.querySelectorAll(".exitBtn").forEach(b => b.addEventListener("click", ()=>{
   if(window.confirm("Leave this assessment? Any unsaved progress will be discarded. (To keep completed fluency parts, use Skip on the remaining parts and save instead.)")) {
