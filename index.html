@@ -96,6 +96,8 @@ table.skills td.hot{background:var(--err-bg); color:var(--err); font-weight:700;
 .lvlcard .ldesc{font-size:13px; color:var(--grey); margin-top:2px;}
 .lvlcard .lscore{margin-top:8px; font-size:13px; font-weight:700;}
 .lvlcard .lscore.good{color:var(--ok);} .lvlcard .lscore.mid{color:#8a6d00;} .lvlcard .lscore.low{color:var(--err);}
+.kq{position:relative; display:inline-block; line-height:1.15;}
+.kq::after{content:''; position:absolute; left:50%; transform:translateX(-50%); bottom:-.12em; width:.22em; height:.15em; background:linear-gradient(#111,#111) top/100% .035em no-repeat, linear-gradient(#111,#111) center bottom/.035em 100% no-repeat;}
 .diagbig{direction:rtl; font-family:'David Libre',serif; font-size:96px; text-align:center; background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:50px 20px; margin-top:16px; min-height:220px; display:flex; align-items:center; justify-content:center;}
 .diagmeta{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; font-size:14px; color:var(--grey);}
 .diagbtns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
@@ -767,16 +769,16 @@ function renderWorksheetHTML(title, subtitle, skillCounts, missedWords, missedBy
       const items = practiceItemsFor(code, 8);
       if(!items.length) return "";
       return `<div class="wsSkill"><div class="wsSkillHead">${SKILL_DESC[code]||code} <span class="wsCount">(${count} miss${count===1?"":"es"})</span></div>
-        <div class="wsItems">${items.map(it=>`<span class="wsItem">${it}</span>`).join("")}</div></div>`;
+        <div class="wsItems">${items.map(it=>`<span class="wsItem">${kqFix(it)}</span>`).join("")}</div></div>`;
     }).join("");
   }
   if(missedWords && missedWords.length){
     body += `<div class="wsSkill"><div class="wsSkillHead">Exact words missed</div>
-      <div class="wsItems">${missedWords.map(w=>`<span class="wsItem">${w}</span>`).join("")}</div></div>`;
+      <div class="wsItems">${missedWords.map(w=>`<span class="wsItem">${kqFix(w)}</span>`).join("")}</div></div>`;
   }
   if(missedByLevel && missedByLevel.length){
     body += missedByLevel.map(lv=>`<div class="wsSkill"><div class="wsSkillHead">Level ${lv.id} · ${lv.desc}</div>
-      <div class="wsItems">${lv.missed.map(w=>`<span class="wsItem">${w}</span>`).join("")}</div></div>`).join("");
+      <div class="wsItems">${lv.missed.map(w=>`<span class="wsItem">${kqFix(w)}</span>`).join("")}</div></div>`).join("");
   }
   if(!body) body = "<p style='color:var(--grey)'>No skill errors were recorded for this selection.</p>";
   return `<div class="wsHeader"><img src="${LOGO}" alt="Emek Hebrew Academy" style="height:54px; display:block; margin-bottom:8px"><div class="wsSchool">Torah Studies</div>
@@ -1232,8 +1234,9 @@ $("lvlGrid").addEventListener("click", e=>{
   $("diagLvlTitle").textContent = "Level " + DG.cur.id + " · " + DG.cur.desc;
   renderDiagItem(); show("scr-diag");
 });
+function kqFix(w){ w=esc(w); return w.replace(/\ufb3a\u05b8?/g,'<span class="kq">\ufb3a</span>'); }
 function renderDiagItem(){
-  $("diagItem").textContent = DG.cur.items[DG.idx];
+  $("diagItem").innerHTML = kqFix(DG.cur.items[DG.idx]);
   $("diagLabel").textContent = DG.cur.labels ? DG.cur.labels[DG.idx] : "";
   $("diagProg").textContent = (DG.idx+1) + " / " + DG.cur.items.length;
 }
