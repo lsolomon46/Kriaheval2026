@@ -681,9 +681,61 @@ function runRecordHTML(rec){
   h += `<div class="rr-sign"><span>Examiner signature</span><span>Date</span></div></div>`;
   return h;
 }
+
+/* ---------- Class decoding record ---------- */
+function classDecodingData(rows, w){
+  const per = rows.map(st=>({ st, lv: diagRowsFromMaps(st.name, w) }));
+  const used = [...new Set(per.flatMap(p=>p.lv.map(x=>x.id)))].sort();
+  const agg = {};
+  per.forEach(p=>p.lv.forEach(x=>{
+    const a = agg[x.id] = agg[x.id] || { id:x.id, desc:x.desc, correct:0, total:0, n:0, words:{} };
+    a.correct += x.correct; a.total += x.total; a.n++;
+    x.missed.forEach(m=>{ a.words[m] = (a.words[m]||0) + 1; });
+  }));
+  return { per, used, agg };
+}
+function classDecodingHTML(rows, w){
+  const D = classDecodingData(rows, w);
+  if(!D.used.length) return "";
+  const tested = D.per.filter(p=>p.lv.length).length;
+  const head = D.used.map(id=>`<th class="c">${id}</th>`).join("");
+  const body = D.per.map(p=>{
+    if(!p.lv.length) return `<tr><td>${esc(p.st.name)}</td><td class="c">${esc(p.st.grade)}</td><td class="c" colspan="${D.used.length}" style="color:#8A8578">Not tested this window</td><td></td></tr>`;
+    const by = {}; p.lv.forEach(x=>by[x.id]=x);
+    const cells = D.used.map(id=>{
+      const x = by[id]; if(!x) return `<td class="c" style="color:#8A8578">—</td>`;
+      const pct = Math.round(x.correct/x.total*100);
+      return `<td class="c"><b>${x.correct}/${x.total}</b><div style="font-size:10.5px;color:#6b665c">${pct}%</div></td>`;
+    }).join("");
+    const miss = p.lv.filter(x=>x.missed.length).map(x=>`<span style="white-space:nowrap"><b style="font-family:'Nunito Sans',sans-serif;font-size:11px">${x.id}:</b> ${x.missed.map(kqFix).join(" ")}</span>`).join(" &nbsp; ");
+    return `<tr><td><b>${esc(p.st.name)}</b></td><td class="c">${esc(p.st.grade)}</td>${cells}<td style="direction:rtl;font-family:'David Libre',serif;font-size:15px;line-height:1.5">${miss || "<span style='font-family:inherit;font-size:12px;color:#8A8578;direction:ltr'>None</span>"}</td></tr>`;
+  }).join("");
+  const avg = D.used.map(id=>{ const a = D.agg[id]; return `<td class="c"><b>${Math.round(a.correct/a.total*100)}%</b><div style="font-size:10.5px;color:#6b665c">${a.n} stud.</div></td>`; }).join("");
+  return `<div class="rr-h" style="margin-top:14px">Decoding diagnostic &middot; ${tested} of ${rows.length} students tested</div>
+    <div class="rr-scroll"><table class="rr-table rr-class"><thead><tr><th>Student</th><th>Gr</th>${head}<th>Missed words</th></tr></thead><tbody>${body}
+    <tr style="background:#F2F5FB"><td colspan="2"><b>Class average</b></td>${avg}<td></td></tr></tbody></table></div>
+    <div class="rr-note">Each cell shows correct / total for that level, then the percent. Level descriptions: ${D.used.map(id=>id+" = "+esc(D.agg[id].desc)).join("; ")}.</div>`;
+}
+/* One-page class practice sheet built from decoding results: the weakest levels first, most-missed words first */
+function classDecodingSheetLevels(rows, w){
+  const D = classDecodingData(rows, w);
+  const lv = Object.values(D.agg).filter(a=>Object.keys(a.words).length)
+    .sort((a,b)=>(a.correct/a.total)-(b.correct/b.total)).slice(0,6);
+  return lv.map(a=>{
+    const L = LEVELS.find(x=>x.id===a.id);
+    let words = Object.entries(a.words).sort((x,y)=>y[1]-x[1]).map(([t])=>t);
+    if(L) L.items.forEach(it=>{ if(words.length<8 && !words.includes(it)) words.push(it); });
+    return { id:a.id, desc:a.desc + " (" + Math.round(a.correct/a.total*100) + "% class accuracy)", missed:words.slice(0,8) };
+  });
+}
 function classRecordHTML(rows, w, label){
   const bandBg = {Benchmark:"#E3F1E8", Strategic:"#FBF3D9", Intensive:"#FBEAE8"};
   const cell = (score, band) => score==null ? `<td class="c" style="color:#8A8578">—</td>` : `<td class="c" style="background:${bandBg[band]||"#fff"}"><b>${score}</b>${band?`<div style="font-size:11px">${band}</div>`:""}</td>`;
+  const needFluency = rows.some(s=>s.grade !== "2" || (activeResultsCache||[]).some(x=>x.name===s.name && x.window===w));
+  const decHTML = classDecodingHTML(rows, w);
+  if(!needFluency){
+    return `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Class Running Record &middot; Decoding</div><div class="rr-sub">${esc(label)} &middot; printed ${fmtDate()}</div></div></div>${decHTML || "<div class='notice' style='margin-top:12px'>No decoding levels have been saved for this class and window yet.</div>"}</div>`;
+  }
   const body = rows.map(s=>{
     const r = (activeResultsCache||[]).filter(x=>x.name===s.name && x.window===w).pop();
     if(!r) return `<tr><td>${esc(s.name)}</td><td class="c">${esc(s.grade)}</td><td class="c" colspan="5" style="color:#8A8578">Not tested this window</td><td></td></tr>`;
@@ -695,7 +747,7 @@ function classRecordHTML(rows, w, label){
   }).join("");
   return `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Class Running Record</div><div class="rr-sub">${esc(label)} &middot; printed ${fmtDate()}</div></div></div>
     ${classSummaryHTML(rows, w)}<div class="rr-scroll" style="margin-top:12px"><table class="rr-table rr-class"><thead><tr><th>Student</th><th>Gr</th><th>Word list (CSPM)</th><th>Passage A (WCPM)</th><th>Passage B (WCPM)</th><th>Lowest accuracy</th><th>Skills to target (2+ errors)</th><th>Missed items</th></tr></thead><tbody>${body}</tbody></table></div>
-    ${BENCH.enabled?`<div class="rr-note">Level colors: green = Benchmark, yellow = Strategic, red = Intensive.</div>`:""}</div>`;
+    ${BENCH.enabled?`<div class="rr-note">Level colors: green = Benchmark, yellow = Strategic, red = Intensive.</div>`:""}${decHTML}</div>`;
 }
 let rrReturnTo = "scr-setup";
 function openRunRecord(html, returnTo, landscape){
@@ -1425,9 +1477,14 @@ $("dashWorksheetBtn").addEventListener("click", ()=>{
   rows.forEach(r=>Object.entries(r.tally||{}).forEach(([k,v])=>{ if(sums[k]!=null) sums[k]+=v; }));
   const wc = {}; rows.forEach(r=>[...new Set(Object.values(r.missed||{}).flat())].forEach(t=>{ wc[t]=(wc[t]||0)+1; }));
   const common = Object.entries(wc).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,16).map(([t])=>t);
+  const dl = classDecodingSheetLevels(dashCtx.rows, w);
+  if(dl.length && !rows.length){
+    openWorksheet(dashCtx.label, "Class Practice Sheet", "Decoding: the levels the class found hardest, with the words missed most often first", null, null, dl, "scr-dash");
+    return;
+  }
   openWorksheet(dashCtx.label, "Class Practice Sheet",
     "Most common error patterns across " + rows.length + " student" + (rows.length===1?"":"s") + (common.length ? ". Words missed by 2 or more students are listed at the bottom." : ""),
-    sums, common, null, "scr-dash");
+    sums, common, dl.length ? dl : null, "scr-dash");
 });
 $("dashBack").addEventListener("click", ()=>show("scr-setup"));
 
