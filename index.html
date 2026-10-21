@@ -407,6 +407,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <button class="btn-primary" id="diagFinish">Finish and Save Diagnostic</button>
   <button class="btn-ghost exitBtn">✕ Exit to student setup without saving</button>
   <div class="saveline" id="diagSaveline" style="display:none"></div>
+  <button class="btn-ghost" id="diagRecordBtn" style="display:none">Print Decoding Record →</button>
   <button class="btn-ghost" id="diagWorksheetBtn" style="display:none">Generate Practice Sheet →</button>
   <button class="btn-ghost" id="diagAgain" style="display:none">Test another student</button>
 </section>
@@ -522,7 +523,7 @@ function tagWord(w){
 
 /* ============ STATE ============ */
 const S = { name:"", grade:"", window:"", examiner:"", parts:{} };
-let roster = [], doneMap = {}, diagMap = {}, flagsMap = {};
+let roster = [], doneMap = {}, diagMap = {}, diagMissed = {}, diagMeta = {}, flagsMap = {};
 let currentRole = null, scopeRoster = null;
 
 /* ============ SETUP SCREEN ============ */
@@ -715,6 +716,14 @@ $("dashRunRecBtn").addEventListener("click", ()=>{
 });
 $("srBody").addEventListener("click", e=>{
   if(e.target.closest("#srRunRec") && srCurrent) openRunRecord(runRecordHTML(recFromRow(srCurrent, srFull)), "scr-studentres", false);
+  const nm = srCurrentName, wn = srCurrentWindow;
+  if(e.target.closest("#srDecRec")){
+    const meta = diagMeta[nm + "|" + wn] || {};
+    const st = (typeof roster !== "undefined" && roster.find(x=>x.name===nm)) || (teacherRoster||[]).find(x=>x.name===nm) || {};
+    const d = meta.ts ? new Date(meta.ts) : null;
+    openRunRecord(decodingRecordHTML({ name:nm, grade:st.grade||(srCurrent&&srCurrent.grade)||"", window:wn, examiner:meta.examiner, date:d&&!isNaN(d)?d.toLocaleDateString():"" }, diagRowsFromMaps(nm, wn), null), "scr-studentres", false);
+  }
+  if(e.target.closest("#srDecWs")) worksheetFromRows(nm + " · " + wn, diagRowsFromMaps(nm, wn), "scr-studentres");
 });
 
 /* ============ PRACTICE SHEET GENERATOR ============ */
@@ -1190,9 +1199,10 @@ $("beginDiagBtn").addEventListener("click", ()=>{
 /* Levels already saved earlier for this student and window show as done (prior) so a returning teacher sees them. */
 function loadPriorLevels(){
   const lv = diagMap[S.name + "|" + S.window] || [];
+  const pm = parseDiagMissed(diagMissed[S.name + "|" + S.window]);
   lv.forEach(str=>{
     const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/);
-    if(m && !(DG.done[m[1]] && !DG.done[m[1]].prior)) DG.done[m[1]] = { correct:+m[2], total:+m[3], missed:[], prior:true };
+    if(m && !(DG.done[m[1]] && !DG.done[m[1]].prior)) DG.done[m[1]] = { correct:+m[2], total:+m[3], missed:pm[m[1]]||[], prior:true };
   });
 }
 async function refreshPriorLevels(){
@@ -1225,6 +1235,7 @@ function renderLevels(){
   if(!effectiveShowA) html += `<div class="lvlcard" id="showA" style="border-style:dashed; opacity:.75"><div class="lid" style="font-size:15px">+ Show Level A</div><div class="ldesc">Letter/vowel recognition. Rarely needed in grades 3–8; tap only for a student who cannot access Level B.</div></div>`;
   if(isG2 && S.window === "Fall") html += `<div class="lvlcard" style="border-style:dashed; opacity:.6; cursor:default"><div class="lid" style="font-size:15px">Levels J–L</div><div class="ldesc">Not administered in Fall for Grade 2. These unlock at Winter/Spring testing.</div></div>`;
   $("lvlGrid").innerHTML = html;
+  refreshDiagButtons();
 }
 $("lvlGrid").addEventListener("click", e=>{
   const c = e.target.closest(".lvlcard"); if(!c) return;
@@ -1234,6 +1245,60 @@ $("lvlGrid").addEventListener("click", e=>{
   $("diagLvlTitle").textContent = "Level " + DG.cur.id + " · " + DG.cur.desc;
   renderDiagItem(); show("scr-diag");
 });
+
+/* ---------- Decoding record + practice sheet helpers ---------- */
+function parseDiagMissed(str){
+  const out = {};
+  String(str||"").split("|").forEach(seg=>{
+    const t = seg.trim(); const k = t.charAt(0);
+    if(/[A-L]/.test(k) && t.charAt(1) === ":") out[k] = t.slice(2).trim().split(/\s+/).filter(Boolean);
+  });
+  return out;
+}
+/* rows: [{id, desc, correct, total, missed[]}] from what the app holds for a saved student/window */
+function diagRowsFromMaps(name, w){
+  const lv = diagMap[name + "|" + w] || [];
+  const pm = parseDiagMissed(diagMissed[name + "|" + w]);
+  const rows = [];
+  lv.forEach(str=>{
+    const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/); if(!m) return;
+    const L = LEVELS.find(x=>x.id===m[1]);
+    rows.push({ id:m[1], desc:L?L.desc:"", correct:+m[2], total:+m[3], missed:pm[m[1]]||[] });
+  });
+  return rows.sort((a,b)=>a.id<b.id?-1:1);
+}
+function diagRowsFromSession(){
+  return LEVELS.filter(l=>DG.done[l.id]).map(l=>({ id:l.id, desc:l.desc, correct:DG.done[l.id].correct, total:DG.done[l.id].total, missed:DG.done[l.id].missed||[] }));
+}
+function decodingRecordHTML(info, rows, notes){
+  let h = `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Decoding Record</div><div class="rr-sub">Emek Hebrew Academy &middot; Teichman Family Torah Center</div></div></div>`;
+  h += `<div class="rr-info"><div><b>Student:</b> ${esc(info.name)}</div><div><b>Grade:</b> ${esc(info.grade||"—")}</div><div><b>Window:</b> ${esc(info.window)}</div><div><b>Date:</b> ${esc(info.date||"—")}</div><div><b>Examiner:</b> ${esc(info.examiner||"—")}</div><div><b>Levels given:</b> ${rows.map(r=>r.id).join(" + ")||"none"}</div></div>`;
+  if(!rows.length) return h + `<div class="notice">No decoding levels have been saved for this student and window.</div></div>`;
+  h += `<table class="rr-table"><thead><tr><th>Level</th><th>Skill</th><th>Correct</th><th>Accuracy</th><th>Missed words</th></tr></thead><tbody>` +
+    rows.map(r=>`<tr><td class="c"><b>${r.id}</b></td><td>${esc(r.desc)}</td><td class="c">${r.correct}/${r.total}</td><td class="c">${Math.round(r.correct/r.total*100)}%</td><td style="direction:rtl;font-family:'David Libre',serif;font-size:20px;line-height:1.6">${r.missed.length ? r.missed.map(kqFix).join(" &nbsp; ") : "<span style='font-family:inherit;font-size:13px;color:var(--grey);direction:ltr'>None</span>"}</td></tr>`).join("") + `</tbody></table>`;
+  if(notes && ((notes.rs&&notes.rs.length)||(notes.bh&&notes.bh.length)||notes.txt)){
+    h += `<div class="rr-h">Session notes</div>`;
+    if(notes.rs && notes.rs.length) h += `<div><b>Reading style:</b> ${notes.rs.map(esc).join(", ")}</div>`;
+    if(notes.bh && notes.bh.length) h += `<div><b>Behavior:</b> ${notes.bh.map(esc).join(", ")}</div>`;
+    if(notes.txt) h += `<div><b>Notes:</b> ${esc(notes.txt)}</div>`;
+  }
+  return h + `</div>`;
+}
+function worksheetFromRows(who, rows, returnTo){
+  const mbl = rows.filter(r=>r.missed.length).map(r=>({id:r.id, desc:r.desc, missed:r.missed}));
+  openWorksheet(who, "Practice Sheet", "Based on the decoding diagnostic", null, null, mbl, returnTo);
+}
+function refreshDiagButtons(){
+  const rows = diagRowsFromSession();
+  $("diagRecordBtn").style.display = rows.length ? "block" : "none";
+  $("diagWorksheetBtn").style.display = rows.some(r=>r.missed.length) ? "block" : "none";
+}
+$("diagRecordBtn").addEventListener("click", ()=>{
+  const notes = { rs:getSelectedTags("diagRSRow"), bh:getSelectedTags("diagBHRow"), txt:$("diagNotes").value.trim() };
+  const meta = diagMeta[S.name + "|" + S.window] || {};
+  openRunRecord(decodingRecordHTML({ name:S.name, grade:S.grade, window:S.window, examiner:S.examiner||meta.examiner, date:new Date().toLocaleDateString() }, diagRowsFromSession(), notes), "scr-levels", false);
+});
+$("diagWorksheetBtn").addEventListener("click", ()=>worksheetFromRows(S.name + " · Grade " + S.grade + " · " + S.window, diagRowsFromSession(), "scr-levels"));
 function kqFix(w){ w=esc(w); return w.replace(/\ufb3a\u05b8?/g,'<span class="kq">\ufb3a</span>'); }
 function renderDiagItem(){
   $("diagItem").innerHTML = kqFix(DG.cur.items[DG.idx]);
@@ -1269,16 +1334,7 @@ $("diagFinish").addEventListener("click", async ()=>{
     name:S.name, grade:S.grade, window:S.window, examiner:S.examiner,
     levels, missed: missedParts.join("  |  ") };
   const sl = $("diagSaveline"); sl.style.display = "block"; $("diagAgain").style.display = "block";
-  $("diagWorksheetBtn").style.display = missedParts.length ? "block" : "none";
-  $("diagWorksheetBtn").onclick = ()=>{
-    const missedByLevel = LEVELS.map(l=>{
-      const r = DG.done[l.id];
-      return (r && r.missed.length) ? {id:l.id, desc:l.desc, missed:r.missed} : null;
-    }).filter(Boolean);
-    openWorksheet(S.name + " · Grade " + S.grade + " · " + S.window, "Practice Sheet",
-      "Based on the decoding diagnostic completed " + new Date().toLocaleDateString(),
-      null, null, missedByLevel, "scr-levels");
-  };
+  refreshDiagButtons();
   if(SCRIPT_URL.startsWith("PASTE")){ sl.textContent = "Not connected to a Sheet. Results shown above only."; sl.className = "saveline fail"; return; }
   try{
     await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain"}, body:JSON.stringify(payload)});
@@ -1287,6 +1343,10 @@ $("diagFinish").addEventListener("click", async ()=>{
     const kept = (diagMap[dk] || []).filter(x => !levels[String(x).charAt(0)]);
     const added = LEVELS.filter(l => levels[l.id]).map(l => l.id + " " + levels[l.id]);
     diagMap[dk] = kept.concat(added);
+    const pm2 = parseDiagMissed(diagMissed[dk]);
+    LEVELS.forEach(l=>{ if(levels[l.id]) delete pm2[l.id]; });
+    LEVELS.forEach(l=>{ const r = DG.done[l.id]; if(r && !r.prior && r.missed.length) pm2[l.id] = r.missed; });
+    diagMissed[dk] = Object.keys(pm2).sort().map(k=>k + ": " + pm2[k].join(" ")).join("  |  ");
   }catch(e){ sl.textContent = "Could not save (no connection)."; sl.className = "saveline fail"; }
 });
 $("diagAgain").addEventListener("click", ()=>backToSetup(true));
@@ -1383,7 +1443,7 @@ async function loadTeacher(name){
     teacherName = j.teacherName || name; teacherRoster = j.roster || []; teacherResults = j.results || [];
     teacherSections = j.sections || [];
     teacherOpenWindows = j.openWindows || null;
-    doneMap = {}; flagsMap = {}; diagMap = {};
+    doneMap = {}; flagsMap = {}; diagMap = {}; diagMissed = {}; diagMeta = {};
     (j.done || []).forEach(d => {
       doneMap[d.name + "|" + d.window] = d.parts;
       if(d.flags && d.flags.length) flagsMap[d.name + "|" + d.window] = d.flags;
@@ -1391,6 +1451,8 @@ async function loadTeacher(name){
     (j.diagDone || []).forEach(d => {
       const k2 = d.name + "|" + d.window;
       diagMap[k2] = (diagMap[k2] || []).concat(d.levels);
+      if(d.missed) diagMissed[k2] = d.missed;
+      diagMeta[k2] = { examiner:d.examiner||"", ts:d.ts||"" };
     });
     if(!teacherSections.length) return {ok:false, msg:"No classes are listed for you yet. Please contact lsolomon@emek.org."};
     return {ok:true};
@@ -1483,7 +1545,7 @@ $("signOutBtn").addEventListener("click", ()=>{
   teacherOpenWindows = null;
   teacherName = null; teacherRoster = null; teacherResults = null; teacherSections = null;
   adminKey = null; adminLoaded = false; anlCache = null; activeResultsCache = null;
-  roster = []; doneMap = {}; diagMap = {}; flagsMap = {}; secOf = {};
+  roster = []; doneMap = {}; diagMap = {}; diagMissed = {}; diagMeta = {}; flagsMap = {}; secOf = {};
   $("gradeSel").value = ""; $("windowSel").value = ""; $("classSel").innerHTML = "<option value=''>Select class…</option>"; $("studentSel").innerHTML = "<option value=''>Select a class first</option>";
   $("siErr").hidden = true; siSetMode("teacher");
   show("scr-signin");
@@ -1500,7 +1562,9 @@ $("myClassBtn").addEventListener("click", async ()=>{
 /* ============ STUDENT RESULT DETAIL ============ */
 let activeResultsCache = null;
 function bandTag(band){ return band ? `<span class="band-tag">${band}</span>` : ""; }
+let srCurrentName = "", srCurrentWindow = "";
 function openStudentResult(name, w, type){
+  srCurrentName = name; srCurrentWindow = w;
   $("srWho").textContent = name + " · " + w;
   const matches = (activeResultsCache||[]).filter(r => r.name === name && r.window === w);
   const r = matches[matches.length - 1];
@@ -1527,6 +1591,11 @@ function openStudentResult(name, w, type){
     ? `<div class="notice" style="border-left-color:var(--gold)">${lv.join(" &middot; ")}</div>`
     : "<div class='notice'>No diagnostic levels recorded for this window.</div>";
 
+  const drows = diagRowsFromMaps(name, w);
+  if(drows.length){
+    html += `<button class="btn-primary" id="srDecRec" style="margin-top:12px">Print Decoding Record</button>`;
+    if(drows.some(x=>x.missed.length)) html += ` <button class="btn-ghost" id="srDecWs" style="margin-top:12px">Practice Sheet (decoding)</button>`;
+  }
   if(!r) html += `<div id="srFull"></div>`;
   if(r) html += `<button class="btn-primary" id="srRunRec" style="margin-top:16px">Print Running Record</button>`;
   $("srBody").innerHTML = html;
@@ -1606,10 +1675,12 @@ async function loadAdmin(keyArg, silent){
       doneMap[d.name + "|" + d.window] = d.parts;
       if(d.flags && d.flags.length) flagsMap[d.name + "|" + d.window] = d.flags;
     });
-    diagMap = {};
+    diagMap = {}; diagMissed = {}; diagMeta = {};
     (j.diagDone || []).forEach(d => {
       const k2 = d.name + "|" + d.window;
       diagMap[k2] = (diagMap[k2] || []).concat(d.levels);
+      if(d.missed) diagMissed[k2] = d.missed;
+      diagMeta[k2] = { examiner:d.examiner||"", ts:d.ts||"" };
     });
     return true;
   }catch(e){ adminErr = "Could not reach the Sheet. Check your connection and try again."; if(!silent) window.alert(adminErr); return false; }
