@@ -96,6 +96,7 @@ table.skills td.hot{background:var(--err-bg); color:var(--err); font-weight:700;
 .lvlcard .ldesc{font-size:13px; color:var(--grey); margin-top:2px;}
 .lvlcard .lscore{margin-top:8px; font-size:13px; font-weight:700;}
 .lvlcard .lscore.good{color:var(--ok);} .lvlcard .lscore.mid{color:#8a6d00;} .lvlcard .lscore.low{color:var(--err);}
+.savedBanner{border-left-color:var(--ok); background:#EAF5EE; font-weight:600;}
 .kq{position:relative; display:inline-block; line-height:1.15;}
 .kq::after{content:''; position:absolute; left:50%; transform:translateX(-50%); bottom:-.12em; width:.22em; height:.15em; background:linear-gradient(#111,#111) top/100% .035em no-repeat, linear-gradient(#111,#111) center bottom/.035em 100% no-repeat;}
 .diagbig{direction:rtl; font-family:'David Libre',serif; font-size:96px; text-align:center; background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:50px 20px; margin-top:16px; min-height:220px; display:flex; align-items:center; justify-content:center;}
@@ -284,6 +285,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <select id="studentSel"><option value="">Select student…</option></select>
   <label>Grade <span style="font-weight:400;color:var(--grey)">(from the roster)</span></label>
   <select id="gradeSel" disabled><option value="">Select a student first</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+  <div class="notice" id="savedParts" style="display:none"></div>
   <button class="btn-ghost" id="addToggle">+ Add a student not on the list</button>
   <div id="addBox" style="display:none">
     <label>New student name</label>
@@ -312,6 +314,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
     <div class="tstate"><b>Part 1 · Word Reading</b><span id="p1msg">Tap Start, then have the student begin. Tap any syllable the student misreads. The student reads the whole list, even after 60 seconds.</span></div>
     <button class="btn-stop" id="p1btn">Start</button>
   </div>
+  <div class="notice savedBanner" id="p1saved" style="display:none"></div>
   <div class="grid" id="wordGrid"></div>
   <button class="btn-primary" id="p1next" style="display:none">Continue to Passage A</button>
   <button class="btn-ghost" id="p1skip">Skip this part (administer another day)</button>
@@ -325,6 +328,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
     <div class="tstate"><b>Part 2 · Passage A (familiar)</b><span id="p2msg">Tap Start, then have the student begin. Tap any word read incorrectly.</span></div>
     <button class="btn-stop" id="p2btn">Start</button>
   </div>
+  <div class="notice savedBanner" id="p2saved" style="display:none"></div>
   <div class="passage" id="pasA"></div>
   <button class="btn-primary" id="p2next" style="display:none">Continue to Passage B</button>
   <button class="btn-ghost" id="p2back" style="display:none">← Back to review Part 1</button>
@@ -339,6 +343,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
     <div class="tstate"><b>Part 3 · Passage B (unfamiliar)</b><span id="p3msg">Tap Start, then have the student begin. Tap any word read incorrectly.</span></div>
     <button class="btn-stop" id="p3btn">Start</button>
   </div>
+  <div class="notice savedBanner" id="p3saved" style="display:none"></div>
   <div class="passage" id="pasB"></div>
   <button class="btn-primary" id="p3next" style="display:none">See Results</button>
   <button class="btn-ghost" id="p3back" style="display:none">← Back to review Passage A</button>
@@ -884,12 +889,29 @@ function fillClasses(){
   if(classes.length === 1) $("classSel").value = classes[0];
   fillStudents();
 }
+const PART_NAMES = { "1":"Word list", "A":"Passage A", "B":"Passage B" };
+function savedList(parts){ return String(parts||"").split("+").filter(p=>PART_NAMES[p]); }
+function savedSummary(parts){
+  const got = savedList(parts), need = ["1","A","B"].filter(p=>!got.includes(p));
+  return "done: " + got.map(p=>p==="1"?"Word list":p).join(", ") + " · needs: " + need.map(p=>p==="1"?"Word list":p).join(", ");
+}
+function showSavedParts(){
+  const nm = $("studentSel").value, w = $("windowSel").value, box = $("savedParts");
+  const parts = nm && w ? doneMap[nm + "|" + w] : null;
+  const grade = $("gradeSel").value;
+  if(!parts || grade === "2"){ box.style.display = "none"; return; }
+  const got = savedList(parts), need = ["1","A","B"].filter(p=>!got.includes(p));
+  box.style.display = "block";
+  box.innerHTML = "<b>Already saved this window:</b> " + got.map(p=>PART_NAMES[p] + " ✓").join(" · ") +
+    (need.length ? "<br><b>Still to do:</b> " + need.map(p=>PART_NAMES[p]).join(" · ") + "<br><span style='font-weight:400'>The exam will open at the first part that is not saved yet.</span>"
+                 : "<br>All three parts are saved. Starting again will replace the saved scores.");
+}
 function fillStudents(){
   const c = $("classSel").value, w = $("windowSel").value;
   const source = scopeRoster || [];
   const opts = !c ? "" : source.filter(s=>s.active && s.section===c).map(s=>{
     const parts = doneMap[s.name + "|" + w];
-    const tag = !parts ? "" : parts === "1+A+B" ? "  ✓ done" : `  ✓ partial (${parts})`;
+    const tag = !parts ? "" : parts === "1+A+B" ? "  ✓ done" : `  ✓ partial · ${savedSummary(parts)}`;
     return `<option value="${esc(s.name)}">${esc(s.name)}${tag}</option>`;
   }).join("");
   $("studentSel").innerHTML = "<option value=''>" + (c ? "Select student…" : "Select a class first") + "</option>" + opts;
@@ -901,6 +923,7 @@ function onStudentChange(){
   $("gradeSel").value = st ? String(st.grade) : "";
   updateGradeUI();
   checkReady();
+  showSavedParts();
 }
 function updateGradeUI(){
   const isG2 = $("gradeSel").value === "2";
@@ -939,6 +962,20 @@ $("beginBtn").addEventListener("click", ()=>{
   BANK = +S.grade <= 5 ? BANKS["35"] : BANKS["68"];
   document.querySelector("#scr-p1 .tstate b").textContent = "Part 1 · " + BANK.p1label;
   buildP1(); show("scr-p1");
+  const got = savedList(doneMap[S.name + "|" + S.window]);
+  [["1","p1saved"],["A","p2saved"],["B","p3saved"]].forEach(([c,id])=>{
+    const b = $(id);
+    if(got.includes(c)){ b.style.display = "block"; b.textContent = "✓ " + PART_NAMES[c] + " is already saved for this student. Skip it, or retest to replace the saved score."; }
+    else b.style.display = "none";
+  });
+  /* open at the first part that is not saved yet */
+  if(got.includes("1") && got.length < 3){
+    $("p1skip").click();
+    if(got.includes("A") && !got.includes("B")) $("p2skip").click();
+    const land = got.includes("A") ? "p3saved" : "p2saved";
+    $(land).style.display = "block";
+    $(land).textContent = "✓ Already saved for this student: " + got.map(p=>PART_NAMES[p]).join(", ") + ". This is the next part to give.";
+  }
 });
 
 
