@@ -624,6 +624,24 @@ function pill(band){ return band ? `<span class="rr-pill" style="${BAND_PILL[ban
 function esc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function fmtDate(d){ return new Date(d || Date.now()).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); }
 function partTitle(code, grade){ return code==="1" ? "Part 1 · " + (+grade <= 5 ? "Word Reading" : "Word Screener") : code==="A" ? "Passage A · Familiar" : "Passage B · Unfamiliar"; }
+/* The student's row already in the Sheet for this window (parts saved in earlier sittings). */
+function savedRowFor(name, w){
+  const src = (currentRole === "teacher" ? teacherResults : anlCache) || activeResultsCache || [];
+  const m = src.filter(r=>r.name===name && r.window===w);
+  return m.length ? m[m.length-1] : null;
+}
+const hasVal = v => v != null && v !== "";
+/* Parts saved earlier that were NOT given in this sitting. */
+function earlierParts(){
+  const r = savedRowFor(S.name, S.window); if(!r) return [];
+  const out = [], given = { "1":!!S.parts.p1, "A":!!S.parts.pA, "B":!!S.parts.pB };
+  if(!given["1"] && hasVal(r.cspm)) out.push({code:"1", score:r.cspm, measure:"CSPM", acc:r.acc1, read:r.syllRead, errors:r.syllErrors});
+  if(!given["A"] && hasVal(r.wcpmA)) out.push({code:"A", score:r.wcpmA, measure:"WCPM", acc:r.accA, read:r.wordsA, errors:r.errA});
+  if(!given["B"] && hasVal(r.wcpmB)) out.push({code:"B", score:r.wcpmB, measure:"WCPM", acc:r.accB, read:r.wordsB, errors:r.errB});
+  const m = r.missed || {};
+  out.forEach(p=>{ p.missed = m[p.code] || []; p.date = r.ts; });
+  return out;
+}
 function recFromLive(){
   const r = S.result, g = S.grade, parts = [];
   [["1","p1"],["A","pA"],["B","pB"]].forEach(([code,key])=>{
@@ -633,7 +651,11 @@ function recFromLive(){
     parts.push({ code, title:partTitle(code,g), measure: code==="1" ? "CSPM" : "WCPM", score, band, acc:P.acc, read:P.read, errors:P.errors, items:P.allItems, missed:P.missedWords||[] });
   });
   return { name:r.name, grade:g, window:r.window, date:r.timestamp, examiner:r.examiner, tally:r.tally||{}, parts,
-           notes:{ rs:r.readingStyle||[], bh:r.behavior||[], txt:r.notes||"" }, live:true };
+           notes:{ rs:r.readingStyle||[], bh:r.behavior||[], txt:r.notes||"" }, live:true,
+           ...(()=>{ const ep = earlierParts(); if(!ep.length) return {};
+             const all = parts.concat(ep.map(p=>({ code:p.code, title:partTitle(p.code,g) + " (saved earlier)", measure:p.measure, score:p.score, band:bandFor(p.code==="1"?"cspm":"wcpm", p.score, g), acc:p.acc, read:p.read, errors:p.errors, items:null, missed:p.missed })));
+             all.sort((a,b)=>"1AB".indexOf(a.code)-"1AB".indexOf(b.code));
+             return { parts: all }; })() };
 }
 /* Rebuild the word-by-word items of one part from the compact record saved in the Sheet. */
 function itemsFromDetail(d){
@@ -974,7 +996,7 @@ $("beginBtn").addEventListener("click", ()=>{
     if(got.includes("A") && !got.includes("B")) $("p2skip").click();
     const land = got.includes("A") ? "p3saved" : "p2saved";
     $(land).style.display = "block";
-    $(land).textContent = "✓ Already saved for this student: " + got.map(p=>PART_NAMES[p]).join(", ") + ". This is the next part to give.";
+    $(land).textContent = "Give this part now: " + PART_NAMES[got.includes("A") ? "B" : "A"] + " is still needed. (Already saved from an earlier sitting: " + got.map(p=>PART_NAMES[p]).join(", ") + ".)";
   }
 });
 
@@ -1123,6 +1145,15 @@ function updateBackBtns(){
   /* a finished page cannot be skipped by accident */
   [["p1skip",p1],["p2skip",probes.pA],["p3skip",probes.pB]].forEach(([id,pr])=>{ $(id).style.display = done(pr) ? "none" : ""; });
 }
+/* Skip after the timer started throws that part away, so confirm first. */
+[["p1skip",()=>p1],["p2skip",()=>probes.pA],["p3skip",()=>probes.pB]].forEach(([id,get])=>{
+  $(id).addEventListener("click", e=>{
+    const pr = get(); if(!e.isTrusted || !pr || pr.getPhase()==="idle") return;
+    if(!window.confirm("You already started timing this part. Skipping will throw it away and it will NOT be saved.\n\nTo keep it: tap Cancel, then tap the last word the student read.\n\nSkip and discard it?")){
+      e.stopImmediatePropagation(); e.preventDefault();
+    }
+  }, true);
+});
 $("p2back").addEventListener("click", ()=>show("scr-p1"));
 $("p3back").addEventListener("click", ()=>show("scr-p2"));
 $("p1next").addEventListener("click", ()=>{ if(!probes.pA) buildPassage("pasA", BANK.pasA, "p2", "pA"); show("scr-p2"); updateBackBtns(); });
@@ -1210,7 +1241,22 @@ async function showResults(recalc){
   if(p1r){ cards += mcard(p1r, p1r.cspm, "CSPM · word list", "cspm"); accs.push(p1r.acc); }
   if(A){ cards += mcard(A, A.wcpm, "WCPM · familiar", "wcpm"); accs.push(A.acc); }
   if(B){ cards += mcard(B, B.wcpm, "WCPM · unfamiliar", "wcpm"); accs.push(B.acc); }
+  const ep = earlierParts();
+  ep.forEach(p=>{
+    cards += `<div class="card" style="opacity:.8;border-style:dashed"><div class="n">${p.score}</div><div class="l">${p.measure} · ${p.code==="1"?"word list":p.code==="A"?"familiar":"unfamiliar"}</div><div style="font-size:12px;color:var(--grey);margin-top:6px">${hasVal(p.acc)?"Accuracy "+p.acc+"% &middot; ":""}${hasVal(p.read)?p.read+" read &middot; ":""}${hasVal(p.errors)?p.errors+" error"+(+p.errors===1?"":"s"):""}</div><span class="band-tag" style="background:#EEF1F6;color:#4A5568">Saved earlier${p.date?" · "+fmtDate(p.date):""}</span></div>`;
+  });
+  const haveNow = ["1","A","B"].filter(c=>({"1":p1r,"A":A,"B":B})[c]);
+  const allCodes = [...new Set(haveNow.concat(ep.map(p=>p.code)))];
+  const nm = c => PART_NAMES[c];
+  let status = "";
+  if(haveNow.length || ep.length){
+    status = `<div class="notice" style="margin-bottom:12px"><b>This sitting:</b> ${haveNow.length ? haveNow.map(nm).join(", ") : "nothing recorded"}` +
+      (ep.length ? ` &nbsp;·&nbsp; <b>Saved earlier:</b> ${ep.map(p=>nm(p.code)).join(", ")}` : "") +
+      (allCodes.length === 3 ? `<br><b style="color:var(--ok)">All three parts are now complete ✓</b>` : `<br><b>Still needed:</b> ${["1","A","B"].filter(c=>!allCodes.includes(c)).map(nm).join(", ")}`) + `</div>`;
+  }
   $("cards").innerHTML = cards || "<div class='card'><div class='l'>No parts administered</div></div>";
+  { const old = document.getElementById("resStatus"); if(old) old.remove();
+    if(status){ const d = document.createElement("div"); d.id = "resStatus"; d.innerHTML = status; $("cards").parentNode.insertBefore(d, $("cards")); } }
   let gap = "";
   if(A && B) gap = A.wcpm - B.wcpm;   // raw difference only; no flag is stored or shown
 
@@ -1253,6 +1299,11 @@ async function showResults(recalc){
   if(recalc === true){ scheduleSave(); return; }
   resetTagPanel("res");
   show("scr-res");
+  if(partsStr === "none"){
+    const sl = $("saveline"); sl.className = "saveline fail";
+    sl.textContent = "Nothing was recorded in this sitting, so nothing was saved. Earlier saved parts are unchanged. (A passage only counts after you tap the last word the student read.)";
+    return;
+  }
   saveResult();
 }
 async function saveResult(){
