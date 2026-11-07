@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Kriah Exam (Decoding and Fluency) · Grades 2-8 · Emek Hebrew Academy</title>
+<title>Kriah Exam (Decoding and Fluency) · Grades 1-8 · Emek Hebrew Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -234,7 +234,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
 </style>
 </head>
 <body class="on-signin">
-<header class="app"><img class="logo" alt="Emek Hebrew Academy" data-logo><div class="titles"><h1>Kriah Exam</h1><span class="band">Decoding and Fluency · Grades 2–8</span></div><span class="who" id="whoami"></span></header>
+<header class="app"><img class="logo" alt="Emek Hebrew Academy" data-logo><div class="titles"><h1>Kriah Exam</h1><span class="band">Decoding and Fluency · Grades 1–8</span></div><span class="who" id="whoami"></span></header>
 
 <!-- ============ SIGN IN ============ -->
 <section class="screen active" id="scr-signin">
@@ -284,14 +284,14 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <label>Student</label>
   <select id="studentSel"><option value="">Select student…</option></select>
   <label>Grade <span style="font-weight:400;color:var(--grey)">(from the roster)</span></label>
-  <select id="gradeSel" disabled><option value="">Select a student first</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+  <select id="gradeSel" disabled><option value="">Select a student first</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
   <div class="notice" id="savedParts" style="display:none"></div>
   <button class="btn-ghost" id="addToggle">+ Add a student not on the list</button>
   <div id="addBox" style="display:none">
     <label>New student name</label>
     <input type="text" id="newName" placeholder="First Last">
     <label>Grade</label>
-    <select id="newGrade"><option value="">Select grade…</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+    <select id="newGrade"><option value="">Select grade…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
     <button class="btn-ghost" id="addBtn">Save to roster</button>
     <span id="addMsg" style="font-size:13px;color:var(--grey)"></span>
   </div>
@@ -357,7 +357,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <div class="anlfilters">
     <select id="anlWin"><option value="">All windows</option><option>Fall</option><option>Winter</option><option>Spring</option></select>
     <select id="anlSec"><option value="">All sections</option></select>
-    <select id="anlGrade"><option value="">All grades</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+    <select id="anlGrade"><option value="">All grades</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
   </div>
   <div class="scorecards" id="anlCards"></div>
   <h2 class="step" id="anlBandsHead" style="display:none">Benchmark bands</h2>
@@ -398,6 +398,7 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <h2 class="step" id="levelsTitle"><span id="levelsTitleText">Decoding Diagnostic · choose a level</span> <span class="hint" id="diagWho"></span></h2>
   <div class="notice">Untimed. Show each item; tap Correct or Incorrect (keyboard: C / X). Assess only the levels you need; then Finish and Save.</div>
   <div class="lvlgrid" id="lvlGrid"></div>
+  <div id="g1Panel" style="display:none"></div>
 
   <h2 class="step">Session Notes</h2>
   <div class="tagGroupLabel">Reading style</div>
@@ -587,7 +588,7 @@ function lastResultFor(name, w){
   return m.length ? m[m.length-1] : null;
 }
 function classSummaryHTML(ctxRows, w){
-  const eligible = (ctxRows||[]).filter(x=>String(x.grade) !== "2");
+  const eligible = (ctxRows||[]).filter(x=>!isDecodingOnly(x.grade));
   if(!eligible.length) return `<div class="sum-wrap"><div class="sum-title">Class summary</div><div class="sum-sub">Grade 2 uses the decoding assessment only, so there are no fluency averages.</div></div>`;
   const res = eligible.map(x=>lastResultFor(x.name, w)).filter(Boolean);
   const total = eligible.length, tested = res.length;
@@ -624,24 +625,6 @@ function pill(band){ return band ? `<span class="rr-pill" style="${BAND_PILL[ban
 function esc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function fmtDate(d){ return new Date(d || Date.now()).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); }
 function partTitle(code, grade){ return code==="1" ? "Part 1 · " + (+grade <= 5 ? "Word Reading" : "Word Screener") : code==="A" ? "Passage A · Familiar" : "Passage B · Unfamiliar"; }
-/* The student's row already in the Sheet for this window (parts saved in earlier sittings). */
-function savedRowFor(name, w){
-  const src = (currentRole === "teacher" ? teacherResults : anlCache) || activeResultsCache || [];
-  const m = src.filter(r=>r.name===name && r.window===w);
-  return m.length ? m[m.length-1] : null;
-}
-const hasVal = v => v != null && v !== "";
-/* Parts saved earlier that were NOT given in this sitting. */
-function earlierParts(){
-  const r = savedRowFor(S.name, S.window); if(!r) return [];
-  const out = [], given = { "1":!!S.parts.p1, "A":!!S.parts.pA, "B":!!S.parts.pB };
-  if(!given["1"] && hasVal(r.cspm)) out.push({code:"1", score:r.cspm, measure:"CSPM", acc:r.acc1, read:r.syllRead, errors:r.syllErrors});
-  if(!given["A"] && hasVal(r.wcpmA)) out.push({code:"A", score:r.wcpmA, measure:"WCPM", acc:r.accA, read:r.wordsA, errors:r.errA});
-  if(!given["B"] && hasVal(r.wcpmB)) out.push({code:"B", score:r.wcpmB, measure:"WCPM", acc:r.accB, read:r.wordsB, errors:r.errB});
-  const m = r.missed || {};
-  out.forEach(p=>{ p.missed = m[p.code] || []; p.date = r.ts; });
-  return out;
-}
 function recFromLive(){
   const r = S.result, g = S.grade, parts = [];
   [["1","p1"],["A","pA"],["B","pB"]].forEach(([code,key])=>{
@@ -651,11 +634,7 @@ function recFromLive(){
     parts.push({ code, title:partTitle(code,g), measure: code==="1" ? "CSPM" : "WCPM", score, band, acc:P.acc, read:P.read, errors:P.errors, items:P.allItems, missed:P.missedWords||[] });
   });
   return { name:r.name, grade:g, window:r.window, date:r.timestamp, examiner:r.examiner, tally:r.tally||{}, parts,
-           notes:{ rs:r.readingStyle||[], bh:r.behavior||[], txt:r.notes||"" }, live:true,
-           ...(()=>{ const ep = earlierParts(); if(!ep.length) return {};
-             const all = parts.concat(ep.map(p=>({ code:p.code, title:partTitle(p.code,g) + " (saved earlier)", measure:p.measure, score:p.score, band:bandFor(p.code==="1"?"cspm":"wcpm", p.score, g), acc:p.acc, read:p.read, errors:p.errors, items:null, missed:p.missed })));
-             all.sort((a,b)=>"1AB".indexOf(a.code)-"1AB".indexOf(b.code));
-             return { parts: all }; })() };
+           notes:{ rs:r.readingStyle||[], bh:r.behavior||[], txt:r.notes||"" }, live:true };
 }
 /* Rebuild the word-by-word items of one part from the compact record saved in the Sheet. */
 function itemsFromDetail(d){
@@ -725,7 +704,7 @@ function classDecodingHTML(rows, w){
   const D = classDecodingData(rows, w);
   if(!D.used.length) return "";
   const tested = D.per.filter(p=>p.lv.length).length;
-  const head = D.used.map(id=>`<th class="c">${id}</th>`).join("");
+  const head = D.used.map(id=>`<th class="c">${/^\d$/.test(id)?"Part "+id:id}</th>`).join("");
   const body = D.per.map(p=>{
     if(!p.lv.length) return `<tr><td>${esc(p.st.name)}</td><td class="c">${esc(p.st.grade)}</td><td class="c" colspan="${D.used.length}" style="color:#8A8578">Not tested this window</td><td></td></tr>`;
     const by = {}; p.lv.forEach(x=>by[x.id]=x);
@@ -741,7 +720,7 @@ function classDecodingHTML(rows, w){
   return `<div class="rr-h" style="margin-top:14px">Decoding diagnostic &middot; ${tested} of ${rows.length} students tested</div>
     <div class="rr-scroll"><table class="rr-table rr-class"><thead><tr><th>Student</th><th>Gr</th>${head}<th>Missed words</th></tr></thead><tbody>${body}
     <tr style="background:#F2F5FB"><td colspan="2"><b>Class average</b></td>${avg}<td></td></tr></tbody></table></div>
-    <div class="rr-note">Each cell shows correct / total for that level, then the percent. Level descriptions: ${D.used.map(id=>id+" = "+esc(D.agg[id].desc)).join("; ")}.</div>`;
+    <div class="rr-note">Each cell shows correct / total for that level, then the percent. Level descriptions: ${D.used.map(id=>(/^\d$/.test(id)?"Part "+id:id)+" = "+esc(D.agg[id].desc)).join("; ")}.</div>`;
 }
 /* One-page class practice sheet built from decoding results: the weakest levels first, most-missed words first */
 function classDecodingSheetLevels(rows, w){
@@ -749,7 +728,7 @@ function classDecodingSheetLevels(rows, w){
   const lv = Object.values(D.agg).filter(a=>Object.keys(a.words).length)
     .sort((a,b)=>(a.correct/a.total)-(b.correct/b.total)).slice(0,6);
   return lv.map(a=>{
-    const L = LEVELS.find(x=>x.id===a.id);
+    const L = ALL_LEVELS.find(x=>x.id===a.id);
     let words = Object.entries(a.words).sort((x,y)=>y[1]-x[1]).map(([t])=>t);
     if(L) L.items.forEach(it=>{ if(words.length<8 && !words.includes(it)) words.push(it); });
     return { id:a.id, desc:a.desc + " (" + Math.round(a.correct/a.total*100) + "% class accuracy)", missed:words.slice(0,8) };
@@ -758,7 +737,7 @@ function classDecodingSheetLevels(rows, w){
 function classRecordHTML(rows, w, label){
   const bandBg = {Benchmark:"#E3F1E8", Strategic:"#FBF3D9", Intensive:"#FBEAE8"};
   const cell = (score, band) => score==null ? `<td class="c" style="color:#8A8578">—</td>` : `<td class="c" style="background:${bandBg[band]||"#fff"}"><b>${score}</b>${band?`<div style="font-size:11px">${band}</div>`:""}</td>`;
-  const needFluency = rows.some(s=>s.grade !== "2" || (activeResultsCache||[]).some(x=>x.name===s.name && x.window===w));
+  const needFluency = rows.some(s=>!isDecodingOnly(s.grade) || (activeResultsCache||[]).some(x=>x.name===s.name && x.window===w));
   const decHTML = classDecodingHTML(rows, w);
   if(!needFluency){
     return `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Class Running Record &middot; Decoding</div><div class="rr-sub">${esc(label)} &middot; printed ${fmtDate()}</div></div></div>${decHTML || "<div class='notice' style='margin-top:12px'>No decoding levels have been saved for this class and window yet.</div>"}</div>`;
@@ -865,7 +844,7 @@ function renderWorksheetHTML(title, subtitle, skillCounts, missedWords, missedBy
       <div class="wsItems">${missedWords.map(w=>`<span class="wsItem">${kqFix(w)}</span>`).join("")}</div></div>`;
   }
   if(missedByLevel && missedByLevel.length){
-    body += missedByLevel.map(lv=>`<div class="wsSkill"><div class="wsSkillHead">Level ${lv.id} · ${lv.desc}</div>
+    body += missedByLevel.map(lv=>`<div class="wsSkill"><div class="wsSkillHead">${lvlName(lv.id)} · ${lv.desc}</div>
       <div class="wsItems">${lv.missed.map(w=>`<span class="wsItem">${kqFix(w)}</span>`).join("")}</div></div>`).join("");
   }
   if(!body) body = "<p style='color:var(--grey)'>No skill errors were recorded for this selection.</p>";
@@ -921,7 +900,7 @@ function showSavedParts(){
   const nm = $("studentSel").value, w = $("windowSel").value, box = $("savedParts");
   const parts = nm && w ? doneMap[nm + "|" + w] : null;
   const grade = $("gradeSel").value;
-  if(!parts || grade === "2"){ box.style.display = "none"; return; }
+  if(!parts || isDecodingOnly(grade)){ box.style.display = "none"; return; }
   const got = savedList(parts), need = ["1","A","B"].filter(p=>!got.includes(p));
   box.style.display = "block";
   box.innerHTML = "<b>Already saved this window:</b> " + got.map(p=>PART_NAMES[p] + " ✓").join(" · ") +
@@ -948,9 +927,9 @@ function onStudentChange(){
   showSavedParts();
 }
 function updateGradeUI(){
-  const isG2 = $("gradeSel").value === "2";
+  const gv = $("gradeSel").value, isG2 = isDecodingOnly(gv);
   $("beginBtn").style.display = isG2 ? "none" : "block";
-  $("beginDiagBtn").textContent = isG2 ? "Begin Kriah Assessment (untimed)" : "Begin Decoding Diagnostic (A–L, untimed)";
+  $("beginDiagBtn").textContent = gv === "1" ? "Begin First Grade Assessment (untimed, 3 parts)" : isG2 ? "Begin Kriah Assessment (untimed)" : "Begin Decoding Diagnostic (A–L, untimed)";
 }
 $("classSel").addEventListener("change", fillStudents);
 $("windowSel").addEventListener("change", fillStudents);
@@ -996,7 +975,7 @@ $("beginBtn").addEventListener("click", ()=>{
     if(got.includes("A") && !got.includes("B")) $("p2skip").click();
     const land = got.includes("A") ? "p3saved" : "p2saved";
     $(land).style.display = "block";
-    $(land).textContent = "Give this part now: " + PART_NAMES[got.includes("A") ? "B" : "A"] + " is still needed. (Already saved from an earlier sitting: " + got.map(p=>PART_NAMES[p]).join(", ") + ".)";
+    $(land).textContent = "✓ Already saved for this student: " + got.map(p=>PART_NAMES[p]).join(", ") + ". This is the next part to give.";
   }
 });
 
@@ -1145,15 +1124,6 @@ function updateBackBtns(){
   /* a finished page cannot be skipped by accident */
   [["p1skip",p1],["p2skip",probes.pA],["p3skip",probes.pB]].forEach(([id,pr])=>{ $(id).style.display = done(pr) ? "none" : ""; });
 }
-/* Skip after the timer started throws that part away, so confirm first. */
-[["p1skip",()=>p1],["p2skip",()=>probes.pA],["p3skip",()=>probes.pB]].forEach(([id,get])=>{
-  $(id).addEventListener("click", e=>{
-    const pr = get(); if(!e.isTrusted || !pr || pr.getPhase()==="idle") return;
-    if(!window.confirm("You already started timing this part. Skipping will throw it away and it will NOT be saved.\n\nTo keep it: tap Cancel, then tap the last word the student read.\n\nSkip and discard it?")){
-      e.stopImmediatePropagation(); e.preventDefault();
-    }
-  }, true);
-});
 $("p2back").addEventListener("click", ()=>show("scr-p1"));
 $("p3back").addEventListener("click", ()=>show("scr-p2"));
 $("p1next").addEventListener("click", ()=>{ if(!probes.pA) buildPassage("pasA", BANK.pasA, "p2", "pA"); show("scr-p2"); updateBackBtns(); });
@@ -1241,22 +1211,7 @@ async function showResults(recalc){
   if(p1r){ cards += mcard(p1r, p1r.cspm, "CSPM · word list", "cspm"); accs.push(p1r.acc); }
   if(A){ cards += mcard(A, A.wcpm, "WCPM · familiar", "wcpm"); accs.push(A.acc); }
   if(B){ cards += mcard(B, B.wcpm, "WCPM · unfamiliar", "wcpm"); accs.push(B.acc); }
-  const ep = earlierParts();
-  ep.forEach(p=>{
-    cards += `<div class="card" style="opacity:.8;border-style:dashed"><div class="n">${p.score}</div><div class="l">${p.measure} · ${p.code==="1"?"word list":p.code==="A"?"familiar":"unfamiliar"}</div><div style="font-size:12px;color:var(--grey);margin-top:6px">${hasVal(p.acc)?"Accuracy "+p.acc+"% &middot; ":""}${hasVal(p.read)?p.read+" read &middot; ":""}${hasVal(p.errors)?p.errors+" error"+(+p.errors===1?"":"s"):""}</div><span class="band-tag" style="background:#EEF1F6;color:#4A5568">Saved earlier${p.date?" · "+fmtDate(p.date):""}</span></div>`;
-  });
-  const haveNow = ["1","A","B"].filter(c=>({"1":p1r,"A":A,"B":B})[c]);
-  const allCodes = [...new Set(haveNow.concat(ep.map(p=>p.code)))];
-  const nm = c => PART_NAMES[c];
-  let status = "";
-  if(haveNow.length || ep.length){
-    status = `<div class="notice" style="margin-bottom:12px"><b>This sitting:</b> ${haveNow.length ? haveNow.map(nm).join(", ") : "nothing recorded"}` +
-      (ep.length ? ` &nbsp;·&nbsp; <b>Saved earlier:</b> ${ep.map(p=>nm(p.code)).join(", ")}` : "") +
-      (allCodes.length === 3 ? `<br><b style="color:var(--ok)">All three parts are now complete ✓</b>` : `<br><b>Still needed:</b> ${["1","A","B"].filter(c=>!allCodes.includes(c)).map(nm).join(", ")}`) + `</div>`;
-  }
   $("cards").innerHTML = cards || "<div class='card'><div class='l'>No parts administered</div></div>";
-  { const old = document.getElementById("resStatus"); if(old) old.remove();
-    if(status){ const d = document.createElement("div"); d.id = "resStatus"; d.innerHTML = status; $("cards").parentNode.insertBefore(d, $("cards")); } }
   let gap = "";
   if(A && B) gap = A.wcpm - B.wcpm;   // raw difference only; no flag is stored or shown
 
@@ -1299,11 +1254,6 @@ async function showResults(recalc){
   if(recalc === true){ scheduleSave(); return; }
   resetTagPanel("res");
   show("scr-res");
-  if(partsStr === "none"){
-    const sl = $("saveline"); sl.className = "saveline fail";
-    sl.textContent = "Nothing was recorded in this sitting, so nothing was saved. Earlier saved parts are unchanged. (A passage only counts after you tap the last word the student read.)";
-    return;
-  }
   saveResult();
 }
 async function saveResult(){
@@ -1325,6 +1275,12 @@ $("wsFromResultsBtn").addEventListener("click", ()=>{
 /* ============ DECODING DIAGNOSTIC (A–L) ============ */
 const LEVELS = [{"id":"A","desc":"Letter / Sound + Vowel Recognition","items":["ל","ז","תּ","ר","ם","ב","צ","מ","שׁ","ך","פּ","ו","ק","ף","ג","כ","ט","א","נ","ת","ץ","בּ","י","ה","ן","כּ","שׂ","פ","ס","ד","ח","ע","ָ","ַ","ֵ","ֶ","ִ","ֻ","ְ","וּ","וֹ"],"labels":["Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Letter","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel","Vowel"]},{"id":"B","desc":"C+V blend / C+V+C blend","items":["פֶּ","טֹ","בֻ","קֵ","חִ","שֻׁב","גָד","רֵק","דֻר","מָן"],"labels":["CV blend","CV blend","CV blend","CV blend","CV blend","CVC blend","CVC blend","CVC blend","CVC blend","CVC blend"]},{"id":"C","desc":"CVCV / CVCVCV blend","items":["פֶּלֶ","עַמִ","יָבֹ","צֻרֵ","בִּקֵעַ","זַמֵרֻ","כֹּתָבֵ","טַפֵּנֻ"],"labels":["CVCV","CVCV","CVCV","CVCV","CVCVCV","CVCVCV","CVCVCV","CVCVCV"]},{"id":"D","desc":"Cholom Vav (Maleh) / Shoorook","items":["בּוֹקֶר","יַכּוּ","חוֹלֵק","וֶעֶזוּז","יוֹצֵא","וּמָלֵא","שׁוֹפָר","לוּלָב"],"labels":["Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook","Cholom Vav","Shoorook"]},{"id":"E","desc":"Similar looking letters","items":["כָּזֶה","בֶּצַע","הִנוֹ","חָלָב","וֶרֶד","זֶבֶד","טַלִית","מֶלַח","כֻּלָם","כַּנֵס","אוֹצָרוֹ","עָנָוִים","הַשְׂכֵּל","הַשֵׂמוֹת"],"labels":["Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters","Similar letters"]},{"id":"F","desc":"Similar looking Sofiot","items":["מְצַוֶךָּ","כָּמוֹךָ","דֶרֶךְ","רָצוּף","קִבּוּץ","חַלּוֹן","קִבֵּץ","אַף"],"labels":["Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit","Sofit"]},{"id":"G","desc":"Patach Ganuva (Ach vs Cha)","items":["נִתּוּחַ","פָּתַח","יָרֵחַ","שׁוֹלֵחַ","טָבוּחַ","פּוֹתֵחַ","יִפָּתֵחַ","שָׁלַח"],"labels":["Ganuva (ach)","Normal order","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Ganuva (ach)","Normal order"]},{"id":"H","desc":"Silent Hei","items":["הֻכָּה","אֶמוּנָה","תּוֹרָה","בְּרָכָה","לַיְלָה","מִשְׁפָּחָה","קוֹמָה","שָׂדֶה"],"labels":["Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei","Silent Hei"]},{"id":"I","desc":"Sounded & Silent Yud","items":["אַבוֹתַי","גוֹיֶךָ","אַבוֹתָיו","גָלוּי","עָלָיו","בָּנָיו","דְּבָרָיו","עָלַי"],"labels":["Sounded","Sounded","Silent","Sounded","Silent","Silent","Silent","Sounded"]},{"id":"J","desc":"Double duty Cholom","items":["מֹשֵׁל","תִּגשֹׁ","לָשׂבַע","נְפָשֹׁת","יִטשׁ","עֹשֶׂה","שֹׁמֵעַ","חַשׂךְ"],"labels":["Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom","Double Cholom"]},{"id":"K","desc":"Articulated Vav","items":["עָוֹן","עַוֹנֵי","מִצְוֹת","עֲוֹנוֹת","מִצְוֹתֵיכֶם","עֲוֹנוֹתֵינוּ","תִּקְוָה","מִקְוֶה"],"labels":["Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav","Articulated Vav"]},{"id":"L","desc":"Shva Nah / Shva Nach","items":["מְאֹד","זִמְּרָה","הַלְלוּ","תִּשְׁמְרוּ","בָּךְ","וַיַשְׁקְ","חֶבְלֵי","יִצְרֵי"],"labels":["Shva Nah","Shva Nah","Shva Nach","Shva Nach","Shva Nach","Shva Nah","Shva Nach","Shva Nah"]}];
 
+const G1_LEVELS = [{"id": "1", "desc": "Letters and vowels", "items": ["ל", "ז", "תּ", "ר", "ם", "ב", "צ", "מ", "שׁ", "ך", "פּ", "ו", "ק", "ף", "ג", "כ", "ט", "א", "נ", "ת", "ץ", "בּ", "י", "ה", "ן", "כּ", "שׂ", "פ", "ס", "ד", "ח", "ע", "◌ָ", "◌ַ", "◌ֵ", "◌ֶ", "◌ְ"], "labels": ["Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Letter", "Vowel sign", "Vowel sign", "Vowel sign", "Vowel sign", "Vowel sign"], "skills": [["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Letters"], ["Vowel signs (alone)"], ["Vowel signs (alone)"], ["Vowel signs (alone)"], ["Vowel signs (alone)"], ["Vowel signs (alone)"]]}, {"id": "2", "desc": "One-syllable words", "items": ["דָּג", "לֵב", "זֶה", "גַּן", "שְׁמַע", "יָד", "שֵׁם", "אֶת", "חַג", "זְמַן", "שָׁם", "עֵץ", "פֶּה", "בַּת", "בֵּן"], "labels": ["Kamatz", "Tzeirei", "Segol", "Patach", "Sheva (voiced) + Patach", "Kamatz", "Tzeirei", "Segol", "Patach", "Sheva (voiced) + Patach", "Kamatz", "Tzeirei", "Segol", "Patach", "Tzeirei"], "skills": [["Kamatz"], ["Tzeirei"], ["Segol"], ["Patach"], ["Sheva (voiced)", "Patach"], ["Kamatz"], ["Tzeirei"], ["Segol"], ["Patach"], ["Sheva (voiced)", "Patach"], ["Kamatz"], ["Tzeirei"], ["Segol"], ["Patach"], ["Tzeirei"]]}, {"id": "3", "desc": "Two- and three-syllable words", "items": ["שַׁבָּת", "חָלָב", "חָבֵר", "יָשֵׁן", "סֵפֶר", "לֶחֶם", "יֶלֶד", "מֶלֶךְ", "יַלְדָּה", "בְּרָכָה", "מַתָּנָה", "מְבָרֵךְ", "מְלַמֵּד", "בְּהֵמָה", "מַחְבֶּרֶת"], "labels": ["Patach + Kamatz", "Kamatz", "Kamatz + Tzeirei", "Kamatz + Tzeirei", "Tzeirei + Segol", "Segol", "Segol", "Segol + Sheva (silent)", "Patach + Sheva (silent) + Kamatz", "Sheva (voiced) + Kamatz", "Patach + Kamatz", "Sheva (voiced) + Kamatz + Tzeirei", "Sheva (voiced) + Patach + Tzeirei", "Sheva (voiced) + Tzeirei + Kamatz", "Patach + Sheva (silent) + Segol"], "skills": [["Patach", "Kamatz"], ["Kamatz", "Kamatz"], ["Kamatz", "Tzeirei"], ["Kamatz", "Tzeirei"], ["Tzeirei", "Segol"], ["Segol", "Segol"], ["Segol", "Segol"], ["Segol", "Segol", "Sheva (silent)"], ["Patach", "Sheva (silent)", "Kamatz"], ["Sheva (voiced)", "Kamatz", "Kamatz"], ["Patach", "Kamatz", "Kamatz"], ["Sheva (voiced)", "Kamatz", "Tzeirei"], ["Sheva (voiced)", "Patach", "Tzeirei"], ["Sheva (voiced)", "Tzeirei", "Kamatz"], ["Patach", "Sheva (silent)", "Segol", "Segol"]]}];
+const ALL_LEVELS = LEVELS.concat(G1_LEVELS);
+function lvlName(id){ return /^\d$/.test(id) ? "Part " + id : "Level " + id; }
+function dispLv(str){ return String(str).replace(/^(\d) /, "Part $1 "); }
+const isDecodingOnly = g => String(g) === "1" || String(g) === "2";
+
 const DG = { done:{}, cur:null, idx:0, answers:[] };
 
 $("beginDiagBtn").addEventListener("click", ()=>{
@@ -1332,7 +1288,7 @@ $("beginDiagBtn").addEventListener("click", ()=>{
   S.grade = $("gradeSel").value; S.window = $("windowSel").value; S.examiner = $("examiner").value.trim() || (currentRole==="admin" ? "Admin" : (teacherName||""));
   $("whoami").textContent = S.name + " · Gr " + S.grade + " · " + S.window;
   $("diagWho").textContent = S.name + " · Grade " + S.grade + " · " + S.window;
-  $("levelsTitleText").textContent = S.grade === "2" ? "Kriah Assessment · choose a level" : "Decoding Diagnostic · choose a level";
+  $("levelsTitleText").textContent = S.grade === "1" ? "First Grade Assessment · choose a part" : S.grade === "2" ? "Kriah Assessment · choose a level" : "Decoding Diagnostic · choose a level";
   DG.done = {}; loadPriorLevels(); renderLevels(); resetTagPanel("diag"); show("scr-levels");
   refreshPriorLevels();
 });
@@ -1341,7 +1297,7 @@ function loadPriorLevels(){
   const lv = diagMap[S.name + "|" + S.window] || [];
   const pm = parseDiagMissed(diagMissed[S.name + "|" + S.window]);
   lv.forEach(str=>{
-    const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/);
+    const m = String(str).match(/^([A-L1-3]) (\d+)\/(\d+)/);
     if(m && !(DG.done[m[1]] && !DG.done[m[1]].prior)) DG.done[m[1]] = { correct:+m[2], total:+m[3], missed:pm[m[1]]||[], prior:true };
   });
 }
@@ -1356,6 +1312,15 @@ async function refreshPriorLevels(){
 
 let showLevelA = false;
 function renderLevels(){
+  if(S.grade === "1"){
+    $("lvlGrid").innerHTML = G1_LEVELS.map(l=>{
+      const r = DG.done[l.id];
+      let score = "<span class='lscore' style='color:var(--grey)'>Not assessed</span>";
+      if(r){ const pct = Math.round(r.correct/r.total*100); score = `<span class="lscore">${r.correct}/${r.total} correct · ${pct}%${r.prior ? " · saved earlier" : ""}</span>`; }
+      return `<div class="lvlcard" data-lvl="${l.id}"><div class="lid">${lvlName(l.id)}</div><div class="ldesc">${l.desc}</div>${score}</div>`;
+    }).join("");
+    refreshDiagButtons(); return;
+  }
   const isG2 = S.grade === "2";
   const effectiveShowA = showLevelA || isG2;
   let pool = LEVELS;
@@ -1370,7 +1335,7 @@ function renderLevels(){
       const pct = Math.round(r.correct/r.total*100);
       score = `<span class="lscore">${r.correct}/${r.total} correct · ${pct}%${r.prior ? " · saved earlier" : ""}</span>`;
     }
-    return `<div class="lvlcard" data-lvl="${l.id}"><div class="lid">Level ${l.id}</div><div class="ldesc">${l.desc}</div>${score}</div>`;
+    return `<div class="lvlcard" data-lvl="${l.id}"><div class="lid">${lvlName(l.id)}</div><div class="ldesc">${l.desc}</div>${score}</div>`;
   }).join("");
   if(!effectiveShowA) html += `<div class="lvlcard" id="showA" style="border-style:dashed; opacity:.75"><div class="lid" style="font-size:15px">+ Show Level A</div><div class="ldesc">Letter/vowel recognition. Rarely needed in grades 3–8; tap only for a student who cannot access Level B.</div></div>`;
   if(isG2 && S.window === "Fall") html += `<div class="lvlcard" style="border-style:dashed; opacity:.6; cursor:default"><div class="lid" style="font-size:15px">Levels J–L</div><div class="ldesc">Not administered in Fall for Grade 2. These unlock at Winter/Spring testing.</div></div>`;
@@ -1381,8 +1346,8 @@ $("lvlGrid").addEventListener("click", e=>{
   const c = e.target.closest(".lvlcard"); if(!c) return;
   if(c.id === "showA"){ showLevelA = true; renderLevels(); return; }
   if(!c.dataset.lvl) return;
-  DG.cur = LEVELS.find(l=>l.id===c.dataset.lvl); DG.idx = 0; DG.answers = [];
-  $("diagLvlTitle").textContent = "Level " + DG.cur.id + " · " + DG.cur.desc;
+  DG.cur = ALL_LEVELS.find(l=>l.id===c.dataset.lvl); DG.idx = 0; DG.answers = [];
+  $("diagLvlTitle").textContent = lvlName(DG.cur.id) + " · " + DG.cur.desc;
   renderDiagItem(); show("scr-diag");
 });
 
@@ -1391,7 +1356,7 @@ function parseDiagMissed(str){
   const out = {};
   String(str||"").split("|").forEach(seg=>{
     const t = seg.trim(); const k = t.charAt(0);
-    if(/[A-L]/.test(k) && t.charAt(1) === ":") out[k] = t.slice(2).trim().split(/\s+/).filter(Boolean);
+    if(/[A-L1-3]/.test(k) && t.charAt(1) === ":") out[k] = t.slice(2).trim().split(/\s+/).filter(Boolean);
   });
   return out;
 }
@@ -1401,21 +1366,52 @@ function diagRowsFromMaps(name, w){
   const pm = parseDiagMissed(diagMissed[name + "|" + w]);
   const rows = [];
   lv.forEach(str=>{
-    const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/); if(!m) return;
-    const L = LEVELS.find(x=>x.id===m[1]);
+    const m = String(str).match(/^([A-L1-3]) (\d+)\/(\d+)/); if(!m) return;
+    const L = ALL_LEVELS.find(x=>x.id===m[1]);
     rows.push({ id:m[1], desc:L?L.desc:"", correct:+m[2], total:+m[3], missed:pm[m[1]]||[] });
   });
   return rows.sort((a,b)=>a.id<b.id?-1:1);
 }
 function diagRowsFromSession(){
-  return LEVELS.filter(l=>DG.done[l.id]).map(l=>({ id:l.id, desc:l.desc, correct:DG.done[l.id].correct, total:DG.done[l.id].total, missed:DG.done[l.id].missed||[] }));
+  return ALL_LEVELS.filter(l=>DG.done[l.id]).map(l=>({ id:l.id, desc:l.desc, correct:DG.done[l.id].correct, total:DG.done[l.id].total, missed:DG.done[l.id].missed||[] }));
+}
+
+/* ---------- First grade: skill breakdown + total ---------- */
+const G1_SKILL_ORDER = ["Letters","Vowel signs (alone)","Kamatz","Patach","Tzeirei","Segol","Sheva (voiced)","Sheva (silent)"];
+function g1Stats(rows){
+  const sk = {}; let pts = 0, poss = 0, parts = 0;
+  rows.forEach(r=>{
+    const L = G1_LEVELS.find(x=>x.id===r.id); if(!L) return;
+    parts++; pts += r.correct; poss += r.total;
+    L.items.forEach((it,i)=>{
+      const miss = r.missed.includes(it);
+      (L.skills[i]||[]).forEach(k=>{ const o = sk[k] = sk[k] || {ok:0,total:0}; o.total++; if(!miss) o.ok++; });
+    });
+  });
+  const list = G1_SKILL_ORDER.filter(k=>sk[k]).map(k=>({ k, ok:sk[k].ok, total:sk[k].total }));
+  let band = "";
+  if(parts === 3 && poss === 67) band = pts >= 64 ? "E" : pts >= 54 ? "G" : pts >= 47 ? "S" : "NI";
+  return { list, pts, poss, parts, band };
+}
+function g1SummaryHTML(rows){
+  const st = g1Stats(rows.filter(r=>/^\d$/.test(r.id)));
+  if(!st.parts) return "";
+  const pct = Math.round(st.pts/st.poss*100);
+  const trs = st.list.map(x=>{
+    const p = Math.round(x.ok/x.total*100), weak = p < 80;
+    return `<tr><td>${esc(x.k)}</td><td class="c">${x.ok}/${x.total}</td><td class="c">${p}%</td><td class="c" style="font-weight:700;color:${weak?"var(--err)":"var(--ok)"}">${weak?"Reteach":"Secure"}</td></tr>`;
+  }).join("");
+  return `<div style="margin-top:12px"><b>Total: ${st.pts}/${st.poss} (${pct}%)</b>${st.band?` &middot; Grade ${st.band}`:` &middot; <span style="color:var(--grey)">${st.parts} of 3 parts done</span>`}</div>
+    <table class="rr-table" style="margin-top:8px"><thead><tr><th>Skill</th><th>Correct</th><th>Accuracy</th><th>Status</th></tr></thead><tbody>${trs}</tbody></table>
+    <div class="rr-note">Each word counts toward every skill in it (for example, שְׁמַע counts for voiced Sheva and for Patach). Reteach = under 80% on that skill. Grades: E 64-67, G 54-63, S 47-53, NI 46 or fewer (when all 3 parts are done).</div>`;
 }
 function decodingRecordHTML(info, rows, notes){
   let h = `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Decoding Record</div><div class="rr-sub">Emek Hebrew Academy &middot; Teichman Family Torah Center</div></div></div>`;
   h += `<div class="rr-info"><div><b>Student:</b> ${esc(info.name)}</div><div><b>Grade:</b> ${esc(info.grade||"—")}</div><div><b>Window:</b> ${esc(info.window)}</div><div><b>Date:</b> ${esc(info.date||"—")}</div><div><b>Examiner:</b> ${esc(info.examiner||"—")}</div><div><b>Levels given:</b> ${rows.map(r=>r.id).join(" + ")||"none"}</div></div>`;
   if(!rows.length) return h + `<div class="notice">No decoding levels have been saved for this student and window.</div></div>`;
   h += `<table class="rr-table"><thead><tr><th>Level</th><th>Skill</th><th>Correct</th><th>Accuracy</th><th>Missed words</th></tr></thead><tbody>` +
-    rows.map(r=>`<tr><td class="c"><b>${r.id}</b></td><td>${esc(r.desc)}</td><td class="c">${r.correct}/${r.total}</td><td class="c">${Math.round(r.correct/r.total*100)}%</td><td style="direction:rtl;font-family:'David Libre',serif;font-size:20px;line-height:1.6">${r.missed.length ? r.missed.map(kqFix).join(" &nbsp; ") : "<span style='font-family:inherit;font-size:13px;color:var(--grey);direction:ltr'>None</span>"}</td></tr>`).join("") + `</tbody></table>`;
+    rows.map(r=>`<tr><td class="c"><b>${/^\d$/.test(r.id)?"Part "+r.id:r.id}</b></td><td>${esc(r.desc)}</td><td class="c">${r.correct}/${r.total}</td><td class="c">${Math.round(r.correct/r.total*100)}%</td><td style="direction:rtl;font-family:'David Libre',serif;font-size:20px;line-height:1.6">${r.missed.length ? r.missed.map(kqFix).join(" &nbsp; ") : "<span style='font-family:inherit;font-size:13px;color:var(--grey);direction:ltr'>None</span>"}</td></tr>`).join("") + `</tbody></table>`;
+  if(String(info.grade) === "1") h += g1SummaryHTML(rows);
   if(notes && ((notes.rs&&notes.rs.length)||(notes.bh&&notes.bh.length)||notes.txt)){
     h += `<div class="rr-h">Session notes</div>`;
     if(notes.rs && notes.rs.length) h += `<div><b>Reading style:</b> ${notes.rs.map(esc).join(", ")}</div>`;
@@ -1430,6 +1426,11 @@ function worksheetFromRows(who, rows, returnTo){
 }
 function refreshDiagButtons(){
   const rows = diagRowsFromSession();
+  const gp = $("g1Panel");
+  if(gp){
+    if(S.grade === "1" && rows.length){ gp.style.display = "block"; gp.innerHTML = `<div class="notice" style="margin-top:12px">${g1SummaryHTML(rows)}</div>`; }
+    else gp.style.display = "none";
+  }
   $("diagRecordBtn").style.display = rows.length ? "block" : "none";
   $("diagWorksheetBtn").style.display = rows.some(r=>r.missed.length) ? "block" : "none";
 }
@@ -1464,7 +1465,7 @@ document.addEventListener("keydown", e=>{
 });
 $("diagFinish").addEventListener("click", async ()=>{
   const levels = {}, missedParts = [];
-  LEVELS.forEach(l=>{
+  ALL_LEVELS.forEach(l=>{
     const r = DG.done[l.id];
     const fresh = r && !r.prior;
     levels[l.id] = fresh ? `${r.correct}/${r.total} (${Math.round(r.correct/r.total*100)}%)` : "";
@@ -1481,11 +1482,11 @@ $("diagFinish").addEventListener("click", async ()=>{
     sl.textContent = "Diagnostic saved to Google Sheet ✓"; sl.className = "saveline ok";
     const dk = S.name + "|" + S.window;
     const kept = (diagMap[dk] || []).filter(x => !levels[String(x).charAt(0)]);
-    const added = LEVELS.filter(l => levels[l.id]).map(l => l.id + " " + levels[l.id]);
+    const added = ALL_LEVELS.filter(l => levels[l.id]).map(l => l.id + " " + levels[l.id]);
     diagMap[dk] = kept.concat(added);
     const pm2 = parseDiagMissed(diagMissed[dk]);
-    LEVELS.forEach(l=>{ if(levels[l.id]) delete pm2[l.id]; });
-    LEVELS.forEach(l=>{ const r = DG.done[l.id]; if(r && !r.prior && r.missed.length) pm2[l.id] = r.missed; });
+    ALL_LEVELS.forEach(l=>{ if(levels[l.id]) delete pm2[l.id]; });
+    ALL_LEVELS.forEach(l=>{ const r = DG.done[l.id]; if(r && !r.prior && r.missed.length) pm2[l.id] = r.missed; });
     diagMissed[dk] = Object.keys(pm2).sort().map(k=>k + ": " + pm2[k].join(" ")).join("  |  ");
   }catch(e){ sl.textContent = "Could not save (no connection)."; sl.className = "saveline fail"; }
 });
@@ -1505,7 +1506,7 @@ function renderDashboard(rows, w, whoLabel){
   $("dashWho").textContent = whoLabel;
   $("thFlu").style.display = "";
   $("dashBody").innerHTML = rows.length ? rows.map(s => {
-    const isG2 = String(s.grade) === "2";
+    const isG2 = isDecodingOnly(s.grade);
     const parts = doneMap[s.name + "|" + w];
     const flu = isG2
       ? "<span style='color:var(--grey)'>N/A · decoding only</span>"
@@ -1521,7 +1522,7 @@ function renderDashboard(rows, w, whoLabel){
     const fluCell = `<td>${fluInner}</td>`;
     const lv = diagMap[s.name + "|" + w];
     const dgInner = lv && lv.length
-      ? `<span style='color:var(--navy); font-weight:600'>${lv.join(" · ")}</span>`
+      ? `<span style='color:var(--navy); font-weight:600'>${lv.map(dispLv).join(" · ")}</span>`
       : "<span style='color:var(--grey)'>—</span>";
     const dg = lv && lv.length
       ? `<button class="btn-ghost" style="padding:2px; font-size:inherit; text-align:left" data-srname="${s.name}" data-srwin="${w}" data-srtype="diag">${dgInner}</button>`
@@ -1733,7 +1734,7 @@ function openStudentResult(name, w, type){
   const lv = diagMap[name + "|" + w];
   html += `<h2 class="step">Decoding Diagnostic</h2>`;
   html += (lv && lv.length)
-    ? `<div class="notice" style="border-left-color:var(--gold)">${lv.join(" &middot; ")}</div>`
+    ? `<div class="notice" style="border-left-color:var(--gold)">${lv.map(dispLv).join(" &middot; ")}</div>`
     : "<div class='notice'>No diagnostic levels recorded for this window.</div>";
 
   const drows = diagRowsFromMaps(name, w);
@@ -1882,7 +1883,7 @@ function renderAnl(){
   renderAnlDiag(w, g, sec);
 }
 function renderAnlDiag(w, g, sec){
-  const LV = "ABCDEFGHIJKL".split("");
+  const LV = String(g)==="1" ? "123".split("") : "ABCDEFGHIJKL".split("");
   const per = {}; LV.forEach(l=>per[l]=[]);
   const stu = new Set();
   (roster||[]).forEach(st=>{
@@ -1891,15 +1892,15 @@ function renderAnlDiag(w, g, sec){
       if(w && win!==w) return;
       const lv = diagMap[st.name+"|"+win]; if(!lv) return;
       lv.forEach(str=>{
-        const m = String(str).match(/^([A-L]) (\d+)\/(\d+)/);
-        if(m && +m[3]>0){ per[m[1]].push(+m[2]/+m[3]*100); stu.add(st.name); }
+        const m = String(str).match(/^([A-L1-3]) (\d+)\/(\d+)/);
+        if(m && per[m[1]] && +m[3]>0){ per[m[1]].push(+m[2]/+m[3]*100); stu.add(st.name); }
       });
     });
   });
   $("anlDiagCount").textContent = stu.size + " student" + (stu.size===1?"":"s") + " with a decoding diagnostic saved";
   $("anlDiag").innerHTML = LV.map(l=>{
     const a = per[l]; const avg = a.length ? Math.round(a.reduce((x,y)=>x+y,0)/a.length) : null;
-    return `<div class="hrow"><span class="hl">${l}</span><div class="htrack"><div class="hfill" style="width:${avg||0}%"></div></div><span class="hn" style="width:auto; min-width:92px">${avg==null?"not yet":avg+"% · "+a.length+" student"+(a.length===1?"":"s")}</span></div>`;
+    return `<div class="hrow"><span class="hl">${/^\d$/.test(l)?"Part "+l:l}</span><div class="htrack"><div class="hfill" style="width:${avg||0}%"></div></div><span class="hn" style="width:auto; min-width:92px">${avg==null?"not yet":avg+"% · "+a.length+" student"+(a.length===1?"":"s")}</span></div>`;
   }).join("");
 }
 $("anlWin").addEventListener("change", renderAnl);
