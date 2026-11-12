@@ -203,6 +203,11 @@ table.rr-table td.c{text-align:center;}
 .rr-text .rr-stop{font-family:'Nunito Sans',sans-serif; font-size:11px; font-weight:800; color:var(--navy); background:var(--gold-soft); border-radius:5px; padding:1px 6px; margin:0 4px;}
 .rr-chips{display:flex; flex-wrap:wrap; gap:6px;}
 .rr-chip{font-size:12.5px; border:1px solid var(--line); border-radius:6px; padding:3px 8px; background:#fff;}
+.nsbig{width:100%;margin-top:6px}
+.nsrow{display:flex;gap:10px;margin:12px 0 8px}
+.nsb{flex:1;height:64px;font-size:20px;font-weight:800;border-radius:14px;border:3px solid var(--line);background:#fff;cursor:pointer;color:var(--navy);font-family:'Nunito Sans',sans-serif}
+.nsb.on{border-color:#C0392B;background:#FBEAE8;color:#C0392B}
+.nslbl{font-size:13px;font-weight:700;color:var(--grey);margin-top:12px}
 .mkrow{display:flex;flex-direction:row-reverse;flex-wrap:wrap;justify-content:center;gap:10px;margin:14px 0}
 .mkc{display:flex;flex-direction:column;align-items:center;gap:6px}
 .mkl{font-family:'David Libre',serif;font-size:56px;line-height:1.25;min-width:64px;padding:2px 10px;border:2.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;color:var(--navy)}
@@ -434,6 +439,12 @@ table.rr-class td,table.rr-class th{font-size:12.5px;}
   <div class="diagbtns" id="diagBtns">
     <button class="btn-wrong" id="diagWrong">✗ Incorrect (X)</button>
     <button class="btn-correct" id="diagRight">✓ Correct (C)</button>
+  </div>
+  <div id="diagNS" style="display:none">
+    <button class="btn-correct nsbig" id="diagNSok">✓ Name and sound both correct (C)</button>
+    <div class="nslbl">Or tap what was missed, then Next:</div>
+    <div class="nsrow"><button class="nsb" data-k="N">✗ Name</button><button class="nsb" data-k="S">✗ Sound</button></div>
+    <button class="btn-wrong nsbig" id="diagNSnext" style="opacity:.45">Next →</button>
   </div>
   <div id="diagMark" style="display:none">
     <div class="notice">Tap the <b>letter</b> and/or the <b>vowel</b> the child got wrong (optional), then Next.</div>
@@ -1415,25 +1426,31 @@ function serializeDetail(map){
     return ents.length ? k + ": " + ents.join(" ") : "";
   }).filter(Boolean).join("  |  ");
 }
+function pdot(x){ return (x.length===1 && x.charCodeAt(0)>=0x591 && x.charCodeAt(0)<=0x5C7) ? "\u25CC"+x : x; }
+function tokText(x){ const c = x.charAt(0); return c==="N" ? "name" : c==="S" ? "sound" : c==="L" ? x.slice(1) : vname(x.slice(1)); }
 function tokLabel(t){ return t.charAt(0) === "L" ? t.slice(1) : vname(t.slice(1)); }
 function tallyErrs(rowsOrErrs){
-  const v = {}, l = {};
-  rowsOrErrs.forEach(e=>Object.values(e||{}).forEach(toks=>toks.forEach(t=>{
+  const v = {}, l = {}, n = {}, sd = {};
+  rowsOrErrs.forEach(e=>Object.entries(e||{}).forEach(([w,toks])=>toks.forEach(t=>{
+    if(t === "N"){ n[w] = (n[w]||0) + 1; return; }
+    if(t === "S"){ sd[w] = (sd[w]||0) + 1; return; }
     const m = t.charAt(0) === "V" ? v : l; const k = t.slice(1); m[k] = (m[k]||0) + 1;
   })));
-  return { v, l };
+  return { v, l, n, s: sd };
 }
 function errSummaryHTML(tally, intro){
-  const fmt = (m,isV)=>Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<span dir="ltr" style="display:inline-block;white-space:nowrap;margin-right:12px">${isV?esc(vname(k)):`<span style="font-family:'David Libre',serif;font-size:20px">${esc(k)}</span>`} <b>&times;${n}</b></span>`).join(" ");
-  if(!Object.keys(tally.v).length && !Object.keys(tally.l).length) return "";
+  const fmt = (m,isV)=>Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<span dir="ltr" style="display:inline-block;white-space:nowrap;margin-right:12px">${isV?esc(vname(k)):`<span style="font-family:'David Libre',serif;font-size:20px">${esc(pdot(k))}</span>`} <b>(${n})</b></span>`).join(" ");
+  if(!Object.keys(tally.v).length && !Object.keys(tally.l).length && !Object.keys(tally.n||{}).length && !Object.keys(tally.s||{}).length) return "";
   return `<div class="rr-h" style="margin-top:14px">${intro}</div>` +
     (Object.keys(tally.v).length ? `<div style="margin-top:4px"><b>Vowels missed:</b> ${fmt(tally.v,true)}</div>` : "") +
-    (Object.keys(tally.l).length ? `<div style="margin-top:4px"><b>Letters missed:</b> ${fmt(tally.l,false)}</div>` : "");
+    (Object.keys(tally.l).length ? `<div style="margin-top:4px"><b>Letters missed:</b> ${fmt(tally.l,false)}</div>` : "") +
+    (Object.keys(tally.n||{}).length ? `<div style="margin-top:4px"><b>Names missed (Part 1):</b> ${fmt(tally.n,false)}</div>` : "") +
+    (Object.keys(tally.s||{}).length ? `<div style="margin-top:4px"><b>Sounds missed (Part 1):</b> ${fmt(tally.s,false)}</div>` : "");
 }
 function missedCellHTML(r){
   return r.missed.map(w=>{
     const t = (r.errs||{})[w];
-    return kqFix(w) + (t && t.length ? ` <span dir="ltr" style="display:inline-block;font-family:'Nunito Sans',sans-serif;font-size:11px;color:#C0392B">[${t.map(x=>x.charAt(0)==="L"?esc(x.slice(1)):esc(vname(x.slice(1)))).join(", ")}]</span>` : "");
+    return kqFix(pdot(w)) + (t && t.length ? ` <span dir="ltr" style="display:inline-block;font-family:'Nunito Sans',sans-serif;font-size:11px;color:#C0392B">[${t.map(x=>esc(tokText(x))).join(", ")}]</span>` : "");
   }).join(" &nbsp; ");
 }
 /* rows: [{id, desc, correct, total, missed[]}] from what the app holds for a saved student/window */
@@ -1468,7 +1485,7 @@ function g1Stats(rows){
         let bad = miss;
         if(miss && toks && toks.length){
           const want = {"Letters":t=>t[0]==="L","Vowel signs (alone)":t=>t[0]==="V","Kamatz":t=>t==="VKamatz","Patach":t=>t==="VPatach","Tzeirei":t=>t==="VTzeirei","Segol":t=>t==="VSegol","Sheva (voiced)":t=>t==="VSheva","Sheva (silent)":t=>t==="VSheva"}[k];
-          if(want) bad = toks.some(want);
+          if(want && !toks.some(t=>t==="N"||t==="S")) bad = toks.some(want);
         }
         if(!bad) o.ok++;
       });
@@ -1483,13 +1500,23 @@ function g1SummaryHTML(rows){
   const st = g1Stats(rows.filter(r=>/^\d$/.test(r.id)));
   if(!st.parts) return "";
   const pct = Math.round(st.pts/st.poss*100);
+  let nsLine = "";
+  const p1 = rows.find(r=>r.id==="1");
+  if(p1){
+    const E = p1.errs||{}; const has = (w,c)=>(E[w]||[]).includes(c);
+    const unknown = p1.missed.filter(w=>!has(w,"N") && !has(w,"S")).length;
+    if(!unknown){
+      const nm = p1.missed.filter(w=>has(w,"N")).length, sm = p1.missed.filter(w=>has(w,"S")).length;
+      nsLine = `<div style="margin-top:4px">Part 1 names: <b>${p1.total-nm}/${p1.total}</b> &middot; sounds: <b>${p1.total-sm}/${p1.total}</b></div>`;
+    }
+  }
   const trs = st.list.map(x=>{
     const p = Math.round(x.ok/x.total*100), weak = p < 80;
     return `<tr><td>${esc(x.k)}</td><td class="c">${x.ok}/${x.total}</td><td class="c">${p}%</td><td class="c" style="font-weight:700;color:${weak?"var(--err)":"var(--ok)"}">${weak?"Reteach":"Secure"}</td></tr>`;
   }).join("");
-  return `<div style="margin-top:12px"><b>Total: ${st.pts}/${st.poss} (${pct}%)</b>${st.band?` &middot; Grade ${st.band}`:` &middot; <span style="color:var(--grey)">${st.parts} of 3 parts done</span>`}</div>
+  return `<div style="margin-top:12px"><b>Total: ${st.pts}/${st.poss} (${pct}%)</b>${st.band?` &middot; Grade ${st.band}`:` &middot; <span style="color:var(--grey)">${st.parts} of 3 parts done</span>`}</div>${nsLine}
     <table class="rr-table" style="margin-top:8px"><thead><tr><th>Skill</th><th>Correct</th><th>Accuracy</th><th>Status</th></tr></thead><tbody>${trs}</tbody></table>
-    <div class="rr-note">Each word counts toward every skill in it (for example, שְׁמַע counts for voiced Sheva and for Patach). Reteach = under 80% on that skill. Grades: E 64-67, G 54-63, S 47-53, NI 46 or fewer (when all 3 parts are done).</div>`;
+    <div class="rr-note">Each word counts toward every skill in it (for example, שְׁמַע counts for voiced Sheva and for Patach). In Part 1 an item counts as correct only when both the name and the sound were correct. Reteach = under 80% on that skill. Grades: E 64-67, G 54-63, S 47-53, NI 46 or fewer (when all 3 parts are done).</div>`;
 }
 function decodingRecordHTML(info, rows, notes){
   let h = `<div class="rr-page"><div class="rr-head"><img src="${LOGO}" alt="Emek Hebrew Academy"><div><div class="rr-ttl">Kriah Decoding Record</div><div class="rr-sub">Emek Hebrew Academy &middot; Teichman Family Torah Center</div></div></div>`;
@@ -1529,8 +1556,11 @@ $("diagRecordBtn").addEventListener("click", ()=>{
 $("diagWorksheetBtn").addEventListener("click", ()=>worksheetFromRows(S.name + " · Grade " + S.grade + " · " + S.window, diagRowsFromSession(), "scr-levels"));
 function kqFix(w){ w=esc(w); return w.replace(/\ufb3a\u05b8?/g,'<span class="kq">\ufb3a</span>'); }
 function renderDiagItem(){
-  DG.marking = false; $("diagMark").style.display = "none"; $("diagBtns").style.display = "";
-  $("diagItem").innerHTML = kqFix(DG.cur.items[DG.idx]);
+  DG.marking = false; $("diagMark").style.display = "none";
+  DG.ns = DG.cur.id === "1";
+  $("diagBtns").style.display = DG.ns ? "none" : ""; $("diagNS").style.display = DG.ns ? "block" : "none";
+  if(DG.ns){ DG.nsSel = new Set(); document.querySelectorAll("#diagNS .nsb").forEach(b=>b.classList.remove("on")); $("diagNSnext").style.opacity = ".45"; }
+  $("diagItem").innerHTML = kqFix(DG.ns ? pdot(DG.cur.items[DG.idx]) : DG.cur.items[DG.idx]);
   $("diagLabel").textContent = DG.cur.labels ? DG.cur.labels[DG.idx] : "";
   $("diagProg").textContent = (DG.idx+1) + " / " + DG.cur.items.length;
 }
@@ -1564,7 +1594,14 @@ function finishMarking(){
   });
   diagAdvance(false, toks);
 }
-function diagMark(ok){ if(ok) diagAdvance(true, []); else startMarking(); }
+function diagMark(ok){ if(ok) diagAdvance(true, []); else if(DG.ns) return; else startMarking(); }
+document.querySelectorAll("#diagNS .nsb").forEach(b=>b.addEventListener("click", ()=>{
+  const k = b.dataset.k;
+  if(DG.nsSel.has(k)){ DG.nsSel.delete(k); b.classList.remove("on"); } else { DG.nsSel.add(k); b.classList.add("on"); }
+  $("diagNSnext").style.opacity = DG.nsSel.size ? "1" : ".45";
+}));
+$("diagNSok").addEventListener("click", ()=>diagAdvance(true, []));
+$("diagNSnext").addEventListener("click", ()=>{ if(DG.nsSel.size) diagAdvance(false, ["N","S"].filter(k=>DG.nsSel.has(k))); });
 $("diagMarkRow").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b || b.classList.contains("off")) return;
   const k = b.dataset.i + ":" + b.dataset.t;
@@ -1578,6 +1615,12 @@ document.addEventListener("keydown", e=>{
   if(!$("scr-diag").classList.contains("active")) return;
   if(DG.marking){ if(e.key==="Enter"||e.key==="ArrowRight"||e.key===" "){ e.preventDefault(); finishMarking(); } return; }
   if(e.key==="c"||e.key==="C"||e.key==="ArrowRight") diagMark(true);
+  if(DG.ns){
+    if(e.key==="n"||e.key==="N") $("diagNS").querySelector('[data-k="N"]').click();
+    if(e.key==="s"||e.key==="S") $("diagNS").querySelector('[data-k="S"]').click();
+    if(e.key==="Enter"||e.key==="ArrowLeft") $("diagNSnext").click();
+    return;
+  }
   if(e.key==="x"||e.key==="X"||e.key==="ArrowLeft") diagMark(false);
 });
 $("diagFinish").addEventListener("click", async ()=>{
